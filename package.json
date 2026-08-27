@@ -12,7 +12,13 @@
     "lint": "eslint .",
     "format": "prettier --write ."
   },
+  "overrides": {
+    "@vercel/analytics": {
+      "vue-router": "$vue-router"
+    }
+  },
   "dependencies": {
+    "@vercel/analytics": "^2.0.1",
     "html2canvas": "^1.4.1",
     "pinia": "^4.0.3",
     "vue": "^3.5.41",
