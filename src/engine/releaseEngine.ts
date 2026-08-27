@@ -1,0 +1,103 @@
+import { BAND_THRESHOLDS, clampStat } from '@/engine/constants'
+import type { Rng } from '@/engine/rng'
+import { rollRange, weightedPick } from '@/engine/rng'
+import type { Career, Release, ReleaseTier } from '@/types/career'
+
+function noise(rng: Rng, spread = 15): number {
+  return rollRange(rng, -spread, spread)
+}
+
+const TITLE_WORDS_A = ['Perreo', 'Fuego', 'Candela', 'Dura', 'Sola', 'Bandida', 'Traicionera', 'Peligrosa']
+const TITLE_WORDS_B = ['Intenso', 'de Madrugada', 'Sin Freno', 'Eterno', 'en la Disco', 'Pa Siempre', 'Callejero']
+
+function generateTitle(rng: Rng): string {
+  const a = TITLE_WORDS_A[rollRange(rng, 0, TITLE_WORDS_A.length - 1)]
+  const b = TITLE_WORDS_B[rollRange(rng, 0, TITLE_WORDS_B.length - 1)]
+  return `${a} ${b}`
+}
+
+export function classifyTier(hitScore: number): ReleaseTier {
+  if (hitScore >= BAND_THRESHOLDS.top) return 'smash'
+  if (hitScore >= BAND_THRESHOLDS.veryHigh) return 'hit'
+  if (hitScore >= BAND_THRESHOLDS.high) return 'good'
+  if (hitScore >= BAND_THRESHOLDS.mid) return 'normal'
+  return 'flop'
+}
+
+export function computeHitScore(release: Omit<Release, 'hitScore' | 'tier'>): number {
+  const score =
+    release.quality * 0.2 +
+    release.commerciality * 0.2 +
+    release.originality * 0.1 +
+    release.artistBuzz * 0.15 +
+    release.featurePower * 0.1 +
+    release.marketing * 0.15 +
+    release.timing * 0.1
+  return Math.round(clampStat(score))
+}
+
+function generateOneRelease(career: Career, rng: Rng): Release {
+  const { attributes, stats, finances } = career
+
+  const quality = clampStat(attributes.talent * 0.3 + attributes.productionSense * 0.3 + attributes.writing * 0.2 + noise(rng))
+  const originality = clampStat(attributes.originality + noise(rng))
+  const commerciality = clampStat(attributes.business * 0.4 + attributes.charisma * 0.3 + stats.hype * 0.2 + noise(rng))
+  const artistBuzz = clampStat(stats.hype * 0.6 + stats.fame * 0.2 + noise(rng))
+  const featurePower = clampStat(attributes.charisma * 0.4 + stats.fame * 0.3 + noise(rng))
+  const marketing = clampStat((finances.cash > 100 ? 20 : 5) + attributes.business * 0.3 + noise(rng, 20))
+  const timing = clampStat(rollRange(rng, 30, 80))
+
+  const base = {
+    title: generateTitle(rng),
+    year: career.year,
+    quality,
+    originality,
+    commerciality,
+    artistBuzz,
+    featurePower,
+    marketing,
+    timing,
+  }
+
+  const hitScore = computeHitScore(base)
+  return { ...base, hitScore, tier: classifyTier(hitScore) }
+}
+
+type ReleaseKind = 'single' | 'ep' | 'album'
+
+function pickReleaseKind(rng: Rng): ReleaseKind {
+  const kinds: ReleaseKind[] = ['single', 'ep', 'album']
+  return (
+    weightedPick(kinds, (k) => (k === 'single' ? 7 : k === 'ep' ? 2 : 1), rng) ?? 'single'
+  )
+}
+
+/** Generates 0-2 releases for the current year, each with a fictional title. */
+export function generateReleases(career: Career, rng: Rng): { release: Release; kind: ReleaseKind }[] {
+  const count = rollRange(rng, 0, 100) <= 20 ? 0 : rollRange(rng, 0, 100) <= 80 ? 1 : 2
+  const releases: { release: Release; kind: ReleaseKind }[] = []
+  for (let i = 0; i < count; i++) {
+    releases.push({ release: generateOneRelease(career, rng), kind: pickReleaseKind(rng) })
+  }
+  return releases
+}
+
+/** Mutates `career` in place, folding the given releases into record and stats. */
+export function applyReleasesToCareer(career: Career, releases: { release: Release; kind: ReleaseKind }[]): void {
+  for (const { release, kind } of releases) {
+    career.releases.push(release)
+    career.record.releases += 1
+    if (kind === 'single') career.record.singles += 1
+    if (kind === 'ep') career.record.eps += 1
+    if (kind === 'album') career.record.albums += 1
+
+    if (release.tier === 'hit' || release.tier === 'smash') career.record.hits += 1
+    if (release.tier === 'smash') career.record.smashHits += 1
+    if (release.tier === 'smash') career.record.numberOneRecords += 1
+
+    const impact = release.hitScore / 10
+    career.stats.hype = clampStat(career.stats.hype + impact * 2)
+    career.stats.fame = clampStat(career.stats.fame + impact)
+    career.stats.catalogStrength = clampStat(career.stats.catalogStrength + impact * 0.8)
+  }
+}

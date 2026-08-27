@@ -19,6 +19,9 @@ export default tseslint.config(
   {
     rules: {
       'vue/multi-word-component-names': 'off',
+      // TypeScript already catches undefined references; no-undef doesn't
+      // understand ambient DOM/TS globals and produces false positives.
+      'no-undef': 'off',
     },
   },
   eslintConfigPrettier,

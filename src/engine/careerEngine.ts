@@ -1,0 +1,44 @@
+import { selectYearEvent } from '@/engine/eventEngine'
+import { applyFinances } from '@/engine/financeEngine'
+import { applyProgression, computeEra } from '@/engine/progressionEngine'
+import type { Rng } from '@/engine/rng'
+import { applyReleasesToCareer, generateReleases } from '@/engine/releaseEngine'
+import type { Career, CareerYear } from '@/types/career'
+
+/**
+ * Simulates one career year and returns a new Career object: ages the artist,
+ * drifts stats, generates releases, recomputes finances, then fires a due
+ * delayed effect or rolls one fresh event. The player's decision on that event
+ * (if any) is applied afterward via `decisionEngine.applyChoice`.
+ */
+export function simulateYear(career: Career, rng: Rng): Career {
+  const next = structuredClone(career)
+
+  next.age += 1
+  next.year += 1
+  next.era = computeEra(next.year)
+
+  applyProgression(next, rng)
+
+  const releasesThisYear = generateReleases(next, rng)
+  applyReleasesToCareer(next, releasesThisYear)
+  applyFinances(
+    next,
+    releasesThisYear.map((r) => r.release),
+  )
+
+  const { event, remainingPendingEffects } = selectYearEvent(next, rng)
+  next.pendingEffects = remainingPendingEffects
+
+  const yearEntry: CareerYear = {
+    year: next.year,
+    age: next.age,
+    era: next.era,
+    releases: releasesThisYear.map((r) => r.release),
+    eventId: event?.id,
+    statsSnapshot: { ...next.stats },
+  }
+  next.history.push(yearEntry)
+
+  return next
+}
