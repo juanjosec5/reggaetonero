@@ -2,8 +2,8 @@
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 
-import CareerEraTable from '@/components/CareerEraTable.vue'
 import CareerHeader from '@/components/CareerHeader.vue'
+import CareerTable from '@/components/CareerTable.vue'
 import DecisionCard from '@/components/DecisionCard.vue'
 import MarketProgress from '@/components/MarketProgress.vue'
 import RivalPanel from '@/components/RivalPanel.vue'
@@ -113,7 +113,7 @@ function goRetire() {
           </button>
         </template>
 
-        <CareerEraTable :career="career" />
+        <CareerTable :career="career" />
       </div>
 
       <!-- Team / markets / rivals column - only once there's something to show -->
