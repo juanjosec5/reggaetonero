@@ -69,15 +69,13 @@ function applyEffect(career: Career, effect: CareerEffect, rng: Rng, defaultRiva
       return
 
     case 'award': {
-      const isGrammy = effect.award === 'grammy'
-      if (isGrammy) career.record.grammys += 1
-      else career.record.billboards += 1
-      grantAward(
-        career,
-        isGrammy ? 'gr' : 'bb',
-        effect.award,
-        effect.title ?? (isGrammy ? 'Grammy Latino' : 'Premio Billboard'),
-      )
+      const meta = {
+        grammy: { key: 'gr', title: 'Grammy Latino', bump: () => (career.record.grammys += 1) },
+        billboard: { key: 'bb', title: 'Premio Billboard', bump: () => (career.record.billboards += 1) },
+        platinum: { key: 'plat', title: 'Disco de platino', bump: () => (career.record.platinumRecords += 1) },
+      }[effect.award]
+      meta.bump()
+      grantAward(career, meta.key, effect.award, effect.title ?? meta.title)
       return
     }
   }

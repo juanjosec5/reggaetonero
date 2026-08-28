@@ -250,7 +250,7 @@ export interface LabelEffect {
 
 export interface AwardEffect {
   kind: 'award'
-  award: 'grammy' | 'billboard'
+  award: 'grammy' | 'billboard' | 'platinum'
   title?: string // player-facing name; defaults per kind
 }
 

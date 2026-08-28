@@ -70,4 +70,14 @@ describe('award effect from a decision', () => {
     expect(next.awards.some((a) => a.kind === 'grammy')).toBe(true)
     expect(career.awards).toHaveLength(0) // original untouched
   })
+
+  it('music_platinum_push logs a platinum plaque', () => {
+    career.stats.fame = 45
+    career.stats.catalogStrength = 40
+    career.finances.cash = 200
+    const event = getEventById('music_platinum_push')!
+    const next = applyChoice(career, event, event.choices[0]!, makeRng(2))
+    expect(next.record.platinumRecords).toBe(1)
+    expect(next.awards.some((a) => a.kind === 'platinum')).toBe(true)
+  })
 })

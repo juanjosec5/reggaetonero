@@ -71,4 +71,35 @@ export const MONEY_EVENTS: CareerEvent[] = [
       },
     ],
   },
+  {
+    id: 'money_day_job',
+    category: 'money',
+    title: 'El trabajo de verdad',
+    description: 'Tu familia te recuerda que la música no paga la renta. Puedes seguir en el trabajo o dejarlo y apostarlo todo.',
+    visibleRisk: 'medium',
+    condition: (c) => c.year <= 3 && c.stats.fame < 15,
+    weight: () => 4,
+    oncePerCareer: true,
+    choices: [
+      {
+        text: 'Dejarlo y apostar todo por la música',
+        style: 'ambitious',
+        effects: [
+          { target: 'hiddenTraits.ambition', min: 3, max: 8 },
+          { target: 'hiddenTraits.riskTolerance', min: 2, max: 5 },
+          { target: 'stats.hype', min: 1, max: 5 },
+          { target: 'finances.cash', min: -50, max: -20 },
+        ],
+      },
+      {
+        text: 'Mantener el trabajo por ahora',
+        style: 'safe',
+        effects: [
+          { target: 'finances.cash', min: 30, max: 70 },
+          { target: 'hiddenTraits.discipline', min: 1, max: 4 },
+          { target: 'stats.hype', min: -6, max: -2 },
+        ],
+      },
+    ],
+  },
 ]
