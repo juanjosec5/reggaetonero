@@ -73,7 +73,9 @@ describe('event catalog integrity', () => {
           } else if (effect.kind === 'relationship') {
             expect(KNOWN_PERSON_IDS.has(effect.personId), `${event.id}: ${effect.personId}`).toBe(true)
           } else if (effect.kind === 'team') {
-            expect(TEAM_ROLES).toContain(effect.role)
+            // role may be omitted only for op: 'leave' (engine drops the weakest member)
+            if (effect.role !== undefined) expect(TEAM_ROLES).toContain(effect.role)
+            else expect(effect.op, `${event.id}: team effect without role`).toBe('leave')
           } else if (effect.kind === 'market') {
             expect(['penetrate', 'saturate', 'unlock']).toContain(effect.op)
           }

@@ -56,13 +56,7 @@ function legacySave(): Career {
       eps: 0,
       hits: 1,
       smashHits: 0,
-      features: 0,
-      streams: 0,
-      certifications: 0,
-      shows: 0,
-      countriesPerformed: 0,
       awards: 0,
-      numberOneRecords: 0,
     },
     team: {},
     relationships: [{ personId: 'x', trust: 60, loyalty: 60, professionalValue: 50, tension: 0 }] as never,
@@ -87,8 +81,18 @@ describe('migrateSave', () => {
     expect(migrated.markets.find((m) => m.id === 'pr')?.unlocked).toBe(true)
     expect(migrated.rivals[0]!.id).toBeDefined()
     expect(migrated.rivals[0]!.archetype).toBeDefined()
+    expect(migrated.rivals.every((r) => r.discovered)).toBe(true)
     expect(migrated.relationships[0]!.memory).toEqual([])
     expect(migrated.relationships[0]!.name).toBeDefined()
+  })
+
+  it('seeds a full rival roster for a Phase 1 save that had none', () => {
+    const save = legacySave()
+    save.rivals = []
+    delete (save as { saveVersion?: number }).saveVersion
+    const migrated = migrateSave(save)
+    expect(migrated.rivals.length).toBe(3)
+    expect(migrated.rivals.every((r) => r.id && r.discovered)).toBe(true)
   })
 
   it('leaves an already-current save untouched', () => {

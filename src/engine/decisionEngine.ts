@@ -13,8 +13,12 @@ import {
 } from '@/engine/teamEngine'
 import type { Career, CareerChoice, CareerEffect, CareerEvent } from '@/types/career'
 
-/** Resolves one effect's range through the RNG and applies it to `career` in place. */
-function applyEffect(career: Career, effect: CareerEffect, rng: Rng): void {
+/**
+ * Resolves one effect's range through the RNG and applies it to `career` in place.
+ * `defaultRivalId` is resolved once per choice so every un-targeted rival effect
+ * in the same choice hits the same rival.
+ */
+function applyEffect(career: Career, effect: CareerEffect, rng: Rng, defaultRivalId?: string): void {
   const roll = (min = 0, max = 0) => rollRange(rng, min, max)
 
   switch (effect.kind) {
@@ -28,7 +32,7 @@ function applyEffect(career: Career, effect: CareerEffect, rng: Rng): void {
       return
 
     case 'rival': {
-      const rivalId = effect.rivalId ?? nearestRival(career)?.id
+      const rivalId = effect.rivalId ?? defaultRivalId
       if (rivalId) {
         adjustRival(career, rivalId, effect.field, roll(effect.min, effect.max))
         // A rival the player has now tangled with becomes visible in the panel.
@@ -49,9 +53,13 @@ function applyEffect(career: Career, effect: CareerEffect, rng: Rng): void {
     }
 
     case 'team':
-      if (effect.op === 'hire') hireTeamMember(career, effect.role, rng, effect.personId)
-      else if (effect.op === 'leave') releaseTeamMember(career, effect.role)
-      else adjustTeamLoyalty(career, effect.role, roll(effect.min, effect.max))
+      if (effect.op === 'hire') {
+        if (effect.role) hireTeamMember(career, effect.role, rng, effect.personId)
+      } else if (effect.op === 'leave') {
+        releaseTeamMember(career, effect.role)
+      } else if (effect.role) {
+        adjustTeamLoyalty(career, effect.role, roll(effect.min, effect.max))
+      }
       return
 
     case 'label':
@@ -71,8 +79,12 @@ function applyEffect(career: Career, effect: CareerEffect, rng: Rng): void {
 export function applyChoice(career: Career, event: CareerEvent, choice: CareerChoice, rng: Rng): Career {
   const next = structuredClone(career)
 
+  // Pin the "which rival" for the whole choice up front - a fame effect and a
+  // relationship effect in one choice must not drift onto different rivals.
+  const defaultRivalId = nearestRival(next)?.id
+
   for (const effect of choice.effects) {
-    applyEffect(next, effect, rng)
+    applyEffect(next, effect, rng, defaultRivalId)
   }
 
   if (choice.delayedEffects) {

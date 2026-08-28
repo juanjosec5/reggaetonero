@@ -103,7 +103,6 @@ export function applyReleasesToCareer(career: Career, releases: { release: Relea
 
     if (release.tier === 'hit' || release.tier === 'smash') career.record.hits += 1
     if (release.tier === 'smash') career.record.smashHits += 1
-    if (release.tier === 'smash') career.record.numberOneRecords += 1
 
     if (release.tier === 'flop') {
       // A flop isn't neutral: it burns hype. Putting out music nobody wants is

@@ -42,9 +42,9 @@ const SCORES = [
     </div>
 
     <div class="grid grid-cols-3 gap-2 text-center text-xs text-neutral-400">
-      <div><p class="text-base font-semibold text-neutral-100">{{ career.record.numberOneRecords }}</p>Números 1</div>
       <div><p class="text-base font-semibold text-neutral-100">{{ career.record.hits }}</p>Hits</div>
-      <div><p class="text-base font-semibold text-neutral-100">{{ career.record.shows }}</p>Shows</div>
+      <div><p class="text-base font-semibold text-neutral-100">{{ career.record.releases }}</p>Lanzamientos</div>
+      <div><p class="text-base font-semibold text-neutral-100">{{ career.record.awards }}</p>Premios</div>
     </div>
 
     <p class="text-center text-[10px] tracking-widest text-neutral-600">REGGAETONERO</p>
