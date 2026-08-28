@@ -69,8 +69,9 @@ export const CONTROVERSY_EVENTS: CareerEvent[] = [
     title: 'El incidente sigue coleando',
     description: 'Todavía te preguntan por lo que dijiste hace un tiempo.',
     visibleRisk: 'low',
-    condition: () => true,
-    weight: () => 3,
+    // Follow-up only: reached through a delayed effect, never rolled on its own.
+    condition: () => false,
+    weight: () => 0,
     choices: [
       {
         text: 'Dejarlo atrás en silencio',

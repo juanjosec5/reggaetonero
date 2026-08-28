@@ -27,37 +27,32 @@ async function mountView() {
 }
 
 describe('CreateArtistView', () => {
-  it('starts on the identity step with the continue button disabled', async () => {
+  it('is a single screen with the start button disabled until name + country are set', async () => {
     const wrapper = await mountView()
     expect(wrapper.text()).toContain('¿Quién eres?')
-    const continueButton = wrapper.find('button[disabled]')
-    expect(continueButton.exists()).toBe(true)
+    const startButton = wrapper.findAll('button').find((b) => b.text().includes('Empezar carrera'))!
+    expect(startButton.attributes('disabled')).toBeDefined()
   })
 
-  it('walks through every step and starts a career in the store', async () => {
+  it('starts a career once name and country are chosen', async () => {
     const wrapper = await mountView()
     const store = useCareerStore()
 
-    // Step 1: identity
     await wrapper.find('input[type="text"]').setValue('MC Prueba')
-    await wrapper.findAll('button').find((b) => b.text().includes('Continuar'))!.trigger('click')
-    expect(wrapper.text()).toContain('¿Qué tipo de artista eres?')
-
-    // Step 2: archetype - pick the first card
-    await wrapper.findAll('button').find((b) => !b.attributes('disabled') && !b.text().includes('Continuar') && !b.text().includes('Atrás'))!.trigger('click')
-    await wrapper.findAll('button').find((b) => b.text().includes('Continuar'))!.trigger('click')
-    expect(wrapper.text()).toContain('¿En qué te quieres enfocar?')
-
-    // Step 3: emphasis - pick the first card
-    await wrapper.findAll('button').find((b) => !b.attributes('disabled') && !b.text().includes('Continuar') && !b.text().includes('Atrás'))!.trigger('click')
-    await wrapper.findAll('button').find((b) => b.text().includes('Continuar'))!.trigger('click')
-    expect(wrapper.text()).toContain('Tu primera oportunidad')
-
-    // Step 4: opportunity - pick the first offer card
-    await wrapper.findAll('button').find((b) => !b.attributes('disabled') && !b.text().includes('Continuar') && !b.text().includes('Atrás'))!.trigger('click')
+    await wrapper.findAll('button').find((b) => b.text().includes('Colombia'))!.trigger('click')
     await wrapper.findAll('button').find((b) => b.text().includes('Empezar carrera'))!.trigger('click')
 
     expect(store.hasActiveCareer).toBe(true)
     expect(store.career?.artist.stageName).toBe('MC Prueba')
+    expect(store.career?.artist.country).toBe('Colombia')
+  })
+
+  it('never asks the player for a city, archetype, emphasis or scenario', async () => {
+    const wrapper = await mountView()
+    const text = wrapper.text()
+    expect(text).not.toContain('Ciudad')
+    expect(text).not.toContain('tipo de artista')
+    expect(text).not.toContain('te quieres enfocar')
+    expect(text).not.toContain('primera oportunidad')
   })
 })

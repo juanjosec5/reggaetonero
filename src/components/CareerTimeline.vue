@@ -26,7 +26,7 @@ function eventTitle(eventId?: string): string | undefined {
 </script>
 
 <template>
-  <div class="flex flex-col gap-3">
+  <TransitionGroup name="year" tag="div" class="flex flex-col gap-3">
     <article
       v-for="entry in years"
       :key="entry.year"
@@ -47,5 +47,23 @@ function eventTitle(eventId?: string): string | undefined {
         </p>
       </div>
     </article>
-  </div>
+  </TransitionGroup>
 </template>
+
+<style scoped>
+/* New year fades/slides in at the top; the rest glide down to make room. */
+.year-enter-active {
+  transition:
+    opacity 0.35s ease,
+    transform 0.35s ease;
+}
+
+.year-enter-from {
+  opacity: 0;
+  transform: translateY(-12px);
+}
+
+.year-move {
+  transition: transform 0.35s ease;
+}
+</style>

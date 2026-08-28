@@ -3,7 +3,10 @@ import html2canvas from 'html2canvas'
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
+import CareerStatsPanel from '@/components/CareerStatsPanel.vue'
 import LegacyCard from '@/components/LegacyCard.vue'
+import TrajectoryChart from '@/components/TrajectoryChart.vue'
+import { formatMoney } from '@/engine/status'
 import { useCareerStore } from '@/stores/career'
 
 const router = useRouter()
@@ -63,6 +66,32 @@ function newCareer() {
 <template>
   <main v-if="store.career" class="mx-auto flex w-full max-w-md flex-1 flex-col items-center gap-6 p-6">
     <LegacyCard ref="cardRef" :career="store.career" />
+
+    <section class="flex w-full flex-col gap-6 rounded-2xl bg-neutral-900/60 p-5 ring-1 ring-white/5">
+      <h2 class="text-sm font-semibold text-neutral-200">Cómo llegaste aquí</h2>
+
+      <TrajectoryChart :history="store.career.history" />
+
+      <div class="flex flex-col gap-3">
+        <p class="text-xs font-semibold uppercase tracking-wide text-neutral-500">Estado final</p>
+        <CareerStatsPanel :stats="store.career.stats" />
+      </div>
+
+      <div class="grid grid-cols-3 gap-3 text-center">
+        <div class="rounded-xl bg-neutral-900 p-3 ring-1 ring-white/5">
+          <p class="text-sm font-bold text-neutral-50">{{ formatMoney(store.career.finances.netWorth) }}</p>
+          <p class="text-[11px] text-neutral-500">Patrimonio</p>
+        </div>
+        <div class="rounded-xl bg-neutral-900 p-3 ring-1 ring-white/5">
+          <p class="text-sm font-bold text-neutral-50">{{ formatMoney(store.career.finances.catalogValue) }}</p>
+          <p class="text-[11px] text-neutral-500">Catálogo</p>
+        </div>
+        <div class="rounded-xl bg-neutral-900 p-3 ring-1 ring-white/5">
+          <p class="text-sm font-bold text-neutral-50">{{ Math.round(store.career.finances.ownershipPercent) }}%</p>
+          <p class="text-[11px] text-neutral-500">Masters propios</p>
+        </div>
+      </div>
+    </section>
 
     <div class="flex w-full flex-col gap-3">
       <button

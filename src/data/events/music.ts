@@ -17,6 +17,7 @@ export const MUSIC_EVENTS: CareerEvent[] = [
         style: 'ambitious',
         effects: [
           { target: 'attributes.productionSense', min: 2, max: 6 },
+          { target: 'stats.hype', min: 3, max: 8 },
           { target: 'finances.cash', min: -80, max: -40 },
         ],
       },
@@ -25,6 +26,7 @@ export const MUSIC_EVENTS: CareerEvent[] = [
         style: 'safe',
         effects: [
           { target: 'hiddenTraits.authenticity', min: 2, max: 5 },
+          { target: 'stats.hype', min: 2, max: 6 },
           { target: 'finances.cash', min: -5, max: 0 },
         ],
       },
@@ -33,6 +35,7 @@ export const MUSIC_EVENTS: CareerEvent[] = [
         style: 'creative',
         effects: [
           { target: 'attributes.productionSense', min: 1, max: 3 },
+          { target: 'stats.hype', min: 1, max: 4 },
           { target: 'hiddenTraits.loyalty', min: 2, max: 5 },
         ],
       },
@@ -44,7 +47,7 @@ export const MUSIC_EVENTS: CareerEvent[] = [
     title: 'Un adelanto se hizo viral',
     description: 'Un pedazo de una canción que aún no está lista se está pegando en redes.',
     visibleRisk: 'medium',
-    condition: (c) => c.stats.hype >= 20,
+    condition: (c) => c.stats.hype >= 12,
     weight: (c) => 4 + c.stats.hype / 20,
     choices: [
       {

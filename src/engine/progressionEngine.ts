@@ -37,25 +37,35 @@ export function eraIndex(era: Era): number {
  * callers are expected to have already cloned it.
  */
 export function applyProgression(career: Career, rng: Rng): void {
-  // Skill growth: disciplined, ambitious artists still get better year over year,
-  // but growth tapers off with age.
-  const growthPotential = Math.max(0, 40 - career.age) / 40
+  // Skill growth: disciplined, ambitious artists get better year over year,
+  // faster while young and hungry. Two attributes can move in a strong year.
+  const growthPotential = Math.max(0.15, (45 - career.age) / 40)
   const disciplineFactor = career.hiddenTraits.discipline / 100
-  if (rollRange(rng, 1, 100) <= 15 + career.hiddenTraits.discipline / 4) {
-    const growth = Math.round(rollRange(rng, 1, 4) * (0.4 + disciplineFactor) * (0.5 + growthPotential))
-    const attrKeys = Object.keys(career.attributes) as (keyof Career['attributes'])[]
+  const ambitionFactor = career.hiddenTraits.ambition / 100
+  const attrKeys = Object.keys(career.attributes) as (keyof Career['attributes'])[]
+  const growthChance = 45 + career.hiddenTraits.discipline / 3 + career.hiddenTraits.ambition / 6
+  const rolls = career.age < 30 ? 2 : 1
+  for (let i = 0; i < rolls; i++) {
+    if (rollRange(rng, 1, 100) > growthChance) continue
+    const growth = Math.round(
+      rollRange(rng, 1, 4) * (0.6 + disciplineFactor + ambitionFactor * 0.5) * (0.5 + growthPotential),
+    )
     const key = attrKeys[rollRange(rng, 0, attrKeys.length - 1)]!
-    applyStatDelta(career, `attributes.${key}`, growth)
+    applyStatDelta(career, `attributes.${key}`, Math.max(1, growth))
   }
 
   // Fanbase drifts toward hype + fame; hype naturally cools off each year.
   const fanTarget = (career.stats.hype + career.stats.fame) / 2
   const fanDelta = Math.round((fanTarget - career.stats.fanbase) * 0.15)
   applyStatDelta(career, 'stats.fanbase', fanDelta)
-  applyStatDelta(career, 'stats.hype', -Math.round(career.stats.hype * 0.2))
+
+  // Momentum becomes recognition: a slice of this year's hype converts to fame
+  // before hype cools off. This is the main way fame compounds over a career.
+  applyStatDelta(career, 'stats.fame', Math.round(career.stats.hype * 0.2))
+  applyStatDelta(career, 'stats.hype', -Math.round(career.stats.hype * 0.25))
 
   // Fame decays slowly without fresh output; credibility drifts toward authenticity.
-  applyStatDelta(career, 'stats.fame', -Math.round(career.stats.fame * 0.05))
+  applyStatDelta(career, 'stats.fame', -Math.round(career.stats.fame * 0.035))
   const credibilityDelta = Math.round((career.hiddenTraits.authenticity - career.stats.credibility) * 0.05)
   applyStatDelta(career, 'stats.credibility', credibilityDelta)
 }

@@ -7,7 +7,7 @@ export const COLLABORATION_EVENTS: CareerEvent[] = [
     title: 'Un artista grande quiere un feature',
     description: 'Un artista mucho más conocido que tú quiere grabar contigo.',
     visibleRisk: 'medium',
-    condition: (c) => c.stats.fame >= 15,
+    condition: (c) => c.stats.fame >= 10 || c.stats.hype >= 12,
     weight: (c) => 3 + c.stats.fame / 25,
     choices: [
       {

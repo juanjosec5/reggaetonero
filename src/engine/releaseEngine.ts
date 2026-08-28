@@ -26,24 +26,34 @@ export function classifyTier(hitScore: number): ReleaseTier {
 
 export function computeHitScore(release: Omit<Release, 'hitScore' | 'tier'>): number {
   const score =
-    release.quality * 0.2 +
-    release.commerciality * 0.2 +
+    release.quality * 0.24 +
+    release.commerciality * 0.22 +
     release.originality * 0.1 +
-    release.artistBuzz * 0.15 +
-    release.featurePower * 0.1 +
-    release.marketing * 0.15 +
-    release.timing * 0.1
+    release.artistBuzz * 0.12 +
+    release.featurePower * 0.08 +
+    release.marketing * 0.14 +
+    release.timing * 0.1 +
+    3
   return Math.round(clampStat(score))
 }
 
 function generateOneRelease(career: Career, rng: Rng): Release {
   const { attributes, stats, finances } = career
+  const producerSkill = career.team.producer?.skill ?? 0
 
-  const quality = clampStat(attributes.talent * 0.3 + attributes.productionSense * 0.3 + attributes.writing * 0.2 + noise(rng))
+  const quality = clampStat(
+    attributes.talent * 0.35 +
+      attributes.productionSense * 0.3 +
+      attributes.writing * 0.25 +
+      producerSkill * 0.12 +
+      noise(rng),
+  )
   const originality = clampStat(attributes.originality + noise(rng))
-  const commerciality = clampStat(attributes.business * 0.4 + attributes.charisma * 0.3 + stats.hype * 0.2 + noise(rng))
-  const artistBuzz = clampStat(stats.hype * 0.6 + stats.fame * 0.2 + noise(rng))
-  const featurePower = clampStat(attributes.charisma * 0.4 + stats.fame * 0.3 + noise(rng))
+  const commerciality = clampStat(
+    attributes.business * 0.35 + attributes.charisma * 0.3 + stats.hype * 0.2 + stats.fame * 0.15 + noise(rng),
+  )
+  const artistBuzz = clampStat(stats.hype * 0.55 + stats.fame * 0.35 + 8 + noise(rng))
+  const featurePower = clampStat(attributes.charisma * 0.45 + stats.fame * 0.35 + 6 + noise(rng))
   const marketing = clampStat((finances.cash > 100 ? 20 : 5) + attributes.business * 0.3 + noise(rng, 20))
   const timing = clampStat(rollRange(rng, 30, 80))
 
@@ -95,9 +105,23 @@ export function applyReleasesToCareer(career: Career, releases: { release: Relea
     if (release.tier === 'smash') career.record.smashHits += 1
     if (release.tier === 'smash') career.record.numberOneRecords += 1
 
+    if (release.tier === 'flop') {
+      // A flop isn't neutral: it burns hype. Putting out music nobody wants is
+      // a real risk — but it shouldn't erase a career either.
+      career.stats.hype = clampStat(career.stats.hype - flopHypePenalty(release))
+      career.stats.credibility = clampStat(career.stats.credibility - 1)
+      career.stats.catalogStrength = clampStat(career.stats.catalogStrength + release.hitScore / 40)
+      continue
+    }
+
     const impact = release.hitScore / 10
-    career.stats.hype = clampStat(career.stats.hype + impact * 2)
-    career.stats.fame = clampStat(career.stats.fame + impact)
-    career.stats.catalogStrength = clampStat(career.stats.catalogStrength + impact * 0.8)
+    career.stats.hype = clampStat(career.stats.hype + impact * 2.2)
+    career.stats.fame = clampStat(career.stats.fame + impact * 1.55)
+    career.stats.catalogStrength = clampStat(career.stats.catalogStrength + impact * 1.05)
   }
+}
+
+/** Hype a flop costs — worse the further it missed, capped so it stings without wiping you out. */
+function flopHypePenalty(release: Release): number {
+  return Math.min(6, Math.round(2 + (40 - release.hitScore) / 12))
 }

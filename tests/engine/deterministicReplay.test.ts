@@ -11,7 +11,6 @@ import type { ArtistProfile, Career } from '@/types/career'
 const baseProfile: ArtistProfile = {
   stageName: 'MC Prueba',
   country: 'Colombia',
-  city: 'Medellín',
   age: 19,
   genre: 'reggaeton',
   archetype: 'perreo_king',
@@ -60,5 +59,16 @@ describe('deterministic replay', () => {
     expect(career.status).toBe('retired')
     expect(career.legacy?.verdictId).toBeTruthy()
     expect(career.history).toHaveLength(10)
+  })
+
+  it('stays identical across a long run that exercises team/market/rival systems', () => {
+    const a = playCareer(7777, 18)
+    const b = playCareer(7777, 18)
+    expect(a).toEqual(b)
+
+    // The Phase 2 subsystems should have actually moved over 18 years.
+    expect(a.markets.some((m) => m.penetration > 15)).toBe(true)
+    expect(a.rivals.length).toBeGreaterThan(0)
+    expect(a.stats.internationalReach).toBeGreaterThan(0)
   })
 })

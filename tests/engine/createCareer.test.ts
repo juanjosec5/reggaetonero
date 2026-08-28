@@ -1,15 +1,14 @@
 import { describe, expect, it } from 'vitest'
 
+import { ARCHETYPES } from '@/data/archetypes'
+import { GENRES } from '@/data/genres'
 import { createCareer } from '@/engine/createCareer'
-import type { ArtistProfile } from '@/types/career'
+import type { CreationInput } from '@/types/career'
 
-const baseProfile: ArtistProfile = {
+const baseProfile: CreationInput = {
   stageName: 'MC Prueba',
   country: 'Colombia',
-  city: 'Medellín',
   age: 19,
-  genre: 'reggaeton',
-  archetype: 'hitmaker',
 }
 
 describe('createCareer', () => {
@@ -45,17 +44,20 @@ describe('createCareer', () => {
     }
   })
 
-  it('applies the archetype attribute bias', () => {
-    const executive = createCareer({
-      profile: { ...baseProfile, archetype: 'executive' },
-      seed: 42,
-    })
-    const lyricist = createCareer({
-      profile: { ...baseProfile, archetype: 'lyricist' },
-      seed: 42,
-    })
-    // executive is biased toward business, lyricist is biased against charisma-adjacent traits
-    expect(executive.attributes.business).toBeGreaterThan(lyricist.attributes.business)
+  it('rolls a hidden genre and archetype from the seed', () => {
+    const career = createCareer({ profile: baseProfile, seed: 42 })
+    expect(GENRES.map((g) => g.id)).toContain(career.artist.genre)
+    expect(ARCHETYPES.map((a) => a.id)).toContain(career.artist.archetype)
+  })
+
+  it('different seeds can produce different hidden builds', () => {
+    const builds = new Set(
+      [1, 2, 3, 4, 5, 6, 7, 8].map((seed) => {
+        const c = createCareer({ profile: baseProfile, seed })
+        return `${c.artist.genre}/${c.artist.archetype}`
+      }),
+    )
+    expect(builds.size).toBeGreaterThan(1)
   })
 
   it('starts with sane defaults', () => {

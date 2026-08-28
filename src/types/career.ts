@@ -15,11 +15,19 @@ export interface ArtistProfile {
   stageName: string
   realName?: string
   country: string
-  city: string
   age: number
   pronouns?: string
-  genre: Genre
-  archetype: ArtistArchetype
+  genre: Genre // rolled internally at creation, not chosen by the player
+  archetype: ArtistArchetype // rolled internally at creation, never shown as a label
+}
+
+/** What the player actually fills in on the creation screen. */
+export interface CreationInput {
+  stageName: string
+  realName?: string
+  country: string
+  age: number
+  pronouns?: string
 }
 
 // ---- Numbers the player build gives you (shown only as bands) ----
@@ -100,12 +108,17 @@ export interface MusicCareerRecord {
   numberOneRecords: number
 }
 
-// ---- Team & relationships (Phase 2, but typed now) ----
+// ---- Team ----
+export type TeamRole = 'manager' | 'producer' | 'lawyer' | 'publicist' | 'bookingAgent'
+
 export interface TeamMember {
-  skill: number
-  loyalty: number
-  cost: number
-  influence: number
+  id: string // matches a ProducerDef / staff id in data
+  name: string
+  skill: number // 0-100
+  loyalty: number // 0-100
+  cost: number // annual, same units as finances.cash
+  influence: number // 0-100
+  sinceYear: number
 }
 
 export interface Team {
@@ -114,23 +127,47 @@ export interface Team {
   lawyer?: TeamMember
   publicist?: TeamMember
   bookingAgent?: TeamMember
-  label?: { name: string; ownershipTaken: number }
+  label?: { id: string; name: string; ownershipTaken: number; signedYear: number }
+}
+
+// ---- Relationships (with memory) ----
+export type RelationshipRole = 'producer' | 'manager' | 'rival' | 'collaborator' | 'label_exec' | 'mentor'
+
+export interface RelationshipMemory {
+  eventId: string
+  year: number
+  summary: string // Spanish, short — surfaced in the relationship/history UI
+  delta: number // net trust shift, for tone
 }
 
 export interface Relationship {
   personId: string
-  trust: number
-  loyalty: number
-  professionalValue: number
-  tension: number
+  name: string // display name (fictional)
+  role: RelationshipRole
+  trust: number // 0-100
+  loyalty: number // 0-100
+  professionalValue: number // 0-100
+  tension: number // 0-100
+  memory: RelationshipMemory[]
 }
 
+// ---- Rivals ----
 export interface Rival {
+  id: string
   name: string
-  fame: number
-  credibility: number
-  style: string
-  relationship: number
+  archetype: ArtistArchetype
+  fame: number // 0-100
+  credibility: number // 0-100
+  style: string // Spanish descriptor
+  relationship: number // -100..100
+}
+
+// ---- Geographic markets ----
+export interface MarketState {
+  id: string // matches a MarketDef id in data/markets.ts
+  penetration: number // 0-100, how established the artist is here
+  saturation: number // 0-100, how tapped-out the market is
+  unlocked: boolean
 }
 
 // ---- Events & decisions ----
@@ -155,11 +192,61 @@ export type ChoiceStyle = 'safe' | 'ambitious' | 'loyal' | 'creative' | 'commerc
 export type VisibleRisk = 'low' | 'medium' | 'high'
 
 // An effect is a RANGE, resolved by the RNG - never a fixed number.
+// `kind` discriminates which subsystem the effect mutates; a missing `kind`
+// is treated as 'stat' so Phase 1 event data keeps working unchanged.
 export interface StatEffect {
-  target: string
+  kind?: 'stat'
+  target: string // dotted path: attributes.* | hiddenTraits.* | stats.* | finances.*
   min: number
   max: number
 }
+
+export interface RelationshipEffect {
+  kind: 'relationship'
+  personId: string
+  field: 'trust' | 'loyalty' | 'professionalValue' | 'tension'
+  min: number
+  max: number
+}
+
+export interface RivalEffect {
+  kind: 'rival'
+  rivalId?: string // omit → nearest rival by fame
+  field: 'fame' | 'credibility' | 'relationship'
+  min: number
+  max: number
+}
+
+export interface MarketEffect {
+  kind: 'market'
+  marketId?: string // omit → current market
+  op: 'penetrate' | 'saturate' | 'unlock'
+  min?: number // ignored for op: 'unlock'
+  max?: number
+}
+
+export interface TeamEffect {
+  kind: 'team'
+  role: TeamRole
+  op: 'hire' | 'leave' | 'adjustLoyalty'
+  personId?: string // for op: 'hire' — omit to let the engine pick by budget/fit
+  min?: number // for op: 'adjustLoyalty'
+  max?: number
+}
+
+export interface LabelEffect {
+  kind: 'label'
+  op: 'sign' | 'leave'
+  labelId?: string // for op: 'sign' — omit to let the engine pick by prestige/fame fit
+}
+
+export type CareerEffect =
+  | StatEffect
+  | RelationshipEffect
+  | RivalEffect
+  | MarketEffect
+  | TeamEffect
+  | LabelEffect
 
 export interface DelayedEffect {
   eventId: string
@@ -171,7 +258,7 @@ export interface DelayedEffect {
 export interface CareerChoice {
   text: string // player-facing, in Spanish
   style: ChoiceStyle
-  effects: StatEffect[] // applied to attributes/traits/stats/finances
+  effects: CareerEffect[] // applied to attributes/traits/stats/finances/team/relationships/rivals/markets
   delayedEffects?: DelayedEffect[]
 }
 
@@ -205,6 +292,7 @@ export interface CareerYear {
   releases: Release[]
   eventId?: string
   choiceTaken?: string
+  choiceStyle?: ChoiceStyle // the style of the choice made this year - feeds the derived identity
   statsSnapshot: CareerStats
 }
 
@@ -221,10 +309,13 @@ export interface LegacyResult {
 export type CareerMode = 'quick' | 'story' | 'daily' | 'challenge'
 export type CareerStatus = 'active' | 'retired'
 
+export const CURRENT_SAVE_VERSION = 3
+
 export interface Career {
   id: string
   seed: number
   mode: CareerMode
+  saveVersion: number // bump + migrate in the store when the shape changes
 
   artist: ArtistProfile
   attributes: ArtistAttributes
@@ -244,7 +335,8 @@ export interface Career {
   age: number
   year: number
   era: Era
-  currentMarket: string
+  currentMarket: string // MarketDef id the artist is currently focused on
+  markets: MarketState[]
 
   status: CareerStatus
   legacy?: LegacyResult
