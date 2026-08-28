@@ -2,6 +2,7 @@ import { ARCHETYPES, getArchetype } from '@/data/archetypes'
 import { EMPHASES, getEmphasis } from '@/data/emphasis'
 import type { EmphasisId } from '@/data/emphasis'
 import { pickRivals } from '@/data/fictionalArtists'
+import { homeCity } from '@/data/cities'
 import { GENRES } from '@/data/genres'
 import { homeMarketId, initialMarkets } from '@/data/markets'
 import { OPPORTUNITIES } from '@/data/opportunities'
@@ -147,12 +148,14 @@ function initialFinances(): Finances {
 function initialRecord(): MusicCareerRecord {
   return {
     releases: 0,
-    singles: 0,
-    albums: 0,
-    eps: 0,
     hits: 0,
     smashHits: 0,
-    awards: 0,
+    platinumRecords: 0,
+    grammys: 0,
+    billboards: 0,
+    clubShows: 0,
+    stadiumShows: 0,
+    ticketsSold: 0,
   }
 }
 
@@ -195,6 +198,7 @@ export function createCareer(input: CreateCareerInput): Career {
     year: STARTING_YEAR,
     era: 'debut',
     peakFame: 0,
+    residence: homeCity(profile.country),
     currentMarket: homeMarketId(profile.country),
     markets: initialMarkets(profile.country),
 

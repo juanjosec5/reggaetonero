@@ -96,15 +96,13 @@ export function generateReleases(career: Career, rng: Rng): { release: Release; 
 
 /** Mutates `career` in place, folding the given releases into record and stats. */
 export function applyReleasesToCareer(career: Career, releases: { release: Release; kind: ReleaseKind }[]): void {
-  for (const { release, kind } of releases) {
+  for (const { release } of releases) {
     career.releases.push(release)
     career.record.releases += 1
-    if (kind === 'single') career.record.singles += 1
-    if (kind === 'ep') career.record.eps += 1
-    if (kind === 'album') career.record.albums += 1
 
     if (release.tier === 'hit' || release.tier === 'smash') career.record.hits += 1
     if (release.tier === 'smash') career.record.smashHits += 1
+    // Platinum certifications are derived yearly in recordEngine from hits + fanbase.
 
     if (release.tier === 'flop') {
       // A flop isn't neutral: it burns hype. Putting out music nobody wants is

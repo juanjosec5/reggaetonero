@@ -49,20 +49,12 @@ function legacySave(): Career {
       culturalImpact: 0,
     },
     finances: { cash: 200, netWorth: 200, catalogValue: 30, ownershipPercent: 100, annualIncome: 20 },
-    record: {
-      releases: 3,
-      singles: 3,
-      albums: 0,
-      eps: 0,
-      hits: 1,
-      smashHits: 0,
-      awards: 0,
-    },
+    record: { releases: 3, singles: 3, hits: 1, smashHits: 0, awards: 0 }, // pre-revamp shape
     team: {},
     relationships: [{ personId: 'x', trust: 60, loyalty: 60, professionalValue: 50, tension: 0 }] as never,
     rivals: [{ name: 'Bravo', fame: 30, credibility: 20, style: 'Radio', relationship: -10 }] as never,
     releases: [],
-    history: [],
+    history: [{ year: 3, age: 21, era: 'underground', releases: [], statsSnapshot: {} }] as never,
     pendingEffects: [],
     firedEventIds: [],
     age: 22,
@@ -87,6 +79,12 @@ describe('migrateSave', () => {
     // v4 → v5: 8-era value remapped, peakFame backfilled
     expect(migrated.era).toBe('debut')
     expect(migrated.peakFame).toBe(migrated.stats.fame)
+    // v5 → v6: new record counters, residence, per-year snapshots
+    expect(migrated.record.grammys).toBe(0)
+    expect(migrated.record.ticketsSold).toBe(0)
+    expect(migrated.residence).toBe('San Juan') // Puerto Rico home city
+    expect(migrated.history[0]!.recordSnapshot).toBeDefined()
+    expect(migrated.history[0]!.residence).toBe('San Juan')
   })
 
   it('seeds a full rival roster for a Phase 1 save that had none', () => {

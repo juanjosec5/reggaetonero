@@ -93,12 +93,14 @@ export interface Release {
 
 export interface MusicCareerRecord {
   releases: number
-  singles: number
-  albums: number
-  eps: number
-  hits: number
-  smashHits: number
-  awards: number
+  hits: number // release landed 'hit' tier or better
+  smashHits: number // release landed 'smash' tier
+  platinumRecords: number // a smash that went on to be certified
+  grammys: number
+  billboards: number
+  clubShows: number
+  stadiumShows: number
+  ticketsSold: number
 }
 
 // ---- Team ----
@@ -283,6 +285,8 @@ export interface CareerYear {
   choiceTaken?: string
   choiceStyle?: ChoiceStyle // the style of the choice made this year - feeds the derived identity
   statsSnapshot: CareerStats
+  recordSnapshot: MusicCareerRecord // cumulative career record at year end - powers the era table
+  residence: string // city the artist lived in this year
 }
 
 // ---- The root object ----
@@ -299,7 +303,7 @@ export interface LegacyResult {
 export type CareerMode = 'quick' | 'story' | 'daily' | 'challenge'
 export type CareerStatus = 'active' | 'retired'
 
-export const CURRENT_SAVE_VERSION = 5
+export const CURRENT_SAVE_VERSION = 6
 
 export interface Career {
   id: string
@@ -326,6 +330,7 @@ export interface Career {
   year: number
   era: Era
   peakFame: number // highest fame ever reached - feeds the legacy "staying power" term
+  residence: string // city the artist currently lives in
   currentMarket: string // MarketDef id the artist is currently focused on
   markets: MarketState[]
 
