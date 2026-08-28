@@ -86,6 +86,7 @@ export function applyChoice(career: Career, event: CareerEvent, choice: CareerCh
   const currentYear = next.history.at(-1)
   if (currentYear && currentYear.eventId === event.id) {
     currentYear.choiceTaken = choice.text
+    currentYear.choiceStyle = choice.style
   }
 
   return next

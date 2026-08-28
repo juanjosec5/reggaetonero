@@ -2,16 +2,14 @@ import { acceptHMRUpdate, defineStore } from 'pinia'
 import { computed, ref, toRaw } from 'vue'
 
 import { getEventById } from '@/data/events'
-import type { EmphasisId } from '@/data/emphasis'
 import { initialMarkets } from '@/data/markets'
-import type { OpportunityId } from '@/data/opportunities'
 import { simulateYear } from '@/engine/careerEngine'
 import { createCareer } from '@/engine/createCareer'
 import { applyChoice as resolveChoice } from '@/engine/decisionEngine'
 import { retire as retireCareer } from '@/engine/legacyEngine'
 import { hashSeed, makeRng } from '@/engine/rng'
 import { CURRENT_SAVE_VERSION } from '@/types/career'
-import type { ArtistProfile, Career, CareerChoice, CareerMode } from '@/types/career'
+import type { Career, CareerChoice, CareerMode, CreationInput } from '@/types/career'
 
 const STORAGE_KEY = 'reggaetonero:save'
 
@@ -21,30 +19,36 @@ const ADVANCE_SALT = 1
 const CHOICE_SALT = 2
 
 /**
- * Brings a persisted career up to the current shape. Phase 1 saves (no
- * `saveVersion`) predate team memory, markets and rival ids, so backfill those
- * before the engine touches the object.
+ * Brings a persisted career up to the current shape.
+ * - v1 (Phase 1, no `saveVersion`): predates team memory, markets and rival ids.
+ * - v2 → v3: the derived identity now reads `history[].choiceStyle`, which old
+ *   entries lack - nothing to backfill, the identity just reads "Sin definir"
+ *   until fresh decisions accrue. `artist.city` on old saves is now ignored.
  */
 export function migrateSave(raw: Career): Career {
   const career = raw as Career & { saveVersion?: number }
-  if ((career.saveVersion ?? 1) >= CURRENT_SAVE_VERSION) return career
+  const version = career.saveVersion ?? 1
+  if (version >= CURRENT_SAVE_VERSION) return career
 
-  career.markets = career.markets?.length ? career.markets : initialMarkets(career.artist.country)
-  career.rivals = (career.rivals ?? []).map((rival, i) => ({
-    id: rival.id ?? `rival_legacy_${i}`,
-    name: rival.name,
-    archetype: rival.archetype ?? 'hitmaker',
-    fame: rival.fame ?? 0,
-    credibility: rival.credibility ?? 0,
-    style: rival.style ?? '',
-    relationship: rival.relationship ?? 0,
-  }))
-  career.relationships = (career.relationships ?? []).map((rel) => ({
-    ...rel,
-    name: rel.name ?? rel.personId,
-    role: rel.role ?? 'collaborator',
-    memory: rel.memory ?? [],
-  }))
+  if (version < 2) {
+    career.markets = career.markets?.length ? career.markets : initialMarkets(career.artist.country)
+    career.rivals = (career.rivals ?? []).map((rival, i) => ({
+      id: rival.id ?? `rival_legacy_${i}`,
+      name: rival.name,
+      archetype: rival.archetype ?? 'hitmaker',
+      fame: rival.fame ?? 0,
+      credibility: rival.credibility ?? 0,
+      style: rival.style ?? '',
+      relationship: rival.relationship ?? 0,
+    }))
+    career.relationships = (career.relationships ?? []).map((rel) => ({
+      ...rel,
+      name: rel.name ?? rel.personId,
+      role: rel.role ?? 'collaborator',
+      memory: rel.memory ?? [],
+    }))
+  }
+
   career.saveVersion = CURRENT_SAVE_VERSION
   return career
 }
@@ -69,12 +73,8 @@ export const useCareerStore = defineStore('career', () => {
     return eventId ? getEventById(eventId) : undefined
   })
 
-  function startCareer(
-    profile: ArtistProfile,
-    seed: number,
-    options: { mode?: CareerMode; emphasis?: EmphasisId; opportunity?: OpportunityId } = {},
-  ) {
-    career.value = createCareer({ profile, seed, mode: options.mode ?? 'quick', ...options })
+  function startCareer(profile: CreationInput, seed: number, options: { mode?: CareerMode } = {}) {
+    career.value = createCareer({ profile, seed, mode: options.mode ?? 'quick' })
     save()
   }
 

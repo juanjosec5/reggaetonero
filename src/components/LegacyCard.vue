@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { getArchetype } from '@/data/archetypes'
 import { VERDICTS } from '@/data/verdicts'
+import { computeIdentity } from '@/engine/identityEngine'
 import type { Career } from '@/types/career'
 
 const props = defineProps<{ career: Career }>()
 
 const verdict = VERDICTS.find((v) => v.id === props.career.legacy?.verdictId)
-const archetype = getArchetype(props.career.artist.archetype)
+const identity = computeIdentity(props.career)
 
 const SCORES = [
   { key: 'commercialScore', label: 'Comercial' },
@@ -19,9 +19,9 @@ const SCORES = [
 <template>
   <div class="flex w-full max-w-md flex-col gap-6 rounded-3xl bg-gradient-to-b from-neutral-900 to-black p-8 ring-1 ring-white/10">
     <div class="text-center">
-      <p class="text-xs uppercase tracking-widest text-fuchsia-400">{{ archetype.label }}</p>
+      <p class="text-xs uppercase tracking-widest text-fuchsia-400">{{ identity.label }}</p>
       <h1 class="mt-1 text-2xl font-bold text-neutral-50">{{ career.artist.stageName }}</h1>
-      <p class="text-xs text-neutral-500">{{ career.artist.city }}, {{ career.artist.country }}</p>
+      <p class="text-xs text-neutral-500">{{ career.artist.country }}</p>
     </div>
 
     <div class="rounded-2xl bg-white/5 p-5 text-center">

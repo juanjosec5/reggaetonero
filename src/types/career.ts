@@ -15,11 +15,19 @@ export interface ArtistProfile {
   stageName: string
   realName?: string
   country: string
-  city: string
   age: number
   pronouns?: string
-  genre: Genre
-  archetype: ArtistArchetype
+  genre: Genre // rolled internally at creation, not chosen by the player
+  archetype: ArtistArchetype // rolled internally at creation, never shown as a label
+}
+
+/** What the player actually fills in on the creation screen. */
+export interface CreationInput {
+  stageName: string
+  realName?: string
+  country: string
+  age: number
+  pronouns?: string
 }
 
 // ---- Numbers the player build gives you (shown only as bands) ----
@@ -284,6 +292,7 @@ export interface CareerYear {
   releases: Release[]
   eventId?: string
   choiceTaken?: string
+  choiceStyle?: ChoiceStyle // the style of the choice made this year - feeds the derived identity
   statsSnapshot: CareerStats
 }
 
@@ -300,7 +309,7 @@ export interface LegacyResult {
 export type CareerMode = 'quick' | 'story' | 'daily' | 'challenge'
 export type CareerStatus = 'active' | 'retired'
 
-export const CURRENT_SAVE_VERSION = 2
+export const CURRENT_SAVE_VERSION = 3
 
 export interface Career {
   id: string

@@ -11,7 +11,6 @@ import type { ArtistProfile, Career } from '@/types/career'
 const baseProfile: ArtistProfile = {
   stageName: 'MC Prueba',
   country: 'Colombia',
-  city: 'Medellín',
   age: 19,
   genre: 'reggaeton',
   archetype: 'perreo_king',

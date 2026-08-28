@@ -12,7 +12,6 @@ function legacySave(): Career {
     artist: {
       stageName: 'MC Vieja Escuela',
       country: 'Puerto Rico',
-      city: 'San Juan',
       age: 22,
       genre: 'reggaeton',
       archetype: 'perreo_king',
@@ -96,5 +95,17 @@ describe('migrateSave', () => {
     const current = migrateSave(legacySave())
     const again = migrateSave(current)
     expect(again).toEqual(current)
+  })
+
+  it('brings a v2 save to v3 without re-running the v1 backfills', () => {
+    const v2 = migrateSave(legacySave())
+    v2.saveVersion = 2
+    // a stale field a v2 save could still carry - migration must not choke on it
+    ;(v2.artist as { city?: string }).city = 'San Juan'
+    const rivalsBefore = v2.rivals
+
+    const v3 = migrateSave(v2)
+    expect(v3.saveVersion).toBe(CURRENT_SAVE_VERSION)
+    expect(v3.rivals).toBe(rivalsBefore) // untouched - not re-mapped
   })
 })

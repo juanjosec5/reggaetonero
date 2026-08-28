@@ -1,8 +1,10 @@
-import { getArchetype } from '@/data/archetypes'
+import { ARCHETYPES, getArchetype } from '@/data/archetypes'
+import { EMPHASES, getEmphasis } from '@/data/emphasis'
 import type { EmphasisId } from '@/data/emphasis'
-import { getEmphasis } from '@/data/emphasis'
 import { pickRivals } from '@/data/fictionalArtists'
+import { GENRES } from '@/data/genres'
 import { homeMarketId, initialMarkets } from '@/data/markets'
+import { OPPORTUNITIES } from '@/data/opportunities'
 import type { OpportunityId } from '@/data/opportunities'
 import { getOpportunity } from '@/data/opportunities'
 import { clampAttribute, clampStat, clampTrait, STARTING_CASH, STARTING_YEAR } from '@/engine/constants'
@@ -10,23 +12,37 @@ import { makeRng, rollRange } from '@/engine/rng'
 import { CURRENT_SAVE_VERSION } from '@/types/career'
 import type {
   ArtistAttributes,
+  ArtistArchetype,
   ArtistProfile,
   Career,
   CareerMode,
   CareerStats,
+  CreationInput,
   Finances,
+  Genre,
   HiddenTraits,
   MusicCareerRecord,
 } from '@/types/career'
 
 export interface CreateCareerInput {
-  profile: ArtistProfile
+  profile: CreationInput
   seed: number
   mode?: CareerMode
-  /** Player's chosen creative/business focus at creation time - nudges initial attributes. */
-  emphasis?: EmphasisId
-  /** Player's chosen starting scenario - nudges initial stats/traits. */
-  opportunity?: OpportunityId
+}
+
+/** Rolls the hidden build inputs (genre + archetype + emphasis + scenario) the player no longer picks. */
+function rollBuild(rng: ReturnType<typeof makeRng>): {
+  genre: Genre
+  archetypeId: ArtistArchetype
+  emphasisId: EmphasisId
+  opportunityId: OpportunityId
+} {
+  return {
+    genre: GENRES[rollRange(rng, 0, GENRES.length - 1)]!.id,
+    archetypeId: ARCHETYPES[rollRange(rng, 0, ARCHETYPES.length - 1)]!.id,
+    emphasisId: EMPHASES[rollRange(rng, 0, EMPHASES.length - 1)]!.id,
+    opportunityId: OPPORTUNITIES[rollRange(rng, 0, OPPORTUNITIES.length - 1)]!.id,
+  }
 }
 
 const ATTRIBUTE_KEYS: (keyof ArtistAttributes)[] = [
@@ -140,11 +156,16 @@ function initialRecord(): MusicCareerRecord {
 }
 
 export function createCareer(input: CreateCareerInput): Career {
-  const { profile, seed, mode = 'quick', emphasis, opportunity } = input
+  const { profile, seed, mode = 'quick' } = input
   const rng = makeRng(seed)
 
-  const attributes = rollAttributes(profile.archetype, emphasis, rng)
-  const hiddenTraits = applyOpportunityTraits(rollTraits(profile.archetype, rng), opportunity)
+  // The player only gives us name / country / age; everything else that shapes
+  // the starting build is rolled here from the seed and never surfaced.
+  const { genre, archetypeId, emphasisId, opportunityId } = rollBuild(rng)
+  const artist: ArtistProfile = { ...profile, genre, archetype: archetypeId }
+
+  const attributes = rollAttributes(archetypeId, emphasisId, rng)
+  const hiddenTraits = applyOpportunityTraits(rollTraits(archetypeId, rng), opportunityId)
   const id = `career_${seed}_${rollRange(rng, 0, 999_999)}`
   const rivals = pickRivals(rng, 3)
 
@@ -154,10 +175,10 @@ export function createCareer(input: CreateCareerInput): Career {
     mode,
     saveVersion: CURRENT_SAVE_VERSION,
 
-    artist: profile,
+    artist,
     attributes,
     hiddenTraits,
-    stats: initialStats(opportunity),
+    stats: initialStats(opportunityId),
     finances: initialFinances(),
     record: initialRecord(),
     team: {},
