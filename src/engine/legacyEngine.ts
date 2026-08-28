@@ -11,9 +11,14 @@ import type { Career, LegacyResult } from '@/types/career'
 export function computeLegacy(career: Career): LegacyResult {
   const { attributes, hiddenTraits, stats, finances } = career
 
-  const commercialScore = clampStat(
-    stats.fame * 0.25 + stats.hype * 0.25 + stats.catalogStrength * 0.25 + stats.fanbase * 0.25,
-  )
+  // Commercial and live standing are judged on what the career *reached* at its
+  // height, tempered by where it ended - a hitmaker who faded still made hits.
+  const snapshots = [...career.history.map((h) => h.statsSnapshot), stats]
+  const peakOf = (sel: (s: typeof stats) => number) => Math.max(...snapshots.map(sel))
+
+  const commercialFinal = (stats.fame + stats.hype + stats.catalogStrength + stats.fanbase) / 4
+  const commercialPeak = peakOf((s) => (s.fame + s.hype + s.catalogStrength + s.fanbase) / 4)
+  const commercialScore = clampStat(commercialPeak * 0.55 + commercialFinal * 0.45)
 
   const artisticScore = clampStat(
     attributes.talent * 0.2 +
@@ -23,7 +28,8 @@ export function computeLegacy(career: Career): LegacyResult {
       stats.catalogStrength * 0.15,
   )
 
-  const liveScore = clampStat(attributes.performance * 0.4 + attributes.charisma * 0.25 + stats.livePower * 0.35)
+  const livePowerPeak = Math.max(stats.livePower, peakOf((s) => s.livePower) * 0.85)
+  const liveScore = clampStat(attributes.performance * 0.4 + attributes.charisma * 0.25 + livePowerPeak * 0.35)
 
   // "networking" is now a real term: the reach of the artist's team.
   const teamMembers = Object.values(career.team).filter(
@@ -65,6 +71,7 @@ export function computeLegacy(career: Career): LegacyResult {
     artisticScore: Math.round(artisticScore),
     liveScore: Math.round(liveScore),
     industryScore: Math.round(industryScore),
+    longevityScore: Math.round(longevity),
     legacyScore: Math.round(legacyScore),
     verdictId: '',
   }

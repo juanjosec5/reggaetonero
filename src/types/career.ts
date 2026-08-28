@@ -291,6 +291,7 @@ export interface LegacyResult {
   artisticScore: number
   liveScore: number
   industryScore: number
+  longevityScore: number // sustained relevance across the run (mean + peak fame)
   legacyScore: number
   verdictId: string // maps to a narrative identity in data/verdicts.ts
 }

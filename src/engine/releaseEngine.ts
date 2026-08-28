@@ -84,7 +84,9 @@ function pickReleaseKind(rng: Rng): ReleaseKind {
 
 /** Generates 0-2 releases for the current year, each with a fictional title. */
 export function generateReleases(career: Career, rng: Rng): { release: Release; kind: ReleaseKind }[] {
-  const count = rollRange(rng, 0, 100) <= 20 ? 0 : rollRange(rng, 0, 100) <= 80 ? 1 : 2
+  // Output thins out with age - the veteran who drops an album a year is rare.
+  const skipChance = 18 + Math.max(0, career.age - 31) * 3
+  const count = rollRange(rng, 0, 100) <= skipChance ? 0 : rollRange(rng, 0, 100) <= 80 ? 1 : 2
   const releases: { release: Release; kind: ReleaseKind }[] = []
   for (let i = 0; i < count; i++) {
     releases.push({ release: generateOneRelease(career, rng), kind: pickReleaseKind(rng) })
@@ -114,8 +116,11 @@ export function applyReleasesToCareer(career: Career, releases: { release: Relea
     }
 
     const impact = release.hitScore / 10
+    // Each hit moves the needle less once you're already famous - the jump from
+    // unknown to somebody is far bigger than from star to bigger star.
+    const fameGain = impact * 1.55 * Math.max(0.25, 1 - career.stats.fame / 170)
     career.stats.hype = clampStat(career.stats.hype + impact * 2.2)
-    career.stats.fame = clampStat(career.stats.fame + impact * 1.55)
+    career.stats.fame = clampStat(career.stats.fame + fameGain)
     career.stats.catalogStrength = clampStat(career.stats.catalogStrength + impact * 1.05)
   }
 }

@@ -42,7 +42,7 @@ export function adjustMarket(
  * callers are expected to have already cloned it.
  */
 export function advanceMarkets(career: Career, rng: Rng): void {
-  const fameFactor = 0.4 + career.stats.fame / 110
+  const fameFactor = 0.35 + career.stats.fame / 115
 
   for (const state of career.markets) {
     if (!state.unlocked) continue
@@ -51,7 +51,10 @@ export function advanceMarkets(career: Career, rng: Rng): void {
     const difficultyFactor = 1 - def.difficulty / 160
     const growth =
       (MARKET_GROWTH_BASE + rollRange(rng, 0, 4)) * fameFactor * difficultyFactor * (1 - state.saturation / 150)
-    state.penetration = clampStat(state.penetration + growth)
+    // An established market needs upkeep - a fading artist whose `growth` no
+    // longer clears this drag slides back out of it.
+    const drag = state.penetration * 0.05
+    state.penetration = clampStat(state.penetration + growth - drag)
 
     if (state.penetration >= MARKET_UNLOCK_THRESHOLD) {
       for (const adjacentId of def.adjacency) {
@@ -85,12 +88,18 @@ export function applyMarketStats(career: Career): void {
     return sum + (state.penetration / 100) * getMarket(state.id).size
   }, 0)
 
-  // Markets set the floor for reach; collaboration/tour events push it above
-  // that, and their gains must survive the next year's recompute.
+  // Reach drifts toward what the market spread currently supports — up as you
+  // expand, down as markets slip. An event bump fades over a few years rather
+  // than being wiped instantly or locked in forever.
+  const reachTarget = weightedReach / 3
   career.stats.internationalReach = clampStat(
-    Math.max(career.stats.internationalReach, weightedReach / 3),
+    career.stats.internationalReach + (reachTarget - career.stats.internationalReach) * 0.4,
   )
+
+  // Cultural impact is stickier - you don't un-impact culture - but it still
+  // erodes slowly if the market presence behind it collapses.
+  const impactFromMarkets = established.length * 8 + career.stats.internationalReach * 0.4
   career.stats.culturalImpact = clampStat(
-    Math.max(career.stats.culturalImpact, established.length * 12 + career.stats.internationalReach * 0.3),
+    Math.max(career.stats.culturalImpact * 0.98, impactFromMarkets),
   )
 }

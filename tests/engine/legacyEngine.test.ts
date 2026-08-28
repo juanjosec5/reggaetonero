@@ -63,18 +63,18 @@ function playToRetirement(seed: number, years: number) {
 describe('verdict distribution (balance regression guard)', () => {
   it('spreads verdicts across the roster without one dominating', () => {
     const counts: Record<string, number> = {}
-    const N = 150
+    const N = 200
     for (let s = 0; s < N; s++) {
-      const v = playToRetirement(s * 13 + 1, 12).legacy!.verdictId
+      const v = playToRetirement(s * 13 + 1, 20).legacy!.verdictId
       counts[v] = (counts[v] ?? 0) + 1
     }
     const distinct = Object.keys(counts).length
     const topShare = Math.max(...Object.values(counts)) / N
 
-    // Pre-tuning, el_independiente took ~90%+ of all careers. Guard against any
-    // single verdict swallowing the distribution again.
-    expect(distinct).toBeGreaterThanOrEqual(4)
-    expect(topShare).toBeLessThan(0.55)
+    // Over a full 20-year arc with varied choices, at least 5 of the 7 verdicts
+    // should show up and none should swallow the field.
+    expect(distinct).toBeGreaterThanOrEqual(5)
+    expect(topShare).toBeLessThan(0.45)
   })
 })
 
