@@ -9,6 +9,7 @@ import MarketProgress from '@/components/MarketProgress.vue'
 import RivalPanel from '@/components/RivalPanel.vue'
 import TeamPanel from '@/components/TeamPanel.vue'
 import { getEventById } from '@/data/events'
+import { RETIREMENT_MIN_YEAR } from '@/engine/constants'
 import { useCareerStore } from '@/stores/career'
 import type { CareerChoice, CareerEvent } from '@/types/career'
 
@@ -24,6 +25,18 @@ onMounted(() => {
 
 const career = computed(() => store.career)
 const lastYear = computed(() => career.value?.history.at(-1))
+
+// The side column only appears once the player has something in it: a hire, a
+// second market broken into, or a rival a decision has actually surfaced.
+const showSidebar = computed(() => {
+  const c = career.value
+  if (!c) return false
+  return (
+    Object.keys(c.team).length > 0 ||
+    c.markets.filter((m) => m.unlocked).length >= 2 ||
+    c.rivals.some((r) => r.discovered)
+  )
+})
 
 // Tracks whichever event the *current* year introduced, independent of the
 // store's `currentEvent` (which closes as soon as a choice is applied). This
@@ -64,7 +77,10 @@ function goRetire() {
       </template>
     </CareerHeader>
 
-    <div class="flex flex-col gap-6 md:grid md:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] md:items-start">
+    <div
+      class="flex flex-col gap-6"
+      :class="showSidebar && 'md:grid md:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] md:items-start'"
+    >
       <!-- Decision / action column -->
       <div class="flex flex-col gap-3">
         <Transition name="decision" mode="out-in">
@@ -87,7 +103,7 @@ function goRetire() {
             Avanzar al próximo año
           </button>
           <button
-            v-if="career.year >= 8"
+            v-if="career.year >= RETIREMENT_MIN_YEAR"
             type="button"
             class="w-full rounded-2xl bg-neutral-800 px-4 py-3.5 text-sm font-semibold text-neutral-100 active:scale-[0.98]"
             @click="goRetire"
@@ -99,8 +115,8 @@ function goRetire() {
         <CareerTimeline :history="career.history" />
       </div>
 
-      <!-- Team / markets / rivals column -->
-      <div class="flex flex-col gap-6">
+      <!-- Team / markets / rivals column - only once there's something to show -->
+      <div v-if="showSidebar" class="flex flex-col gap-6">
         <TeamPanel :team="career.team" />
         <MarketProgress :markets="career.markets" />
         <RivalPanel :rivals="career.rivals" :player-fame="career.stats.fame" />

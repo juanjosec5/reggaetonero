@@ -31,11 +31,16 @@ export function getProducer(id: string): ProducerDef {
   return producer
 }
 
-/** Weighted pick of a producer, favouring genre fit and a budget ceiling. */
+/**
+ * Weighted pick of a producer, favouring genre fit within the budget ceiling.
+ * If nothing fits the budget, returns the cheapest producer rather than a
+ * skill-weighted pick that would favour the priciest.
+ */
 export function pickProducer(rng: Rng, opts: { genre?: Genre; maxCost?: number } = {}): ProducerDef | undefined {
-  const pool = PRODUCERS.filter((p) => opts.maxCost === undefined || p.cost <= opts.maxCost)
+  const affordable = PRODUCERS.filter((p) => opts.maxCost === undefined || p.cost <= opts.maxCost)
+  if (affordable.length === 0) return PRODUCERS.reduce((a, b) => (b.cost < a.cost ? b : a))
   return weightedPick(
-    pool.length > 0 ? pool : PRODUCERS,
+    affordable,
     (p) => (opts.genre && p.genreFit.includes(opts.genre) ? 3 : 1) + p.skill / 50,
     rng,
   )

@@ -31,7 +31,7 @@ export const MONEY_EVENTS: CareerEvent[] = [
     title: 'Un promotor te ofrece una gira',
     description: 'Un promotor te adelanta dinero para organizar tu primera gira de shows.',
     visibleRisk: 'medium',
-    condition: (c) => c.stats.livePower >= 10 || c.record.shows >= 3,
+    condition: (c) => c.stats.livePower >= 10,
     weight: () => 4,
     choices: [
       {

@@ -99,13 +99,7 @@ export interface MusicCareerRecord {
   eps: number
   hits: number
   smashHits: number
-  features: number
-  streams: number
-  certifications: number
-  shows: number
-  countriesPerformed: number
   awards: number
-  numberOneRecords: number
 }
 
 // ---- Team ----
@@ -160,6 +154,8 @@ export interface Rival {
   credibility: number // 0-100
   style: string // Spanish descriptor
   relationship: number // -100..100
+  /** Only surfaced to the player once a decision has actually involved them. */
+  discovered?: boolean
 }
 
 // ---- Geographic markets ----
@@ -227,7 +223,7 @@ export interface MarketEffect {
 
 export interface TeamEffect {
   kind: 'team'
-  role: TeamRole
+  role?: TeamRole // for op: 'leave', omit to drop the least valuable current member
   op: 'hire' | 'leave' | 'adjustLoyalty'
   personId?: string // for op: 'hire' — omit to let the engine pick by budget/fit
   min?: number // for op: 'adjustLoyalty'
@@ -309,7 +305,7 @@ export interface LegacyResult {
 export type CareerMode = 'quick' | 'story' | 'daily' | 'challenge'
 export type CareerStatus = 'active' | 'retired'
 
-export const CURRENT_SAVE_VERSION = 3
+export const CURRENT_SAVE_VERSION = 4
 
 export interface Career {
   id: string

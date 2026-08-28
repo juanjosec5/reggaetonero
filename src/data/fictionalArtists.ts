@@ -23,14 +23,6 @@ export const RIVAL_DEFS: RivalDef[] = [
   { id: 'rival_sombra', name: 'Sombra', archetype: 'lyricist', baseFame: 24, baseCredibility: 40, style: 'Trap oscuro con culto propio' },
 ]
 
-const RIVAL_BY_ID = new Map(RIVAL_DEFS.map((r) => [r.id, r]))
-
-export function getRivalDef(id: string): RivalDef {
-  const rival = RIVAL_BY_ID.get(id)
-  if (!rival) throw new Error(`Unknown rival: ${id}`)
-  return rival
-}
-
 function toRival(def: RivalDef): Rival {
   return {
     id: def.id,

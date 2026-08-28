@@ -10,11 +10,10 @@ import {
 } from '@/engine/constants'
 import type { Rng } from '@/engine/rng'
 import { rollRange } from '@/engine/rng'
-import type { Career, TeamMember, TeamRole } from '@/types/career'
+import type { Career, TeamRole } from '@/types/career'
 
-export function getTeamMember(career: Career, role: TeamRole): TeamMember | undefined {
-  return career.team[role]
-}
+/** Every hireable role that draws a salary (the label is not one of these). */
+const TEAM_ROLES: TeamRole[] = ['manager', 'producer', 'lawyer', 'publicist', 'bookingAgent']
 
 /**
  * Hires someone into `role`. `personId` names a specific candidate; omitting it
@@ -54,9 +53,20 @@ export function hireTeamMember(career: Career, role: TeamRole, rng: Rng, personI
   }
 }
 
-/** Removes whoever fills `role`. Mutates `career` in place. */
-export function releaseTeamMember(career: Career, role: TeamRole): void {
-  delete career.team[role]
+/**
+ * Removes whoever fills `role`. With no `role`, drops the least valuable current
+ * member (lowest skill x loyalty), or no-ops if the roster is empty. Mutates
+ * `career` in place.
+ */
+export function releaseTeamMember(career: Career, role?: TeamRole): void {
+  if (role) {
+    delete career.team[role]
+    return
+  }
+  const filled = TEAM_ROLES.filter((r) => career.team[r])
+  if (filled.length === 0) return
+  const weakest = filled.reduce((a, b) => (memberWeight(career.team[b]!) < memberWeight(career.team[a]!) ? b : a))
+  delete career.team[weakest]
 }
 
 /**
@@ -86,8 +96,6 @@ export function adjustTeamLoyalty(career: Career, role: TeamRole, amount: number
   if (!member) return
   member.loyalty = clampStat(member.loyalty + amount)
 }
-
-const TEAM_ROLES: TeamRole[] = ['manager', 'producer', 'lawyer', 'publicist', 'bookingAgent']
 
 /**
  * Yearly team upkeep: bill salaries against cash, move loyalty based on whether

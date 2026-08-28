@@ -2,6 +2,7 @@ import { acceptHMRUpdate, defineStore } from 'pinia'
 import { computed, ref, toRaw } from 'vue'
 
 import { getEventById } from '@/data/events'
+import { pickRivals } from '@/data/fictionalArtists'
 import { initialMarkets } from '@/data/markets'
 import { simulateYear } from '@/engine/careerEngine'
 import { createCareer } from '@/engine/createCareer'
@@ -24,6 +25,8 @@ const CHOICE_SALT = 2
  * - v2 → v3: the derived identity now reads `history[].choiceStyle`, which old
  *   entries lack - nothing to backfill, the identity just reads "Sin definir"
  *   until fresh decisions accrue. `artist.city` on old saves is now ignored.
+ * - v3 → v4: rivals now hide until a decision surfaces them; existing rivals
+ *   were already visible, so mark them discovered.
  */
 export function migrateSave(raw: Career): Career {
   const career = raw as Career & { saveVersion?: number }
@@ -32,21 +35,31 @@ export function migrateSave(raw: Career): Career {
 
   if (version < 2) {
     career.markets = career.markets?.length ? career.markets : initialMarkets(career.artist.country)
-    career.rivals = (career.rivals ?? []).map((rival, i) => ({
-      id: rival.id ?? `rival_legacy_${i}`,
-      name: rival.name,
-      archetype: rival.archetype ?? 'hitmaker',
-      fame: rival.fame ?? 0,
-      credibility: rival.credibility ?? 0,
-      style: rival.style ?? '',
-      relationship: rival.relationship ?? 0,
-    }))
+    // Phase 1 saved no rivals at all - without them every competition event and
+    // rival effect is dead, so seed a fresh set from the career's own seed.
+    career.rivals = career.rivals?.length
+      ? career.rivals.map((rival, i) => ({
+          id: rival.id ?? `rival_legacy_${i}`,
+          name: rival.name,
+          archetype: rival.archetype ?? 'hitmaker',
+          fame: rival.fame ?? 0,
+          credibility: rival.credibility ?? 0,
+          style: rival.style ?? '',
+          relationship: rival.relationship ?? 0,
+        }))
+      : pickRivals(makeRng(career.seed), 3)
     career.relationships = (career.relationships ?? []).map((rel) => ({
       ...rel,
       name: rel.name ?? rel.personId,
       role: rel.role ?? 'collaborator',
       memory: rel.memory ?? [],
     }))
+  }
+
+  if (version < 4) {
+    // Rivals now hide until a decision surfaces them; ones from an older save
+    // were already on screen, so keep them visible.
+    for (const rival of career.rivals ?? []) rival.discovered = true
   }
 
   career.saveVersion = CURRENT_SAVE_VERSION

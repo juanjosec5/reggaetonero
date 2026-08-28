@@ -19,8 +19,10 @@ function relationshipLabel(value: number): { text: string; tone: string } {
   return { text: 'Neutral', tone: 'text-neutral-400' }
 }
 
+// Only rivals a decision has actually put in front of the player.
 const rows = computed(() =>
-  [...props.rivals]
+  props.rivals
+    .filter((rival) => rival.discovered)
     .sort((a, b) => b.fame - a.fame)
     .map((rival) => ({
       id: rival.id,
