@@ -10,11 +10,7 @@ import {
 } from '@/engine/constants'
 import type { Rng } from '@/engine/rng'
 import { rollRange } from '@/engine/rng'
-import type { Career, TeamMember, TeamRole } from '@/types/career'
-
-export function getTeamMember(career: Career, role: TeamRole): TeamMember | undefined {
-  return career.team[role]
-}
+import type { Career, TeamRole } from '@/types/career'
 
 /**
  * Hires someone into `role`. `personId` names a specific candidate; omitting it

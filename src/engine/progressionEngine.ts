@@ -3,17 +3,6 @@ import type { Rng } from '@/engine/rng'
 import { rollRange } from '@/engine/rng'
 import type { Career, Era } from '@/types/career'
 
-const ERA_ORDER: Era[] = [
-  'underground',
-  'first_buzz',
-  'breakout',
-  'national',
-  'international',
-  'superstar',
-  'reinvention',
-  'legacy',
-]
-
 /** Maps a career year to its narrative era. Purely year-based for the Phase 1 MVP. */
 export function computeEra(year: number): Era {
   if (year <= 2) return 'underground'
@@ -24,10 +13,6 @@ export function computeEra(year: number): Era {
   if (year <= 15) return 'superstar'
   if (year <= 18) return 'reinvention'
   return 'legacy'
-}
-
-export function eraIndex(era: Era): number {
-  return ERA_ORDER.indexOf(era)
 }
 
 /**

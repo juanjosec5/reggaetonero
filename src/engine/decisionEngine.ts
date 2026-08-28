@@ -1,6 +1,6 @@
 import { adjustMarket, unlockMarket } from '@/engine/marketEngine'
 import { adjustRelationship } from '@/engine/relationshipEngine'
-import { adjustRival, nearestRival } from '@/engine/rivalEngine'
+import { adjustRival, getRival, nearestRival } from '@/engine/rivalEngine'
 import type { Rng } from '@/engine/rng'
 import { rollRange } from '@/engine/rng'
 import { applyStatDelta } from '@/engine/statPath'
@@ -29,7 +29,12 @@ function applyEffect(career: Career, effect: CareerEffect, rng: Rng): void {
 
     case 'rival': {
       const rivalId = effect.rivalId ?? nearestRival(career)?.id
-      if (rivalId) adjustRival(career, rivalId, effect.field, roll(effect.min, effect.max))
+      if (rivalId) {
+        adjustRival(career, rivalId, effect.field, roll(effect.min, effect.max))
+        // A rival the player has now tangled with becomes visible in the panel.
+        const rival = getRival(career, rivalId)
+        if (rival) rival.discovered = true
+      }
       return
     }
 

@@ -24,6 +24,8 @@ const CHOICE_SALT = 2
  * - v2 → v3: the derived identity now reads `history[].choiceStyle`, which old
  *   entries lack - nothing to backfill, the identity just reads "Sin definir"
  *   until fresh decisions accrue. `artist.city` on old saves is now ignored.
+ * - v3 → v4: rivals now hide until a decision surfaces them; existing rivals
+ *   were already visible, so mark them discovered.
  */
 export function migrateSave(raw: Career): Career {
   const career = raw as Career & { saveVersion?: number }
@@ -47,6 +49,12 @@ export function migrateSave(raw: Career): Career {
       role: rel.role ?? 'collaborator',
       memory: rel.memory ?? [],
     }))
+  }
+
+  if (version < 4) {
+    // Rivals now hide until a decision surfaces them; ones from an older save
+    // were already on screen, so keep them visible.
+    for (const rival of career.rivals ?? []) rival.discovered = true
   }
 
   career.saveVersion = CURRENT_SAVE_VERSION

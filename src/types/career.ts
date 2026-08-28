@@ -160,6 +160,8 @@ export interface Rival {
   credibility: number // 0-100
   style: string // Spanish descriptor
   relationship: number // -100..100
+  /** Only surfaced to the player once a decision has actually involved them. */
+  discovered?: boolean
 }
 
 // ---- Geographic markets ----
@@ -309,7 +311,7 @@ export interface LegacyResult {
 export type CareerMode = 'quick' | 'story' | 'daily' | 'challenge'
 export type CareerStatus = 'active' | 'retired'
 
-export const CURRENT_SAVE_VERSION = 3
+export const CURRENT_SAVE_VERSION = 4
 
 export interface Career {
   id: string

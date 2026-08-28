@@ -172,4 +172,12 @@ describe('applyChoice with Phase 2 effects', () => {
     const totalRelationship = next.rivals.reduce((s, r) => s + r.relationship, 0)
     expect(totalRelationship).toBeLessThan(0)
   })
+
+  it('marks a rival discovered once a choice tangles with them', () => {
+    expect(career.rivals.every((r) => !r.discovered)).toBe(true)
+    career.stats.fame = career.rivals[0]!.fame
+    const event = getEventById('comp_rival_subtweet')!
+    const next = applyChoice(career, event, event.choices[0]!, makeRng(7))
+    expect(next.rivals.some((r) => r.discovered)).toBe(true)
+  })
 })
