@@ -25,9 +25,19 @@ export function computeLegacy(career: Career): LegacyResult {
 
   const liveScore = clampStat(attributes.performance * 0.4 + attributes.charisma * 0.25 + stats.livePower * 0.35)
 
-  // networking folded into business/industryRespect for the Phase 1 MVP, per plan.md.
+  // "networking" is now a real term: the reach of the artist's team.
+  const teamMembers = Object.values(career.team).filter(
+    (m): m is NonNullable<typeof m> => Boolean(m) && 'influence' in (m as object),
+  ) as { influence: number }[]
+  const networking = teamMembers.length
+    ? teamMembers.reduce((sum, m) => sum + m.influence, 0) / teamMembers.length
+    : 0
+
   const industryScore = clampStat(
-    attributes.business * 0.4 + stats.industryRespect * 0.4 + hiddenTraits.adaptability * 0.2,
+    attributes.business * 0.3 +
+      stats.industryRespect * 0.3 +
+      networking * 0.2 +
+      hiddenTraits.adaptability * 0.2,
   )
 
   const longevity = clampStat(career.year * 5)

@@ -3,12 +3,14 @@ import { computed, ref, toRaw } from 'vue'
 
 import { getEventById } from '@/data/events'
 import type { EmphasisId } from '@/data/emphasis'
+import { initialMarkets } from '@/data/markets'
 import type { OpportunityId } from '@/data/opportunities'
 import { simulateYear } from '@/engine/careerEngine'
 import { createCareer } from '@/engine/createCareer'
 import { applyChoice as resolveChoice } from '@/engine/decisionEngine'
 import { retire as retireCareer } from '@/engine/legacyEngine'
 import { hashSeed, makeRng } from '@/engine/rng'
+import { CURRENT_SAVE_VERSION } from '@/types/career'
 import type { ArtistProfile, Career, CareerChoice, CareerMode } from '@/types/career'
 
 const STORAGE_KEY = 'reggaetonero:save'
@@ -17,6 +19,35 @@ const STORAGE_KEY = 'reggaetonero:save'
 // same career year from landing on the same derived seed.
 const ADVANCE_SALT = 1
 const CHOICE_SALT = 2
+
+/**
+ * Brings a persisted career up to the current shape. Phase 1 saves (no
+ * `saveVersion`) predate team memory, markets and rival ids, so backfill those
+ * before the engine touches the object.
+ */
+export function migrateSave(raw: Career): Career {
+  const career = raw as Career & { saveVersion?: number }
+  if ((career.saveVersion ?? 1) >= CURRENT_SAVE_VERSION) return career
+
+  career.markets = career.markets?.length ? career.markets : initialMarkets(career.artist.country)
+  career.rivals = (career.rivals ?? []).map((rival, i) => ({
+    id: rival.id ?? `rival_legacy_${i}`,
+    name: rival.name,
+    archetype: rival.archetype ?? 'hitmaker',
+    fame: rival.fame ?? 0,
+    credibility: rival.credibility ?? 0,
+    style: rival.style ?? '',
+    relationship: rival.relationship ?? 0,
+  }))
+  career.relationships = (career.relationships ?? []).map((rel) => ({
+    ...rel,
+    name: rel.name ?? rel.personId,
+    role: rel.role ?? 'collaborator',
+    memory: rel.memory ?? [],
+  }))
+  career.saveVersion = CURRENT_SAVE_VERSION
+  return career
+}
 
 export const useCareerStore = defineStore('career', () => {
   const career = ref<Career | null>(null)
@@ -79,7 +110,7 @@ export const useCareerStore = defineStore('career', () => {
   function load(): boolean {
     const raw = localStorage.getItem(STORAGE_KEY)
     if (!raw) return false
-    career.value = JSON.parse(raw) as Career
+    career.value = migrateSave(JSON.parse(raw) as Career)
     return true
   }
 

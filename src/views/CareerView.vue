@@ -5,6 +5,9 @@ import { useRouter } from 'vue-router'
 import CareerStatsPanel from '@/components/CareerStatsPanel.vue'
 import CareerTimeline from '@/components/CareerTimeline.vue'
 import DecisionCard from '@/components/DecisionCard.vue'
+import MarketProgress from '@/components/MarketProgress.vue'
+import RivalPanel from '@/components/RivalPanel.vue'
+import TeamPanel from '@/components/TeamPanel.vue'
 import { getEventById } from '@/data/events'
 import { useCareerStore } from '@/stores/career'
 import type { CareerChoice, CareerEvent } from '@/types/career'
@@ -53,14 +56,20 @@ function goRetire() {
 
 <template>
   <main v-if="career" class="mx-auto flex w-full max-w-4xl flex-1 flex-col gap-6 p-6">
-    <header class="flex items-center justify-between">
-      <div>
-        <h1 class="text-lg font-semibold text-neutral-50">{{ career.artist.stageName }}</h1>
-        <p class="text-xs text-neutral-500">Año {{ career.year }} · {{ career.age }} años</p>
+    <header class="flex flex-col gap-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-lg font-semibold text-neutral-50">{{ career.artist.stageName }}</h1>
+          <p class="text-xs text-neutral-500">Año {{ career.year }} · {{ career.age }} años</p>
+        </div>
+        <button type="button" class="text-xs text-neutral-400" @click="router.push('/history')">
+          Historial
+        </button>
       </div>
-      <button type="button" class="text-xs text-neutral-400" @click="router.push('/history')">
-        Historial
-      </button>
+
+      <section class="rounded-2xl bg-neutral-900/60 p-4 ring-1 ring-white/5">
+        <CareerStatsPanel :stats="career.stats" />
+      </section>
     </header>
 
     <div class="flex flex-col gap-6 md:grid md:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] md:items-start">
@@ -94,15 +103,15 @@ function goRetire() {
             Retirarte
           </button>
         </template>
-      </div>
-
-      <!-- Stats + yearly breakdown column -->
-      <div class="flex flex-col gap-6">
-        <section class="rounded-2xl bg-neutral-900/60 p-4 ring-1 ring-white/5">
-          <CareerStatsPanel :stats="career.stats" />
-        </section>
 
         <CareerTimeline :history="career.history" />
+      </div>
+
+      <!-- Team / markets / rivals column -->
+      <div class="flex flex-col gap-6">
+        <TeamPanel :team="career.team" />
+        <MarketProgress :markets="career.markets" />
+        <RivalPanel :rivals="career.rivals" :player-fame="career.stats.fame" />
       </div>
     </div>
   </main>

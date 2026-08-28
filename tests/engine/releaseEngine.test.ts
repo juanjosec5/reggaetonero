@@ -42,8 +42,11 @@ describe('classifyTier', () => {
 })
 
 describe('computeHitScore', () => {
-  it('returns 0 when every input is 0', () => {
-    expect(computeHitScore(baseRelease)).toBe(0)
+  it('returns the small base floor when every input is 0', () => {
+    // A release is never quite worth nothing - there is a low fixed floor so an
+    // early-career artist can still build a little momentum.
+    expect(computeHitScore(baseRelease)).toBe(3)
+    expect(classifyTier(computeHitScore(baseRelease))).toBe('flop')
   })
 
   it('returns 100 when every input is maxed', () => {

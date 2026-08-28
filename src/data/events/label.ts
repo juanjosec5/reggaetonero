@@ -47,8 +47,9 @@ export const LABEL_EVENTS: CareerEvent[] = [
     title: 'El sello no olvidó la negociación',
     description: 'La disquera te está dando menos prioridad de la que esperabas.',
     visibleRisk: 'medium',
-    condition: () => true,
-    weight: () => 3,
+    // Follow-up only: reached through a delayed effect, never rolled on its own.
+    condition: () => false,
+    weight: () => 0,
     choices: [
       {
         text: 'Aceptarlo y seguir trabajando',

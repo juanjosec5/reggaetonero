@@ -1,7 +1,7 @@
 import { clampAttribute, clampStat, clampTrait } from '@/engine/constants'
 import type { Career } from '@/types/career'
 
-type Namespace = 'attributes' | 'hiddenTraits' | 'stats' | 'finances'
+type Namespace = 'attributes' | 'hiddenTraits' | 'stats' | 'finances' | 'record'
 
 function parseTarget(target: string): { namespace: Namespace; key: string } {
   const [namespace, key] = target.split('.')
@@ -12,7 +12,13 @@ function parseTarget(target: string): { namespace: Namespace; key: string } {
 }
 
 function isNamespace(value: string): value is Namespace {
-  return value === 'attributes' || value === 'hiddenTraits' || value === 'stats' || value === 'finances'
+  return (
+    value === 'attributes' ||
+    value === 'hiddenTraits' ||
+    value === 'stats' ||
+    value === 'finances' ||
+    value === 'record'
+  )
 }
 
 function getBag(career: Career, namespace: Namespace): Record<string, number> {
@@ -29,6 +35,8 @@ function clampForTarget(namespace: Namespace, key: string, value: number): numbe
       return clampStat(value)
     case 'finances':
       return key === 'ownershipPercent' ? clampStat(value) : Math.max(0, value)
+    case 'record':
+      return Math.max(0, Math.round(value))
   }
 }
 

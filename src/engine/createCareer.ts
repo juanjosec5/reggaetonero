@@ -1,10 +1,13 @@
 import { getArchetype } from '@/data/archetypes'
 import type { EmphasisId } from '@/data/emphasis'
 import { getEmphasis } from '@/data/emphasis'
+import { pickRivals } from '@/data/fictionalArtists'
+import { homeMarketId, initialMarkets } from '@/data/markets'
 import type { OpportunityId } from '@/data/opportunities'
 import { getOpportunity } from '@/data/opportunities'
 import { clampAttribute, clampStat, clampTrait, STARTING_CASH, STARTING_YEAR } from '@/engine/constants'
 import { makeRng, rollRange } from '@/engine/rng'
+import { CURRENT_SAVE_VERSION } from '@/types/career'
 import type {
   ArtistAttributes,
   ArtistProfile,
@@ -143,11 +146,13 @@ export function createCareer(input: CreateCareerInput): Career {
   const attributes = rollAttributes(profile.archetype, emphasis, rng)
   const hiddenTraits = applyOpportunityTraits(rollTraits(profile.archetype, rng), opportunity)
   const id = `career_${seed}_${rollRange(rng, 0, 999_999)}`
+  const rivals = pickRivals(rng, 3)
 
   return {
     id,
     seed,
     mode,
+    saveVersion: CURRENT_SAVE_VERSION,
 
     artist: profile,
     attributes,
@@ -157,7 +162,7 @@ export function createCareer(input: CreateCareerInput): Career {
     record: initialRecord(),
     team: {},
     relationships: [],
-    rivals: [],
+    rivals,
 
     releases: [],
     history: [],
@@ -167,7 +172,8 @@ export function createCareer(input: CreateCareerInput): Career {
     age: profile.age,
     year: STARTING_YEAR,
     era: 'underground',
-    currentMarket: profile.country,
+    currentMarket: homeMarketId(profile.country),
+    markets: initialMarkets(profile.country),
 
     status: 'active',
   }
