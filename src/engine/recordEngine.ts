@@ -1,3 +1,4 @@
+import { grantAward, grantMilestone, hasMilestone, MILESTONES } from '@/data/awards'
 import { INTERNATIONAL_HUB, RELOCATE_REACH } from '@/data/cities'
 import type { Rng } from '@/engine/rng'
 import { rollRange } from '@/engine/rng'
@@ -32,16 +33,28 @@ export function accrueCareerRecord(career: Career, rng: Rng): void {
   }
 
   // Platinum plaques: your smashes, plus certifications a strong commercial
-  // catalogue racks up over time. Monotonic.
+  // catalogue racks up over time. Monotonic; a new plaque is a celebration.
   const platinumEligible =
     record.smashHits + Math.floor((stats.catalogStrength * (stats.fame / 100)) / 13)
-  if (record.platinumRecords < platinumEligible) record.platinumRecords = platinumEligible
+  for (let n = record.platinumRecords; n < platinumEligible && n < record.platinumRecords + 3; n++) {
+    grantAward(career, 'plat', 'platinum', 'Disco de platino')
+  }
+  record.platinumRecords = Math.max(record.platinumRecords, platinumEligible)
 
   // Awards - Grammy leans cultural/critical, Billboard leans chart/commercial.
   if ((stats.culturalImpact >= 24 || stats.credibility >= 52) && rollRange(rng, 1, 100) <= 16) {
     record.grammys += 1
+    grantAward(career, 'gr', 'grammy', 'Grammy Latino')
   }
-  if (stats.fame >= 48 && stats.hype >= 28 && rollRange(rng, 1, 100) <= 22) record.billboards += 1
+  if (stats.fame >= 48 && stats.hype >= 28 && rollRange(rng, 1, 100) <= 22) {
+    record.billboards += 1
+    grantAward(career, 'bb', 'billboard', 'Premio Billboard')
+  }
+
+  // Grand once-in-a-career milestones.
+  for (const m of MILESTONES) {
+    if (!hasMilestone(career, m.id) && m.reached(career)) grantMilestone(career, m)
+  }
 
   // Once you've truly broken internationally you move to the hub. One-way.
   if (career.residence !== INTERNATIONAL_HUB && stats.internationalReach >= RELOCATE_REACH) {

@@ -37,6 +37,24 @@ describe('event catalog integrity', () => {
     expect(ALL_EVENTS.length).toBeGreaterThanOrEqual(50)
   })
 
+  it('offers a fresh artist more than one first decision', () => {
+    // Guards against the early game collapsing back to a single event (or a
+    // mis-gated business event) — see docs/decisions.md.
+    let atLeastTwo = 0
+    for (const seed of [1, 2, 3, 4, 5, 6, 7, 8]) {
+      const fresh = createCareer({ profile: { stageName: 'x', country: 'Colombia' }, seed })
+      const eligible = ALL_EVENTS.filter((e) => {
+        try {
+          return e.condition(fresh)
+        } catch {
+          return false
+        }
+      })
+      if (eligible.length >= 2) atLeastTwo += 1
+    }
+    expect(atLeastTwo).toBe(8)
+  })
+
   it('has unique ids', () => {
     const ids = ALL_EVENTS.map((e) => e.id)
     expect(new Set(ids).size).toBe(ids.length)

@@ -14,7 +14,7 @@ import { retire as retireCareer } from '@/engine/legacyEngine'
 import { computeEra } from '@/engine/progressionEngine'
 import { hashSeed, makeRng } from '@/engine/rng'
 import { CURRENT_SAVE_VERSION } from '@/types/career'
-import type { Career, CareerChoice, CareerMode, CreationInput } from '@/types/career'
+import type { Career, CareerAward, CareerChoice, CareerMode, CreationInput } from '@/types/career'
 
 const STORAGE_KEY = 'reggaetonero:save'
 
@@ -33,6 +33,8 @@ const CHOICE_SALT = 2
  *   were already visible, so mark them discovered.
  * - v4 → v5: fixed 20-year arc. Remap the old 8-era values to the 5-era model
  *   and backfill `peakFame` from current fame.
+ * - v5 → v6: new record counters, `residence`, per-year snapshots.
+ * - v6 → v7: rebuild the `awards` log from the existing counters.
  */
 export function migrateSave(raw: Career): Career {
   const career = raw as Career & { saveVersion?: number }
@@ -88,6 +90,21 @@ export function migrateSave(raw: Career): Career {
     for (const entry of career.history ?? []) {
       entry.recordSnapshot = entry.recordSnapshot ?? { ...career.record }
       entry.residence = entry.residence ?? career.residence
+    }
+  }
+
+  if (version < 7) {
+    // Rebuild the awards log from the existing counters (year unknown -> now).
+    career.awards = career.awards ?? []
+    if (career.awards.length === 0) {
+      const push = (kind: CareerAward['kind'], title: string, n: number) => {
+        for (let i = 0; i < n; i++) {
+          career.awards.push({ id: `${kind}_legacy_${i}`, kind, title, year: career.year })
+        }
+      }
+      push('grammy', 'Grammy Latino', career.record.grammys ?? 0)
+      push('billboard', 'Premio Billboard', career.record.billboards ?? 0)
+      push('platinum', 'Disco de platino', career.record.platinumRecords ?? 0)
     }
   }
 

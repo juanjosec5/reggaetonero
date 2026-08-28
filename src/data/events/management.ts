@@ -218,4 +218,32 @@ export const MANAGEMENT_EVENTS: CareerEvent[] = [
       },
     ],
   },
+  {
+    id: 'mgmt_hire_producer',
+    category: 'management',
+    title: 'Un productor quiere ser tu mano derecha',
+    description: 'Un productor con oído quiere dejar de trabajar por proyecto y sentarse contigo de fijo, en exclusiva.',
+    visibleRisk: 'low',
+    condition: (c) => !c.team.producer && c.stats.hype >= 20 && c.finances.cash >= 50,
+    weight: () => 3,
+    choices: [
+      {
+        text: 'Ficharlo en exclusiva',
+        style: 'ambitious',
+        effects: [
+          { kind: 'team', role: 'producer', op: 'hire' },
+          { target: 'finances.cash', min: -45, max: -20 },
+          { target: 'attributes.productionSense', min: 2, max: 5 },
+        ],
+      },
+      {
+        text: 'Seguir trabajando con varios',
+        style: 'safe',
+        effects: [
+          { target: 'hiddenTraits.adaptability', min: 1, max: 4 },
+          { target: 'attributes.originality', min: 0, max: 3 },
+        ],
+      },
+    ],
+  },
 ]

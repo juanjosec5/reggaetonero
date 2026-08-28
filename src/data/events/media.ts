@@ -79,4 +79,61 @@ export const MEDIA_EVENTS: CareerEvent[] = [
       },
     ],
   },
+  {
+    id: 'media_local_radio',
+    category: 'media',
+    title: 'Una emisora local te da rotación',
+    description: 'Un DJ de la radio de tu ciudad se encariñó con un tema tuyo y lo está pinchando todas las tardes.',
+    visibleRisk: 'low',
+    condition: (c) => c.stats.hype >= 6 && c.year <= 6,
+    weight: () => 3,
+    choices: [
+      {
+        text: 'Ir al programa y agradecer',
+        style: 'safe',
+        effects: [
+          { target: 'stats.hype', min: 2, max: 6 },
+          { target: 'stats.fanbase', min: 1, max: 4 },
+        ],
+      },
+      {
+        text: 'Pedir que pongan una más arriesgada',
+        style: 'creative',
+        effects: [
+          { target: 'attributes.originality', min: 1, max: 4 },
+          { target: 'stats.hype', min: 0, max: 4 },
+          { target: 'stats.credibility', min: 1, max: 3 },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'media_career_retrospective',
+    category: 'media',
+    title: 'Una revista hace el ranking de tu carrera',
+    description: 'Un medio grande publica su lista de los mejores discos de tu generación. Te mencionan — la pregunta es en qué puesto.',
+    visibleRisk: 'low',
+    condition: (c) => c.age >= 34 && c.stats.culturalImpact >= 16,
+    weight: () => 2,
+    oncePerCareer: true,
+    choices: [
+      {
+        text: 'Te ponen alto: celebrarlo con tu gente',
+        style: 'loyal',
+        effects: [
+          { target: 'stats.culturalImpact', min: 3, max: 8 },
+          { target: 'stats.credibility', min: 2, max: 5 },
+        ],
+      },
+      {
+        text: 'Te ponen bajo: usarlo de combustible',
+        style: 'ambitious',
+        effects: [
+          { target: 'hiddenTraits.ambition', min: 3, max: 7 },
+          { target: 'stats.hype', min: 2, max: 6 },
+          { target: 'hiddenTraits.ego', min: 1, max: 4 },
+        ],
+      },
+    ],
+  },
 ]

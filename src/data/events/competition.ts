@@ -111,7 +111,7 @@ export const COMPETITION_EVENTS: CareerEvent[] = [
         effects: [
           { target: 'stats.industryRespect', min: 5, max: 11 },
           { target: 'stats.culturalImpact', min: 4, max: 9 },
-          { target: 'record.grammys', min: 1, max: 1 },
+          { kind: 'award', award: 'grammy', title: 'Grammy — Álbum del Año' },
           { kind: 'rival', field: 'relationship', min: -12, max: -2 },
         ],
       },
@@ -122,7 +122,7 @@ export const COMPETITION_EVENTS: CareerEvent[] = [
           { target: 'stats.hype', min: 6, max: 14 },
           { target: 'stats.credibility', min: -6, max: 3 },
           { target: 'stats.industryRespect', min: -6, max: 2 },
-          { target: 'record.billboards', min: 1, max: 1 },
+          { kind: 'award', award: 'billboard', title: 'Billboard — Artista del Año' },
         ],
       },
     ],

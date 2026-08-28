@@ -170,4 +170,35 @@ export const BUSINESS_EVENTS: CareerEvent[] = [
       },
     ],
   },
+  {
+    id: 'biz_greatest_hits',
+    category: 'business',
+    title: 'El sello quiere sacar un grandes éxitos',
+    description: 'Un recopilatorio con tus temas más sonados. Es dinero casi sin esfuerzo, pero también es admitir que lo mejor ya pasó.',
+    visibleRisk: 'low',
+    condition: (c) => c.age >= 34 && c.stats.catalogStrength >= 35,
+    weight: () => 3,
+    oncePerCareer: true,
+    choices: [
+      {
+        text: 'Aceptar, es dinero fácil',
+        style: 'commercial',
+        effects: [
+          { target: 'finances.cash', min: 40, max: 110 },
+          { target: 'stats.catalogStrength', min: 2, max: 6 },
+          { target: 'stats.credibility', min: -4, max: -1 },
+        ],
+      },
+      {
+        text: 'Negarte: quieres un disco nuevo de verdad',
+        style: 'creative',
+        effects: [
+          { target: 'hiddenTraits.authenticity', min: 2, max: 6 },
+          { target: 'attributes.originality', min: 1, max: 4 },
+          { target: 'finances.cash', min: -20, max: 0 },
+          { target: 'hiddenTraits.ambition', min: 1, max: 4 },
+        ],
+      },
+    ],
+  },
 ]

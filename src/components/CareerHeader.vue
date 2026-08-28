@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 
 import { computeIdentity } from '@/engine/identityEngine'
-import { formatMoney, globalStatusBand, recognitionBand } from '@/engine/status'
+import { globalStatusBand, moneyBand, recognitionBand } from '@/engine/status'
 import type { Career } from '@/types/career'
 
 const props = defineProps<{ career: Career }>()
@@ -10,7 +10,7 @@ const props = defineProps<{ career: Career }>()
 const identity = computed(() => computeIdentity(props.career))
 
 const readouts = computed(() => [
-  { label: 'Dinero', value: formatMoney(props.career.finances.cash) },
+  { label: 'Dinero', value: moneyBand(props.career.finances.netWorth) },
   { label: 'Reconocimiento', value: recognitionBand(props.career) },
   { label: 'Estatus global', value: globalStatusBand(props.career) },
   { label: 'Título', value: identity.value.label },
