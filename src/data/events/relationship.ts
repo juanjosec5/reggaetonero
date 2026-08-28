@@ -145,4 +145,68 @@ export const RELATIONSHIP_EVENTS: CareerEvent[] = [
       },
     ],
   },
+  {
+    id: 'rel_barrio_crew',
+    category: 'relationship',
+    title: 'Tu combo del barrio quiere entrar contigo',
+    description: 'Los que estaban desde antes quieren ser parte del proyecto: manejo, coros, la logística. Son familia, pero no son profesionales.',
+    visibleRisk: 'medium',
+    condition: (c) => c.year <= 4 && c.stats.hype >= 8,
+    weight: () => 3,
+    choices: [
+      {
+        text: 'Meterlos en todo, son familia',
+        style: 'loyal',
+        effects: [
+          { target: 'hiddenTraits.loyalty', min: 3, max: 7 },
+          { target: 'hiddenTraits.authenticity', min: 2, max: 5 },
+          { target: 'attributes.productionSense', min: -3, max: 0 },
+          { target: 'finances.cash', min: -20, max: -5 },
+        ],
+      },
+      {
+        text: 'Trabajar con gente que sepa',
+        style: 'ambitious',
+        effects: [
+          { target: 'attributes.business', min: 1, max: 4 },
+          { target: 'attributes.productionSense', min: 1, max: 3 },
+          { target: 'hiddenTraits.authenticity', min: -4, max: -1 },
+          { target: 'hiddenTraits.loyalty', min: -5, max: -2 },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'rel_next_gen_cosign',
+    category: 'relationship',
+    title: 'Un pibe nuevo quiere tu co-sign',
+    description: 'Un artista diez años más joven te manda un tema para que le tires un verso. Podría ser el próximo grande — o nada.',
+    visibleRisk: 'low',
+    condition: (c) => c.age >= 32 && (c.stats.industryRespect >= 22 || c.stats.fame >= 45),
+    weight: () => 3,
+    choices: [
+      {
+        text: 'Darle el feature y abrirle puertas',
+        style: 'loyal',
+        effects: [
+          { target: 'stats.industryRespect', min: 3, max: 8 },
+          { target: 'stats.culturalImpact', min: 2, max: 6 },
+          { target: 'hiddenTraits.adaptability', min: 1, max: 4 },
+        ],
+      },
+      {
+        text: 'Cobrarle caro por tu nombre',
+        style: 'commercial',
+        effects: [
+          { target: 'finances.cash', min: 20, max: 60 },
+          { target: 'stats.credibility', min: -5, max: -1 },
+        ],
+      },
+      {
+        text: 'Ignorarlo, que se lo gane',
+        style: 'ambitious',
+        effects: [{ target: 'hiddenTraits.ego', min: 1, max: 4 }],
+      },
+    ],
+  },
 ]

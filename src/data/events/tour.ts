@@ -181,4 +181,37 @@ export const TOUR_EVENTS: CareerEvent[] = [
       },
     ],
   },
+  {
+    id: 'tour_stadium_commitment',
+    category: 'tour',
+    title: 'Puedes montar una gira de estadios',
+    description: 'Los números dan para llenar estadios. Es la gira más grande de tu vida — y la más cara de producir si falla.',
+    visibleRisk: 'high',
+    condition: (c) => c.stats.fame >= 48 && (c.stats.livePower >= 28 || c.stats.internationalReach >= 28),
+    weight: () => 3,
+    oncePerCareer: true,
+    choices: [
+      {
+        text: 'Estadios, todo o nada',
+        style: 'ambitious',
+        effects: [
+          { target: 'record.stadiumShows', min: 8, max: 16 },
+          { target: 'record.ticketsSold', min: 120_000, max: 320_000 },
+          { target: 'stats.livePower', min: 4, max: 10 },
+          { target: 'stats.hype', min: 4, max: 10 },
+          { target: 'finances.cash', min: -90, max: 40 },
+        ],
+      },
+      {
+        text: 'Teatros y arenas, más seguro',
+        style: 'safe',
+        effects: [
+          { target: 'record.clubShows', min: 10, max: 22 },
+          { target: 'record.ticketsSold', min: 20_000, max: 70_000 },
+          { target: 'stats.livePower', min: 2, max: 5 },
+          { target: 'finances.cash', min: 10, max: 45 },
+        ],
+      },
+    ],
+  },
 ]

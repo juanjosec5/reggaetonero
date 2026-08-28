@@ -181,4 +181,110 @@ export const MUSIC_EVENTS: CareerEvent[] = [
       },
     ],
   },
+  {
+    id: 'music_first_show',
+    category: 'music',
+    title: 'Tu primera tarima de verdad',
+    description: 'Un local pequeño te da una fecha. No pagan casi nada, pero es un escenario real.',
+    visibleRisk: 'low',
+    condition: (c) => c.year <= 4 && c.stats.hype >= 4,
+    weight: () => 4,
+    oncePerCareer: true,
+    choices: [
+      {
+        text: 'Darlo todo aunque sea gratis',
+        style: 'ambitious',
+        effects: [
+          { target: 'stats.livePower', min: 3, max: 8 },
+          { target: 'stats.fanbase', min: 2, max: 6 },
+          { target: 'finances.cash', min: -15, max: 0 },
+        ],
+      },
+      {
+        text: 'Cobrar lo justo y cuidar el show',
+        style: 'safe',
+        effects: [
+          { target: 'stats.livePower', min: 1, max: 4 },
+          { target: 'finances.cash', min: 5, max: 25 },
+        ],
+      },
+      {
+        text: 'Llenarlo con tu gente y hacerlo un evento',
+        style: 'loyal',
+        effects: [
+          { target: 'stats.fanbase', min: 3, max: 9 },
+          { target: 'hiddenTraits.authenticity', min: 1, max: 4 },
+          { target: 'hiddenTraits.loyalty', min: 2, max: 5 },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'music_veteran_reinvention',
+    category: 'music',
+    title: 'Ya no suenas a lo de ahora',
+    description: 'La radio pide otra cosa y tu último disco pasó sin ruido. Tienes que decidir qué artista eres a esta altura.',
+    visibleRisk: 'high',
+    condition: (c) => c.age >= 33 && c.stats.hype < 45,
+    weight: () => 3,
+    choices: [
+      {
+        text: 'Reinventar tu sonido por completo',
+        style: 'creative',
+        effects: [
+          { target: 'attributes.originality', min: 3, max: 8 },
+          { target: 'hiddenTraits.adaptability', min: 3, max: 7 },
+          { target: 'stats.credibility', min: -6, max: -1 },
+          { target: 'stats.hype', min: -4, max: 8 },
+        ],
+      },
+      {
+        text: 'Doblar la apuesta por tu sonido clásico',
+        style: 'loyal',
+        effects: [
+          { target: 'hiddenTraits.authenticity', min: 3, max: 7 },
+          { target: 'stats.credibility', min: 3, max: 8 },
+          { target: 'stats.hype', min: -8, max: -2 },
+        ],
+      },
+      {
+        text: 'Aceptar que eres un veterano y disfrutarlo',
+        style: 'safe',
+        effects: [
+          { target: 'hiddenTraits.patience', min: 2, max: 5 },
+          { target: 'hiddenTraits.resilience', min: 2, max: 5 },
+          { target: 'hiddenTraits.ambition', min: -4, max: -1 },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'music_platinum_push',
+    category: 'music',
+    title: 'Empujar el disco a platino',
+    description: 'El álbum va bien pero se puede certificar si le metes campaña, remixes y features de último momento.',
+    visibleRisk: 'medium',
+    condition: (c) => c.stats.fame >= 38 && c.stats.catalogStrength >= 28 && c.finances.cash >= 30,
+    weight: () => 3,
+    choices: [
+      {
+        text: 'Meterle campaña dura',
+        style: 'commercial',
+        effects: [
+          { target: 'finances.cash', min: -80, max: -30 },
+          { target: 'stats.hype', min: 3, max: 8 },
+          { kind: 'award', award: 'platinum' },
+          { target: 'hiddenTraits.authenticity', min: -3, max: 0 },
+        ],
+      },
+      {
+        text: 'Dejar que la música hable sola',
+        style: 'safe',
+        effects: [
+          { target: 'stats.credibility', min: 1, max: 4 },
+          { target: 'hiddenTraits.authenticity', min: 1, max: 3 },
+        ],
+      },
+    ],
+  },
 ]
