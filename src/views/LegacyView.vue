@@ -3,6 +3,7 @@ import html2canvas from 'html2canvas'
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
+import AwardShelf from '@/components/AwardShelf.vue'
 import CareerStatsPanel from '@/components/CareerStatsPanel.vue'
 import CareerTable from '@/components/CareerTable.vue'
 import LegacyCard from '@/components/LegacyCard.vue'
@@ -67,6 +68,8 @@ function newCareer() {
 <template>
   <main v-if="store.career" class="mx-auto flex w-full max-w-md flex-1 flex-col items-center gap-6 p-6">
     <LegacyCard ref="cardRef" :career="store.career" />
+
+    <AwardShelf v-if="store.career.awards.length" :awards="store.career.awards" />
 
     <CareerTable :career="store.career" />
 

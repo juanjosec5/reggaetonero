@@ -197,6 +197,7 @@ export function createCareer(input: CreateCareerInput): Career {
     age: STARTING_AGE,
     year: STARTING_YEAR,
     era: 'debut',
+    awards: [],
     peakFame: 0,
     residence: homeCity(profile.country),
     currentMarket: homeMarketId(profile.country),

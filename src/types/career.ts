@@ -103,6 +103,17 @@ export interface MusicCareerRecord {
   ticketsSold: number
 }
 
+// ---- Awards & milestones (the "dopamine" log) ----
+export type AwardKind = 'grammy' | 'billboard' | 'platinum' | 'milestone'
+
+export interface CareerAward {
+  id: string
+  kind: AwardKind
+  title: string // Spanish
+  year: number
+  grand?: boolean // the rare ones - bigger celebration
+}
+
 // ---- Team ----
 export type TeamRole = 'manager' | 'producer' | 'lawyer' | 'publicist' | 'bookingAgent'
 
@@ -237,6 +248,12 @@ export interface LabelEffect {
   labelId?: string // for op: 'sign' — omit to let the engine pick by prestige/fame fit
 }
 
+export interface AwardEffect {
+  kind: 'award'
+  award: 'grammy' | 'billboard'
+  title?: string // player-facing name; defaults per kind
+}
+
 export type CareerEffect =
   | StatEffect
   | RelationshipEffect
@@ -244,6 +261,7 @@ export type CareerEffect =
   | MarketEffect
   | TeamEffect
   | LabelEffect
+  | AwardEffect
 
 export interface DelayedEffect {
   eventId: string
@@ -303,7 +321,7 @@ export interface LegacyResult {
 export type CareerMode = 'quick' | 'story' | 'daily' | 'challenge'
 export type CareerStatus = 'active' | 'retired'
 
-export const CURRENT_SAVE_VERSION = 6
+export const CURRENT_SAVE_VERSION = 7
 
 export interface Career {
   id: string
@@ -325,6 +343,8 @@ export interface Career {
   history: CareerYear[]
   pendingEffects: DelayedEffect[]
   firedEventIds: string[] // enforce oncePerCareer
+
+  awards: CareerAward[] // every award / milestone won, in order
 
   age: number
   year: number

@@ -1,3 +1,4 @@
+import { grantAward } from '@/data/awards'
 import { adjustMarket, unlockMarket } from '@/engine/marketEngine'
 import { adjustRelationship } from '@/engine/relationshipEngine'
 import { adjustRival, getRival, nearestRival } from '@/engine/rivalEngine'
@@ -66,6 +67,19 @@ function applyEffect(career: Career, effect: CareerEffect, rng: Rng, defaultRiva
       if (effect.op === 'sign') signLabel(career, rng, effect.labelId)
       else leaveLabel(career)
       return
+
+    case 'award': {
+      const isGrammy = effect.award === 'grammy'
+      if (isGrammy) career.record.grammys += 1
+      else career.record.billboards += 1
+      grantAward(
+        career,
+        isGrammy ? 'gr' : 'bb',
+        effect.award,
+        effect.title ?? (isGrammy ? 'Grammy Latino' : 'Premio Billboard'),
+      )
+      return
+    }
   }
 }
 

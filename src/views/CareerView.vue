@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 
+import AwardShelf from '@/components/AwardShelf.vue'
+import AwardToast from '@/components/AwardToast.vue'
 import CareerHeader from '@/components/CareerHeader.vue'
 import CareerTable from '@/components/CareerTable.vue'
 import DecisionCard from '@/components/DecisionCard.vue'
@@ -11,7 +13,7 @@ import TeamPanel from '@/components/TeamPanel.vue'
 import { getEventById } from '@/data/events'
 import { MAX_CAREER_YEAR, RETIREMENT_MIN_YEAR } from '@/engine/constants'
 import { useCareerStore } from '@/stores/career'
-import type { CareerChoice } from '@/types/career'
+import type { CareerAward, CareerChoice } from '@/types/career'
 
 const router = useRouter()
 const store = useCareerStore()
@@ -27,6 +29,28 @@ const career = computed(() => store.career)
 const lastYear = computed(() => career.value?.history.at(-1))
 const careerOver = computed(() => (career.value?.year ?? 0) >= MAX_CAREER_YEAR)
 const canRetire = computed(() => (career.value?.year ?? 0) >= RETIREMENT_MIN_YEAR)
+
+// Celebrate awards as they land. The first observation just sets a baseline so
+// loading a save doesn't replay every past trophy.
+const awardQueue = ref<CareerAward[]>([])
+const currentAward = computed(() => awardQueue.value[0])
+const seenAwards = ref(-1)
+
+watch(
+  () => career.value?.awards.length ?? -1,
+  (n) => {
+    if (n < 0) return
+    if (seenAwards.value < 0) {
+      seenAwards.value = n
+      return
+    }
+    if (n > seenAwards.value) {
+      awardQueue.value.push(...(career.value?.awards.slice(seenAwards.value) ?? []))
+      seenAwards.value = n
+    }
+  },
+  { immediate: true },
+)
 
 // The event this year introduced. Kept even after a choice is applied so the
 // resolved card stays on screen until the player advances.
@@ -57,11 +81,18 @@ function goRetire() {
   store.retire()
   router.push('/legacy')
 }
+
+function nextAward() {
+  awardQueue.value.shift()
+}
 </script>
 
 <template>
   <main v-if="career" class="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 p-6">
+    <AwardToast v-if="currentAward" :key="currentAward.id" :award="currentAward" @done="nextAward" />
+
     <CareerHeader :career="career" />
+    <AwardShelf :awards="career.awards" />
 
     <div class="flex flex-col gap-6 md:grid md:grid-cols-[minmax(0,17rem)_minmax(0,1fr)] md:items-start">
       <!-- Decisions / actions -->
