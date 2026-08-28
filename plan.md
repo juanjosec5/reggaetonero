@@ -465,19 +465,29 @@ a single threshold.
 
 ## 8. Screen flow (Vue Router)
 
+> Updated after the Phase 2 creation rework. §4–§7 still describe the original
+> "choose archetype / emphasis / opportunity" flow — that is now **rolled internally
+> from the seed** and never shown; `city` was dropped. Treat the engine
+> (`createCareer`) as source of truth, not those sections.
+
 ```
-/                 HomeView         → mode select (Quick / Story / Daily), continue save
-/create           CreateArtistView → identity → archetype → attribute emphasis → first opportunity
-/career           CareerView       → year loop; shows timeline + public stats
-/career/decision  DecisionView     → one event, bottom-sheet card, risk badge, 2–4 choices
-/history          HistoryView      → scrollable career log
-/legacy           LegacyView       → LegacyCard (shareable)
+/            HomeView         → libre · reto diario · continuar · (?c= a shared challenge)
+/create      CreateArtistView → nombre · país · edad          (libre)
+                                nombre only; país/edad come from the seed   (reto diario)
+/career      CareerView       → year loop; slim header (dinero · reconocimiento ·
+                                estatus global · título); progressive side panels
+/history     HistoryView      → scrollable career log
+/legacy      LegacyView       → LegacyCard (compartible) + trayectoria + reveal de stats
+                                + logros desbloqueados
+/trofeos     TrofeosView      → grid de todos los logros                    (Phase 3)
 ```
+
+No `/career/decision` route — the decision card lives inside `CareerView`. No
+"Quick / Story" — the modes are **Libre** and **Reto diario**.
 
 Mobile-first, per the spec: one decision per screen, large tap targets, minimal text
 before the choice, one primary action, a visible risk indicator, a horizontal era
-timeline, bottom-sheet event cards, and a shareable final card. Target ~3–7 min for Quick,
-~10–15 min for Story.
+timeline, and a shareable final card. Target ~3–7 min for a Libre run.
 
 ---
 
@@ -520,14 +530,72 @@ Phase 1 acceptance criteria:
   asserts this end-to-end).
 - Engine has zero imports from `vue`/`pinia` and zero `Math.random()`.
 
-### Phase 2 — Depth
+### Phase 2 — Depth *(done — merged to `main` 2026-08-28)*
 50+ events; relationships with memory; team building (manager/producer/lawyer/etc.);
 producers & labels as data; richer release/money/market systems; geographic market
 progression (`marketEngine`, `data/markets.ts`); rival system with fictional rivals.
+Shipped with: a balance pass on verdicts + release/market math; the creation rework
+(name/país/edad only, everything else seed-rolled); a decision-derived "título de
+reggaetonero" (`identityEngine`); stats hidden until retirement + a trajectory reveal;
+progressive disclosure of the team/markets/rivals panels.
 
-### Phase 3 — Modes & social
-Daily challenge (fixed seed + fixed starting profile/opportunities, divergent endings);
-seed sharing; shareable challenge links; local leaderboards; achievements.
+### Phase 3 — Modes & social *(revised 2026-08-28 after the creation rework)*
+
+Goal: make the deterministic career **repeatable and shareable** — no backend. The
+engine is already seed-deterministic (`createCareer` → `simulateYear` → `applyChoice`,
+covered by `deterministicReplay.test.ts`), so this phase is seed plumbing, UI, and
+`localStorage`. Scoped down from the original bullet list: **seed-share codes, a
+`/retos` daily-history screen, and streak/leaderboard UI are pushed to a later pass** —
+they need §3.2 below and aren't load-bearing for the core loop.
+
+**3.0 — Fix the shareable card (prerequisite).** `LegacyView` "Compartir carta" throws
+`unsupported color function "oklch"`: `html2canvas@1.4.1` can't read Tailwind v4 colors.
+Swap to `html-to-image` (`toBlob`, oklch-safe, ~same API) or add an `oklch()`→`rgb()`
+`onclone` shim. Keep the Web Share API + download fallback already in `LegacyView`.
+
+**3.1 — Two modes.**
+
+| Mode | Seed | Player provides | Country + age |
+|---|---|---|---|
+| **Libre** (current default) | random | nombre, país, edad | player's choice |
+| **Reto diario** | `hashSeed(YYYYMMDD)` from today's date | nombre only | derived from the seed |
+
+- `CreationInput` gains optional `country?` / `age?`; when absent, `createCareer`'s
+  `rollBuild` also rolls them (from a shared `COUNTRIES` list + an age range) so the
+  daily artist is identical for everyone that day.
+- `mode: 'quick' | 'daily'` is threaded through `store.startCareer` and **stored on
+  `career.mode`** — the currently-inert `CareerMode` field goes live here.
+- `HomeView`: "Empezar carrera" · "Reto diario" · "Continuar". The daily button shows
+  the day's state (no jugado / en curso / hecho — [TÍTULO]).
+- New `src/engine/daily.ts` — `dailySeed(date: Date): number`.
+
+**3.2 — Multi-slot saves.** The store is single-slot (`reggaetonero:save`); a libre and
+a daily career would clobber each other. Key the save by mode:
+`reggaetonero:save:quick` and `reggaetonero:save:daily:<YYYYMMDD>`. `save` / `load` /
+`hasSave` / `clearSave` become slot-aware; a one-time migration moves the legacy
+`reggaetonero:save` → `:quick`.
+
+**3.3 — Achievements.** `src/engine/achievements.ts` — a pure, data-driven
+`evaluateAchievements(career): AchievementId[]` run once at retirement (mirrors
+`computeLegacy` / `pickVerdict`). Examples: *Primer smash*, *La leyenda* (verdict),
+*Dueño de todo* (retire at 100% ownership), *Fenómeno global* (global market
+established), *Nunca firmaste* (no label ever), *El premio grande* (`record.awards ≥ 1`),
+*Sin un flop*, *Carrera larga* (18+ years). `localStorage` holds the unlocked set
+(union across all careers). Newly-unlocked ones show as a strip on `LegacyView`; the
+full grid lives at `/trofeos`.
+
+Phase 3 acceptance criteria:
+- The same calendar date yields the same starting artist for any player.
+- Libre and daily careers coexist in storage without clobbering each other.
+- Achievements unlock deterministically from a finished `Career` and persist across
+  careers.
+- The legacy card exports to PNG again (Web Share where available, download fallback).
+
+Deferred out of Phase 3: share-codes (`?c=`), `/retos` daily history, streaks and any
+leaderboard. Standing tech debt to schedule separately: market-growth has no decay for
+inactive artists; the hidden traits `ego / loyalty / resilience / patience /
+riskTolerance` are written by events but read by nothing; `AttributeBand.vue` +
+`engine/bands.ts` are unmounted.
 
 ### Phase 4 — Full simulator
 Full ~20-year career; dynamic markets; active rival storylines; catalog ownership as a
