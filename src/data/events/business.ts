@@ -89,7 +89,7 @@ export const BUSINESS_EVENTS: CareerEvent[] = [
     title: 'Un fondo quiere comprar tu catálogo',
     description: 'Te ofrecen un cheque enorme hoy a cambio de todos los derechos de tu música.',
     visibleRisk: 'high',
-    condition: (c) => c.finances.catalogValue >= 120 && c.year >= 10,
+    condition: (c) => c.finances.catalogValue >= 120 && c.year >= 7,
     weight: () => 2,
     oncePerCareer: true,
     choices: [
@@ -176,7 +176,7 @@ export const BUSINESS_EVENTS: CareerEvent[] = [
     title: 'El sello quiere sacar un grandes éxitos',
     description: 'Un recopilatorio con tus temas más sonados. Es dinero casi sin esfuerzo, pero también es admitir que lo mejor ya pasó.',
     visibleRisk: 'low',
-    condition: (c) => c.age >= 34 && c.stats.catalogStrength >= 35,
+    condition: (c) => c.age >= 31 && c.stats.catalogStrength >= 35,
     weight: () => 3,
     oncePerCareer: true,
     choices: [

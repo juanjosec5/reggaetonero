@@ -35,6 +35,7 @@ const CHOICE_SALT = 2
  *   and backfill `peakFame` from current fame.
  * - v5 → v6: new record counters, `residence`, per-year snapshots.
  * - v6 → v7: rebuild the `awards` log from the existing counters.
+ * - v7 → v8: career arc shortened to 22 → 35; re-derive eras.
  */
 export function migrateSave(raw: Career): Career {
   const career = raw as Career & { saveVersion?: number }
@@ -106,6 +107,12 @@ export function migrateSave(raw: Career): Career {
       push('billboard', 'Premio Billboard', career.record.billboards ?? 0)
       push('platinum', 'Disco de platino', career.record.platinumRecords ?? 0)
     }
+  }
+
+  if (version < 8) {
+    // Career arc shortened to 22 → 35; re-derive eras under the new thresholds.
+    career.era = computeEra(career.year)
+    for (const entry of career.history ?? []) entry.era = computeEra(entry.year)
   }
 
   career.saveVersion = CURRENT_SAVE_VERSION

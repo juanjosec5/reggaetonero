@@ -113,7 +113,7 @@ export const MEDIA_EVENTS: CareerEvent[] = [
     title: 'Una revista hace el ranking de tu carrera',
     description: 'Un medio grande publica su lista de los mejores discos de tu generación. Te mencionan — la pregunta es en qué puesto.',
     visibleRisk: 'low',
-    condition: (c) => c.age >= 34 && c.stats.culturalImpact >= 16,
+    condition: (c) => c.age >= 31 && c.stats.culturalImpact >= 16,
     weight: () => 2,
     oncePerCareer: true,
     choices: [

@@ -35,12 +35,12 @@ export const BAND_THRESHOLDS = {
 
 export const STARTING_CASH = 500
 export const STARTING_YEAR = 1
-/** Everyone starts at 20; career year N ⇒ age 19 + N. */
-export const STARTING_AGE = 20
-/** Last playable career year (age 40) — after this the career is forced to end. */
-export const MAX_CAREER_YEAR = 21
-/** Voluntary retirement unlocks at this career year (age 32). */
-export const RETIREMENT_MIN_YEAR = 13
+/** Everyone starts at 22; career year N ⇒ age 21 + N. */
+export const STARTING_AGE = 22
+/** Last playable career year (age 35) — after this the career is forced to end. */
+export const MAX_CAREER_YEAR = 14
+/** Voluntary retirement unlocks at this career year (age 30). */
+export const RETIREMENT_MIN_YEAR = 9
 
 // ---- Phase 2 tuning ----
 

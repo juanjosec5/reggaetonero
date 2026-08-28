@@ -2,11 +2,11 @@ import type { Era } from '@/types/career'
 
 /** Player-facing name for each era, and the age window it covers. */
 export const ERAS: { id: Era; label: string; ageRange: [number, number] }[] = [
-  { id: 'debut', label: 'El Come Up', ageRange: [20, 23] },
-  { id: 'ascenso', label: 'El Boom', ageRange: [24, 27] },
-  { id: 'cima', label: 'La Cima', ageRange: [28, 31] },
-  { id: 'veterano', label: 'El Veterano', ageRange: [32, 35] },
-  { id: 'leyenda', label: 'La Leyenda', ageRange: [36, 40] },
+  { id: 'debut', label: 'El Come Up', ageRange: [22, 24] },
+  { id: 'ascenso', label: 'El Boom', ageRange: [25, 27] },
+  { id: 'cima', label: 'La Cima', ageRange: [28, 30] },
+  { id: 'veterano', label: 'El Veterano', ageRange: [31, 33] },
+  { id: 'leyenda', label: 'La Leyenda', ageRange: [34, 35] },
 ]
 
 export const ERA_LABELS: Record<Era, string> = Object.fromEntries(

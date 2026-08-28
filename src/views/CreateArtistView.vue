@@ -66,7 +66,7 @@ function startCareer() {
         </div>
       </div>
 
-      <p class="text-xs text-neutral-600">Empiezas a los 20. La carrera llega hasta los 40.</p>
+      <p class="text-xs text-neutral-600">Empiezas a los 22. La carrera llega hasta los 35.</p>
     </section>
 
     <div class="mt-auto pt-4">

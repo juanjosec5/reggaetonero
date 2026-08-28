@@ -76,8 +76,8 @@ describe('migrateSave', () => {
     expect(migrated.rivals.every((r) => r.discovered)).toBe(true)
     expect(migrated.relationships[0]!.memory).toEqual([])
     expect(migrated.relationships[0]!.name).toBeDefined()
-    // v4 → v5: 8-era value remapped, peakFame backfilled
-    expect(migrated.era).toBe('debut')
+    // era is re-derived under the current thresholds (v8); year 4 ⇒ ascenso
+    expect(migrated.era).toBe('ascenso')
     expect(migrated.peakFame).toBe(migrated.stats.fame)
     // v5 → v6: new record counters, residence, per-year snapshots
     expect(migrated.record.grammys).toBe(0)

@@ -81,22 +81,22 @@ describe('career store', () => {
     expect(store.career?.legacy?.verdictId).toBeTruthy()
   })
 
-  it('stops advancing at age 40 (MAX_CAREER_YEAR)', () => {
+  it('stops advancing at age 35 (MAX_CAREER_YEAR)', () => {
     const store = useCareerStore()
     store.startCareer(profile, 42)
 
-    for (let i = 0; i < 40; i++) {
+    for (let i = 0; i < 30; i++) {
       if (store.currentEvent) store.applyChoice(store.currentEvent.choices[0]!)
       store.advanceYear()
     }
 
-    expect(store.career?.year).toBe(21)
-    expect(store.career?.age).toBe(40)
+    expect(store.career?.year).toBe(14)
+    expect(store.career?.age).toBe(35)
     expect(store.canAdvance).toBe(false)
 
     if (store.currentEvent) store.applyChoice(store.currentEvent.choices[0]!)
     store.advanceYear()
-    expect(store.career?.year).toBe(21) // no-op past the cap
+    expect(store.career?.year).toBe(14) // no-op past the cap
   })
 
   it('load restores a career saved by another store instance', () => {

@@ -182,7 +182,7 @@ export const RELATIONSHIP_EVENTS: CareerEvent[] = [
     title: 'Un pibe nuevo quiere tu co-sign',
     description: 'Un artista diez años más joven te manda un tema para que le tires un verso. Podría ser el próximo grande — o nada.',
     visibleRisk: 'low',
-    condition: (c) => c.age >= 32 && (c.stats.industryRespect >= 22 || c.stats.fame >= 45),
+    condition: (c) => c.age >= 30 && (c.stats.industryRespect >= 22 || c.stats.fame >= 45),
     weight: () => 3,
     choices: [
       {
