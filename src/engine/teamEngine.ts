@@ -1,3 +1,4 @@
+import { getLabel, pickLabel } from '@/data/labels'
 import { getProducer, pickProducer } from '@/data/producers'
 import { getStaff, pickStaff } from '@/data/staff'
 import {
@@ -8,6 +9,7 @@ import {
   clampStat,
 } from '@/engine/constants'
 import type { Rng } from '@/engine/rng'
+import { rollRange } from '@/engine/rng'
 import type { Career, TeamMember, TeamRole } from '@/types/career'
 
 export function getTeamMember(career: Career, role: TeamRole): TeamMember | undefined {
@@ -57,6 +59,28 @@ export function releaseTeamMember(career: Career, role: TeamRole): void {
   delete career.team[role]
 }
 
+/**
+ * Signs the artist to a label: records the deal on `career.team.label` and hands
+ * the label the masters share it demands. `labelId` names a specific label;
+ * omitting it lets the engine pick one that fits the artist's current fame.
+ * No-ops if already signed. Mutates `career` in place.
+ */
+export function signLabel(career: Career, rng: Rng, labelId?: string): void {
+  if (career.team.label) return
+  const def = labelId ? getLabel(labelId) : pickLabel(rng, career.stats.fame)
+  const ownershipTaken = Math.min(
+    career.finances.ownershipPercent,
+    rollRange(rng, def.ownershipDemandMin, def.ownershipDemandMax),
+  )
+  career.finances.ownershipPercent = clampStat(career.finances.ownershipPercent - ownershipTaken)
+  career.team.label = { id: def.id, name: def.name, ownershipTaken, signedYear: career.year }
+}
+
+/** Ends the label deal. The artist keeps whatever masters share they now hold. */
+export function leaveLabel(career: Career): void {
+  delete career.team.label
+}
+
 export function adjustTeamLoyalty(career: Career, role: TeamRole, amount: number): void {
   const member = career.team[role]
   if (!member) return
@@ -100,6 +124,9 @@ export function memberWeight(member: { skill: number; loyalty: number }): number
  */
 export function applyTeamBonuses(career: Career): void {
   const { team, stats, finances } = career
+
+  // A label's machine keeps the artist in front of people every year.
+  if (team.label) stats.hype = clampStat(stats.hype + getLabel(team.label.id).reach * 0.04)
 
   if (team.publicist) stats.hype = clampStat(stats.hype + 4 * memberWeight(team.publicist))
   if (team.bookingAgent) stats.livePower = clampStat(stats.livePower + 4 * memberWeight(team.bookingAgent))

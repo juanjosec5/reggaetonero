@@ -226,7 +226,19 @@ export interface TeamEffect {
   max?: number
 }
 
-export type CareerEffect = StatEffect | RelationshipEffect | RivalEffect | MarketEffect | TeamEffect
+export interface LabelEffect {
+  kind: 'label'
+  op: 'sign' | 'leave'
+  labelId?: string // for op: 'sign' — omit to let the engine pick by prestige/fame fit
+}
+
+export type CareerEffect =
+  | StatEffect
+  | RelationshipEffect
+  | RivalEffect
+  | MarketEffect
+  | TeamEffect
+  | LabelEffect
 
 export interface DelayedEffect {
   eventId: string

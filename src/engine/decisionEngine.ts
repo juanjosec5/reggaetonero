@@ -4,7 +4,13 @@ import { adjustRival, nearestRival } from '@/engine/rivalEngine'
 import type { Rng } from '@/engine/rng'
 import { rollRange } from '@/engine/rng'
 import { applyStatDelta } from '@/engine/statPath'
-import { adjustTeamLoyalty, hireTeamMember, releaseTeamMember } from '@/engine/teamEngine'
+import {
+  adjustTeamLoyalty,
+  hireTeamMember,
+  leaveLabel,
+  releaseTeamMember,
+  signLabel,
+} from '@/engine/teamEngine'
 import type { Career, CareerChoice, CareerEffect, CareerEvent } from '@/types/career'
 
 /** Resolves one effect's range through the RNG and applies it to `career` in place. */
@@ -41,6 +47,11 @@ function applyEffect(career: Career, effect: CareerEffect, rng: Rng): void {
       if (effect.op === 'hire') hireTeamMember(career, effect.role, rng, effect.personId)
       else if (effect.op === 'leave') releaseTeamMember(career, effect.role)
       else adjustTeamLoyalty(career, effect.role, roll(effect.min, effect.max))
+      return
+
+    case 'label':
+      if (effect.op === 'sign') signLabel(career, rng, effect.labelId)
+      else leaveLabel(career)
       return
   }
 }

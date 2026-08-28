@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 
 import { getEventById } from '@/data/events'
+import { VERDICTS } from '@/data/verdicts'
 import { createCareer } from '@/engine/createCareer'
 import { applyChoice } from '@/engine/decisionEngine'
 import {
@@ -11,8 +12,9 @@ import {
 } from '@/engine/relationshipEngine'
 import { advanceMarkets, getMarketState } from '@/engine/marketEngine'
 import { nearestRival, progressRivals } from '@/engine/rivalEngine'
+import { computeLegacy } from '@/engine/legacyEngine'
 import { makeRng } from '@/engine/rng'
-import { applyTeamUpkeep, hireTeamMember } from '@/engine/teamEngine'
+import { applyTeamUpkeep, hireTeamMember, leaveLabel, signLabel } from '@/engine/teamEngine'
 import type { ArtistProfile, Career } from '@/types/career'
 
 const baseProfile: ArtistProfile = {
@@ -106,6 +108,49 @@ describe('rivalEngine', () => {
       expect(rival.fame).toBeGreaterThanOrEqual(0)
       expect(rival.fame).toBeLessThanOrEqual(100)
     }
+  })
+})
+
+describe('label deals', () => {
+  it('signing records the deal on team.label and hands over a masters share', () => {
+    career.stats.fame = 40
+    const ownershipBefore = career.finances.ownershipPercent
+    signLabel(career, makeRng(5), 'label_capital')
+
+    expect(career.team.label?.id).toBe('label_capital')
+    expect(career.team.label?.signedYear).toBe(career.year)
+    expect(career.team.label!.ownershipTaken).toBeGreaterThan(0)
+    expect(career.finances.ownershipPercent).toBe(ownershipBefore - career.team.label!.ownershipTaken)
+  })
+
+  it('is a no-op when already signed, and leaveLabel ends the deal', () => {
+    signLabel(career, makeRng(1), 'label_barrio')
+    signLabel(career, makeRng(2), 'label_continental')
+    expect(career.team.label?.id).toBe('label_barrio')
+
+    leaveLabel(career)
+    expect(career.team.label).toBeUndefined()
+  })
+
+  it('a signed label pushes the el_independiente verdict away', () => {
+    const free = createCareer({ profile: baseProfile, seed: 42 })
+    free.finances.ownershipPercent = 100
+    const signed = structuredClone(free)
+    signLabel(signed, makeRng(9), 'label_continental')
+
+    const indie = VERDICTS.find((v) => v.id === 'el_independiente')!
+    expect(indie.score(computeLegacy(signed), signed)).toBeLessThan(
+      indie.score(computeLegacy(free), free),
+    )
+  })
+
+  it('signs a label through the three-album-deal event choice', () => {
+    career.stats.hype = 40
+    const event = getEventById('label_major_three_album_deal')!
+    const signChoice = event.choices[0]!
+    const next = applyChoice(career, event, signChoice, makeRng(3))
+    expect(next.team.label).toBeDefined()
+    expect(career.team.label).toBeUndefined() // original untouched
   })
 })
 

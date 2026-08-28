@@ -16,8 +16,8 @@ export const LABEL_EVENTS: CareerEvent[] = [
         text: 'Firmar el contrato',
         style: 'commercial',
         effects: [
+          { kind: 'label', op: 'sign' },
           { target: 'finances.cash', min: 60, max: 150 },
-          { target: 'finances.ownershipPercent', min: -35, max: -20 },
           { target: 'stats.industryRespect', min: 5, max: 10 },
         ],
       },
@@ -25,8 +25,10 @@ export const LABEL_EVENTS: CareerEvent[] = [
         text: 'Negociar mejores términos',
         style: 'ambitious',
         effects: [
+          { kind: 'label', op: 'sign' },
           { target: 'finances.cash', min: 20, max: 60 },
-          { target: 'finances.ownershipPercent', min: -15, max: -8 },
+          // Better terms: claw back some of the masters share the label took.
+          { target: 'finances.ownershipPercent', min: 8, max: 16 },
           { target: 'hiddenTraits.riskTolerance', min: 2, max: 5 },
         ],
         delayedEffects: [{ eventId: 'label_negotiation_backlash', triggerYear: 2 }],

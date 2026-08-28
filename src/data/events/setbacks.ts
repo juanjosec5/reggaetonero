@@ -185,6 +185,7 @@ export const SETBACK_EVENTS: CareerEvent[] = [
         text: 'Negociar una salida y quedar libre del contrato',
         style: 'ambitious',
         effects: [
+          { kind: 'label', op: 'leave' },
           { target: 'finances.cash', min: -160, max: -80 },
           { target: 'finances.ownershipPercent', min: 8, max: 20 },
           { target: 'hiddenTraits.resilience', min: 3, max: 7 },

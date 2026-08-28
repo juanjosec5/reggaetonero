@@ -1,3 +1,6 @@
+import type { Rng } from '@/engine/rng'
+import { weightedPick } from '@/engine/rng'
+
 export interface LabelDef {
   id: string
   name: string // fictional
@@ -28,4 +31,13 @@ export function getLabel(id: string): LabelDef {
   const label = LABEL_BY_ID.get(id)
   if (!label) throw new Error(`Unknown label: ${id}`)
   return label
+}
+
+/**
+ * Picks the label most likely to be courting an artist at this fame level:
+ * bigger, more prestigious labels weight toward more famous artists, but any
+ * label can come knocking.
+ */
+export function pickLabel(rng: Rng, fame: number): LabelDef {
+  return weightedPick(LABELS, (l) => 1 / (1 + Math.abs(l.prestige - fame) / 12), rng) ?? LABELS[0]!
 }
