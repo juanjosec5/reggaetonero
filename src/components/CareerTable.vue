@@ -28,8 +28,8 @@ const rows = computed(() => {
       current: year === props.career.year && props.career.status === 'active',
       city: entry.residence || startCity,
       stars: recordStars(d),
-      tickets: d.ticketsSold > 0 ? formatCount(d.ticketsSold) : '—',
-      awards: d.grammys + d.billboards > 0 ? `${d.grammys}G · ${d.billboards}B` : '—',
+      tickets: d.ticketsSold > 0 ? formatCount(d.ticketsSold) : '·',
+      awards: d.grammys + d.billboards > 0 ? `${d.grammys}·${d.billboards}` : '·',
     }
   })
 })
@@ -39,14 +39,14 @@ const rows = computed(() => {
   <section class="rounded-2xl bg-neutral-900/60 ring-1 ring-white/5">
     <h2 class="px-4 pt-4 text-xs font-semibold uppercase tracking-wide text-neutral-500">Tu carrera</h2>
     <div class="overflow-x-auto px-4 pb-4 pt-3">
-      <table class="w-full min-w-[26rem] border-collapse text-sm">
+      <table class="w-full min-w-[22rem] border-collapse text-sm">
         <thead>
-          <tr class="text-left text-[11px] uppercase tracking-wide text-neutral-600">
-            <th class="pb-2 pr-3 font-medium">Edad</th>
-            <th class="pb-2 pr-3 font-medium">Dónde vives</th>
-            <th class="pb-2 pr-3 font-medium">Puntuación</th>
-            <th class="pb-2 pr-3 font-medium">Entradas</th>
-            <th class="pb-2 font-medium">Premios</th>
+          <tr class="text-[11px] uppercase tracking-wide text-neutral-600">
+            <th class="pb-2 pr-3 text-left font-medium">Edad</th>
+            <th class="pb-2 pr-3 text-left font-medium">Dónde vives</th>
+            <th class="w-14 pb-2 text-center text-sm font-normal" title="Puntuación del año">★</th>
+            <th class="w-14 pb-2 text-center text-sm font-normal" title="Entradas vendidas">🎟️</th>
+            <th class="w-12 pb-2 text-center text-sm font-normal" title="Grammy · Billboard">🏆</th>
           </tr>
         </thead>
         <tbody>
@@ -66,12 +66,14 @@ const rows = computed(() => {
               </span>
             </td>
             <td class="py-2 pr-3">{{ row.played ? row.city : '—' }}</td>
-            <td class="py-2 pr-3">
+            <td class="py-2 text-center">
               <StarRating v-if="row.played" :value="row.stars!" />
-              <span v-else>—</span>
+              <span v-else>·</span>
             </td>
-            <td class="py-2 pr-3 tabular-nums">{{ row.played ? row.tickets : '—' }}</td>
-            <td class="py-2 tabular-nums">{{ row.played ? row.awards : '—' }}</td>
+            <td class="py-2 text-center text-xs tabular-nums">{{ row.played ? row.tickets : '·' }}</td>
+            <td class="py-2 text-center text-xs tabular-nums" :title="`Grammy · Billboard`">
+              {{ row.played ? row.awards : '·' }}
+            </td>
           </tr>
         </tbody>
       </table>
