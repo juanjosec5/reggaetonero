@@ -2,13 +2,26 @@ import { MARKET_ESTABLISHED_THRESHOLD } from '@/engine/constants'
 import type { Career } from '@/types/career'
 
 /**
- * Descriptive header readouts for the play screen. Money is shown as an exact
- * figure (the player asked for the literal number); everything else is a
- * narrative band, never a raw stat - see plan.md section 0.
+ * Descriptive header readouts for the play screen - narrative bands, never raw
+ * stats (see plan.md section 0). The exact figures are kept on the career object
+ * and shown only on the end-of-career summary via `formatMoney`.
  */
 
-export function formatMoney(cash: number): string {
-  return `$${Math.max(0, Math.round(cash)).toLocaleString('en-US')}`
+/** Exact currency figure - end screen only. */
+export function formatMoney(amount: number): string {
+  return `$${Math.max(0, Math.round(amount)).toLocaleString('en-US')}`
+}
+
+const MONEY_BANDS: [max: number, label: string][] = [
+  [700, '$'],
+  [1800, '$$'],
+  [3500, '$$$'],
+  [Infinity, '$$$$'],
+]
+
+/** Wealth tier from net worth - what the play-screen header shows. */
+export function moneyBand(netWorth: number): string {
+  return MONEY_BANDS.find(([max]) => netWorth < max)![1]
 }
 
 const RECOGNITION_BANDS: [max: number, label: string][] = [

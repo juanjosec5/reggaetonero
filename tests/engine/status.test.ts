@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { createCareer } from '@/engine/createCareer'
-import { formatMoney, globalStatusBand, recognitionBand } from '@/engine/status'
+import { formatMoney, globalStatusBand, moneyBand, recognitionBand } from '@/engine/status'
 
 function baseCareer() {
   return createCareer({ profile: { stageName: 'X', country: 'Colombia' }, seed: 1 })
@@ -18,6 +18,15 @@ describe('formatMoney', () => {
   it('clamps negatives to zero and rounds', () => {
     expect(formatMoney(-50)).toBe('$0')
     expect(formatMoney(12.7)).toBe('$13')
+  })
+})
+
+describe('moneyBand', () => {
+  it('maps net worth to a $ tier', () => {
+    expect(moneyBand(500)).toBe('$')
+    expect(moneyBand(1200)).toBe('$$')
+    expect(moneyBand(2500)).toBe('$$$')
+    expect(moneyBand(9000)).toBe('$$$$')
   })
 })
 
