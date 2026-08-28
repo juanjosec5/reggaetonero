@@ -7,7 +7,14 @@ import { homeMarketId, initialMarkets } from '@/data/markets'
 import { OPPORTUNITIES } from '@/data/opportunities'
 import type { OpportunityId } from '@/data/opportunities'
 import { getOpportunity } from '@/data/opportunities'
-import { clampAttribute, clampStat, clampTrait, STARTING_CASH, STARTING_YEAR } from '@/engine/constants'
+import {
+  clampAttribute,
+  clampStat,
+  clampTrait,
+  STARTING_AGE,
+  STARTING_CASH,
+  STARTING_YEAR,
+} from '@/engine/constants'
 import { makeRng, rollRange } from '@/engine/rng'
 import { CURRENT_SAVE_VERSION } from '@/types/career'
 import type {
@@ -153,10 +160,10 @@ export function createCareer(input: CreateCareerInput): Career {
   const { profile, seed, mode = 'quick' } = input
   const rng = makeRng(seed)
 
-  // The player only gives us name / country / age; everything else that shapes
-  // the starting build is rolled here from the seed and never surfaced.
+  // The player only gives us name + country; everything else that shapes the
+  // starting build is rolled here from the seed and never surfaced. Age is fixed.
   const { genre, archetypeId, emphasisId, opportunityId } = rollBuild(rng)
-  const artist: ArtistProfile = { ...profile, genre, archetype: archetypeId }
+  const artist: ArtistProfile = { ...profile, age: STARTING_AGE, genre, archetype: archetypeId }
 
   const attributes = rollAttributes(archetypeId, emphasisId, rng)
   const hiddenTraits = applyOpportunityTraits(rollTraits(archetypeId, rng), opportunityId)
@@ -184,9 +191,10 @@ export function createCareer(input: CreateCareerInput): Career {
     pendingEffects: [],
     firedEventIds: [],
 
-    age: profile.age,
+    age: STARTING_AGE,
     year: STARTING_YEAR,
-    era: 'underground',
+    era: 'debut',
+    peakFame: 0,
     currentMarket: homeMarketId(profile.country),
     markets: initialMarkets(profile.country),
 

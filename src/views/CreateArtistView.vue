@@ -11,17 +11,14 @@ const store = useCareerStore()
 const form = reactive({
   stageName: '',
   country: '',
-  age: 19,
 })
 
-const canStart = computed(
-  () => form.stageName.trim().length > 0 && form.country !== '' && form.age >= 13 && form.age <= 60,
-)
+const canStart = computed(() => form.stageName.trim().length > 0 && form.country !== '')
 
 function startCareer() {
   if (!canStart.value) return
   const seed = Math.floor(Date.now() % 1_000_000)
-  store.startCareer({ stageName: form.stageName.trim(), country: form.country, age: form.age }, seed)
+  store.startCareer({ stageName: form.stageName.trim(), country: form.country }, seed)
   router.push('/career')
 }
 </script>
@@ -69,16 +66,7 @@ function startCareer() {
         </div>
       </div>
 
-      <label class="flex flex-col gap-1.5">
-        <span class="text-xs text-neutral-400">Edad</span>
-        <input
-          v-model.number="form.age"
-          type="number"
-          min="13"
-          max="60"
-          class="rounded-xl bg-neutral-900 px-4 py-3 text-sm text-neutral-100 outline-none ring-1 ring-white/10"
-        />
-      </label>
+      <p class="text-xs text-neutral-600">Empiezas a los 20. La carrera llega hasta los 40.</p>
     </section>
 
     <div class="mt-auto pt-4">

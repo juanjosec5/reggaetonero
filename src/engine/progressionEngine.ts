@@ -3,16 +3,13 @@ import type { Rng } from '@/engine/rng'
 import { rollRange } from '@/engine/rng'
 import type { Career, Era } from '@/types/career'
 
-/** Maps a career year to its narrative era. Purely year-based for the Phase 1 MVP. */
+/** Maps a career year to its era — one per 4-year age bucket (year N ⇒ age 19 + N). */
 export function computeEra(year: number): Era {
-  if (year <= 2) return 'underground'
-  if (year <= 4) return 'first_buzz'
-  if (year <= 6) return 'breakout'
-  if (year <= 9) return 'national'
-  if (year <= 12) return 'international'
-  if (year <= 15) return 'superstar'
-  if (year <= 18) return 'reinvention'
-  return 'legacy'
+  if (year <= 4) return 'debut' // ages 20-23
+  if (year <= 8) return 'ascenso' // 24-27
+  if (year <= 12) return 'cima' // 28-31
+  if (year <= 16) return 'veterano' // 32-35
+  return 'leyenda' // 36-40
 }
 
 /**
@@ -44,13 +41,26 @@ export function applyProgression(career: Career, rng: Rng): void {
   const fanDelta = Math.round((fanTarget - career.stats.fanbase) * 0.15)
   applyStatDelta(career, 'stats.fanbase', fanDelta)
 
-  // Momentum becomes recognition: a slice of this year's hype converts to fame
-  // before hype cools off. This is the main way fame compounds over a career.
-  applyStatDelta(career, 'stats.fame', Math.round(career.stats.hype * 0.2))
-  applyStatDelta(career, 'stats.hype', -Math.round(career.stats.hype * 0.25))
+  // Momentum becomes recognition: a slice of this year's hype converts to fame,
+  // with diminishing returns once you're already huge.
+  const fameHeadroom = Math.max(0.3, 1 - career.stats.fame / 180)
+  applyStatDelta(career, 'stats.fame', Math.round(career.stats.hype * 0.2 * fameHeadroom))
+  // Hype is use-it-or-lose-it: it cools fast, so holding on to fame means a
+  // steady stream of releases/moments, not one big year.
+  applyStatDelta(career, 'stats.hype', -Math.round(career.stats.hype * 0.34))
 
-  // Fame decays slowly without fresh output; credibility drifts toward authenticity.
-  applyStatDelta(career, 'stats.fame', -Math.round(career.stats.fame * 0.035))
+  // Your back catalogue slowly stops carrying you - "what have you done lately".
+  applyStatDelta(career, 'stats.catalogStrength', -Math.round(career.stats.catalogStrength * 0.03))
+
+  // Fame slips every year and the slide steepens with age - staying famous past
+  // your early 30s means fighting it with fresh output. A big catalogue and
+  // cultural weight cushion the fall but don't stop it. This is what turns a
+  // career into an arc instead of an endless ramp.
+  const fameFloor = career.stats.catalogStrength * 0.4 + career.stats.culturalImpact * 0.25
+  const above = Math.max(0, career.stats.fame - fameFloor)
+  const decayRate = 0.03 + Math.max(0, career.age - 28) * 0.014
+  applyStatDelta(career, 'stats.fame', -Math.round(above * decayRate))
+
   const credibilityDelta = Math.round((career.hiddenTraits.authenticity - career.stats.credibility) * 0.05)
   applyStatDelta(career, 'stats.credibility', credibilityDelta)
 }

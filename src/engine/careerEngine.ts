@@ -38,6 +38,8 @@ export function simulateYear(career: Career, rng: Rng): Career {
   advanceMarkets(next, rng)
   progressRivals(next, rng)
 
+  next.peakFame = Math.max(next.peakFame, next.stats.fame)
+
   const { event, remainingPendingEffects } = selectYearEvent(next, rng)
   next.pendingEffects = remainingPendingEffects
 

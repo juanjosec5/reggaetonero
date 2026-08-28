@@ -74,7 +74,7 @@ export const LABEL_EVENTS: CareerEvent[] = [
     title: 'Te ofrecen un adelanto',
     description: 'Un sello independiente te ofrece dinero por adelantado a cambio de un % de tus regalías.',
     visibleRisk: 'medium',
-    condition: (c) => c.finances.cash < 200 && c.year >= 2,
+    condition: (c) => c.year >= 2 && c.stats.hype >= 8 && !c.team.label,
     weight: () => 4,
     choices: [
       {

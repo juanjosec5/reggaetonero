@@ -7,12 +7,12 @@ import type { CareerStats, CareerYear, ChoiceStyle } from '@/types/career'
 const EMPTY_STATS = {} as CareerStats
 
 function careerWithChoices(styles: ChoiceStyle[]) {
-  const career = createCareer({ profile: { stageName: 'X', country: 'Colombia', age: 20 }, seed: 1 })
+  const career = createCareer({ profile: { stageName: 'X', country: 'Colombia' }, seed: 1 })
   career.history = styles.map(
     (style, i): CareerYear => ({
       year: i + 1,
       age: 20 + i,
-      era: 'underground',
+      era: 'debut',
       releases: [],
       choiceStyle: style,
       statsSnapshot: EMPTY_STATS,
@@ -46,7 +46,7 @@ describe('computeIdentity', () => {
     career.history.push({
       year: 4,
       age: 24,
-      era: 'first_buzz',
+      era: 'ascenso',
       releases: [],
       statsSnapshot: EMPTY_STATS,
     })

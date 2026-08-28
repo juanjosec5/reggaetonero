@@ -66,7 +66,7 @@ describe('applyChoice', () => {
     career.history.push({
       year: 1,
       age: 19,
-      era: 'underground',
+      era: 'debut',
       releases: [],
       eventId: 'test_event',
       statsSnapshot: { ...career.stats },

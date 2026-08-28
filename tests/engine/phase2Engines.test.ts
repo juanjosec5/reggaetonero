@@ -104,7 +104,10 @@ describe('marketEngine', () => {
   it('does not wipe an event-granted internationalReach bump on the yearly recompute', () => {
     career.stats.internationalReach = 40 // as if a collaboration event just granted it
     advanceMarkets(career, makeRng(1)) // home market barely penetrated -> tiny market-derived reach
-    expect(career.stats.internationalReach).toBeGreaterThanOrEqual(40)
+    // The bump fades toward the market-derived level over a few years rather than
+    // being wiped in one recompute (or locked in forever).
+    expect(career.stats.internationalReach).toBeGreaterThan(20)
+    expect(career.stats.internationalReach).toBeLessThan(40)
   })
 })
 

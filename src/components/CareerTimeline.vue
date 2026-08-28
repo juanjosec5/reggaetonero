@@ -2,21 +2,11 @@
 import { computed } from 'vue'
 
 import ReleaseCard from '@/components/ReleaseCard.vue'
+import { ERA_LABELS } from '@/data/eras'
 import { getEventById } from '@/data/events'
-import type { CareerYear, Era } from '@/types/career'
+import type { CareerYear } from '@/types/career'
 
 const props = defineProps<{ history: CareerYear[] }>()
-
-const ERA_LABELS: Record<Era, string> = {
-  underground: 'Underground',
-  first_buzz: 'Primer Buzz',
-  breakout: 'Despegue',
-  national: 'Nacional',
-  international: 'Internacional',
-  superstar: 'Superestrella',
-  reinvention: 'Reinvención',
-  legacy: 'Legado',
-}
 
 const years = computed(() => [...props.history].reverse())
 

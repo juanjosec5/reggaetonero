@@ -21,12 +21,11 @@ export interface ArtistProfile {
   archetype: ArtistArchetype // rolled internally at creation, never shown as a label
 }
 
-/** What the player actually fills in on the creation screen. */
+/** What the player actually fills in on the creation screen. Age is fixed at 20. */
 export interface CreationInput {
   stageName: string
   realName?: string
   country: string
-  age: number
   pronouns?: string
 }
 
@@ -271,15 +270,9 @@ export interface CareerEvent {
 }
 
 // ---- Timeline ----
-export type Era =
-  | 'underground'
-  | 'first_buzz'
-  | 'breakout'
-  | 'national'
-  | 'international'
-  | 'superstar'
-  | 'reinvention'
-  | 'legacy'
+// One era per 4-year age bucket, matching the 5 rows of the career table:
+// debut 20-23 · ascenso 24-27 · cima 28-31 · veterano 32-35 · leyenda 36-40.
+export type Era = 'debut' | 'ascenso' | 'cima' | 'veterano' | 'leyenda'
 
 export interface CareerYear {
   year: number
@@ -298,6 +291,7 @@ export interface LegacyResult {
   artisticScore: number
   liveScore: number
   industryScore: number
+  longevityScore: number // sustained relevance across the run (mean + peak fame)
   legacyScore: number
   verdictId: string // maps to a narrative identity in data/verdicts.ts
 }
@@ -305,7 +299,7 @@ export interface LegacyResult {
 export type CareerMode = 'quick' | 'story' | 'daily' | 'challenge'
 export type CareerStatus = 'active' | 'retired'
 
-export const CURRENT_SAVE_VERSION = 4
+export const CURRENT_SAVE_VERSION = 5
 
 export interface Career {
   id: string
@@ -331,6 +325,7 @@ export interface Career {
   age: number
   year: number
   era: Era
+  peakFame: number // highest fame ever reached - feeds the legacy "staying power" term
   currentMarket: string // MarketDef id the artist is currently focused on
   markets: MarketState[]
 

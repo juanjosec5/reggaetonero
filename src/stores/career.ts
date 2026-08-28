@@ -1,13 +1,16 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import { computed, ref, toRaw } from 'vue'
 
+import { LEGACY_ERA_REMAP } from '@/data/eras'
 import { getEventById } from '@/data/events'
 import { pickRivals } from '@/data/fictionalArtists'
 import { initialMarkets } from '@/data/markets'
 import { simulateYear } from '@/engine/careerEngine'
+import { MAX_CAREER_YEAR } from '@/engine/constants'
 import { createCareer } from '@/engine/createCareer'
 import { applyChoice as resolveChoice } from '@/engine/decisionEngine'
 import { retire as retireCareer } from '@/engine/legacyEngine'
+import { computeEra } from '@/engine/progressionEngine'
 import { hashSeed, makeRng } from '@/engine/rng'
 import { CURRENT_SAVE_VERSION } from '@/types/career'
 import type { Career, CareerChoice, CareerMode, CreationInput } from '@/types/career'
@@ -27,6 +30,8 @@ const CHOICE_SALT = 2
  *   until fresh decisions accrue. `artist.city` on old saves is now ignored.
  * - v3 → v4: rivals now hide until a decision surfaces them; existing rivals
  *   were already visible, so mark them discovered.
+ * - v4 → v5: fixed 20-year arc. Remap the old 8-era values to the 5-era model
+ *   and backfill `peakFame` from current fame.
  */
 export function migrateSave(raw: Career): Career {
   const career = raw as Career & { saveVersion?: number }
@@ -62,6 +67,15 @@ export function migrateSave(raw: Career): Career {
     for (const rival of career.rivals ?? []) rival.discovered = true
   }
 
+  if (version < 5) {
+    const c = career as Career & { peakFame?: number }
+    c.peakFame = c.peakFame ?? c.stats.fame
+    c.era = LEGACY_ERA_REMAP[c.era as string] ?? computeEra(c.year)
+    for (const entry of c.history ?? []) {
+      entry.era = LEGACY_ERA_REMAP[entry.era as string] ?? computeEra(entry.year)
+    }
+  }
+
   career.saveVersion = CURRENT_SAVE_VERSION
   return career
 }
@@ -91,8 +105,14 @@ export const useCareerStore = defineStore('career', () => {
     save()
   }
 
+  const canAdvance = computed(
+    () =>
+      hasActiveCareer.value && !pendingChoice.value && (career.value?.year ?? 0) < MAX_CAREER_YEAR,
+  )
+
   function advanceYear() {
     if (!career.value || career.value.status !== 'active' || pendingChoice.value) return
+    if (career.value.year >= MAX_CAREER_YEAR) return
     const rng = makeRng(hashSeed(career.value.seed, career.value.year + 1, ADVANCE_SALT))
     career.value = simulateYear(toRaw(career.value), rng)
     save()
@@ -138,6 +158,7 @@ export const useCareerStore = defineStore('career', () => {
     isRetired,
     currentEvent,
     pendingChoice,
+    canAdvance,
     startCareer,
     advanceYear,
     applyChoice,

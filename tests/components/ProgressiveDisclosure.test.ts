@@ -19,7 +19,7 @@ const router = createRouter({
 })
 
 function freshCareer() {
-  return createCareer({ profile: { stageName: 'MC Test', country: 'México', age: 20 }, seed: 7 })
+  return createCareer({ profile: { stageName: 'MC Test', country: 'México' }, seed: 7 })
 }
 
 async function mountCareer() {
