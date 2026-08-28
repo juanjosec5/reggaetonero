@@ -99,13 +99,7 @@ export interface MusicCareerRecord {
   eps: number
   hits: number
   smashHits: number
-  features: number
-  streams: number
-  certifications: number
-  shows: number
-  countriesPerformed: number
   awards: number
-  numberOneRecords: number
 }
 
 // ---- Team ----
@@ -229,7 +223,7 @@ export interface MarketEffect {
 
 export interface TeamEffect {
   kind: 'team'
-  role: TeamRole
+  role?: TeamRole // for op: 'leave', omit to drop the least valuable current member
   op: 'hire' | 'leave' | 'adjustLoyalty'
   personId?: string // for op: 'hire' — omit to let the engine pick by budget/fit
   min?: number // for op: 'adjustLoyalty'

@@ -145,13 +145,7 @@ function initialRecord(): MusicCareerRecord {
     eps: 0,
     hits: 0,
     smashHits: 0,
-    features: 0,
-    streams: 0,
-    certifications: 0,
-    shows: 0,
-    countriesPerformed: 0,
     awards: 0,
-    numberOneRecords: 0,
   }
 }
 

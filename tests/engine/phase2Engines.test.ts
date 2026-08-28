@@ -14,7 +14,7 @@ import { advanceMarkets, getMarketState } from '@/engine/marketEngine'
 import { nearestRival, progressRivals } from '@/engine/rivalEngine'
 import { computeLegacy } from '@/engine/legacyEngine'
 import { makeRng } from '@/engine/rng'
-import { applyTeamUpkeep, hireTeamMember, leaveLabel, signLabel } from '@/engine/teamEngine'
+import { applyTeamUpkeep, hireTeamMember, leaveLabel, releaseTeamMember, signLabel } from '@/engine/teamEngine'
 import type { ArtistProfile, Career } from '@/types/career'
 
 const baseProfile: ArtistProfile = {
@@ -77,6 +77,17 @@ describe('teamEngine', () => {
     applyTeamUpkeep(career)
     expect(career.team.lawyer).toBeUndefined()
   })
+
+  it('releaseTeamMember with no role drops the least valuable member', () => {
+    career.finances.cash = 2000
+    hireTeamMember(career, 'manager', makeRng(1), 'mgr_la_jefa')
+    hireTeamMember(career, 'lawyer', makeRng(1), 'law_ferro')
+    career.team.manager!.loyalty = 90
+    career.team.lawyer!.loyalty = 15 // weakest
+    releaseTeamMember(career)
+    expect(career.team.lawyer).toBeUndefined()
+    expect(career.team.manager).toBeDefined()
+  })
 })
 
 describe('marketEngine', () => {
@@ -88,6 +99,12 @@ describe('marketEngine', () => {
     expect(getMarketState(career, 'pr')!.penetration).toBeGreaterThan(50)
     expect(getMarketState(career, 'do')!.unlocked || getMarketState(career, 'us_latin')!.unlocked).toBe(true)
     expect(career.stats.internationalReach).toBeGreaterThan(0)
+  })
+
+  it('does not wipe an event-granted internationalReach bump on the yearly recompute', () => {
+    career.stats.internationalReach = 40 // as if a collaboration event just granted it
+    advanceMarkets(career, makeRng(1)) // home market barely penetrated -> tiny market-derived reach
+    expect(career.stats.internationalReach).toBeGreaterThanOrEqual(40)
   })
 })
 
@@ -179,5 +196,17 @@ describe('applyChoice with Phase 2 effects', () => {
     const event = getEventById('comp_rival_subtweet')!
     const next = applyChoice(career, event, event.choices[0]!, makeRng(7))
     expect(next.rivals.some((r) => r.discovered)).toBe(true)
+  })
+
+  it('lands every un-targeted rival effect in one choice on the same rival', () => {
+    // comp_rival_subtweet's tiradera choice has both a relationship and a fame
+    // rival effect - they must not split across two rivals.
+    career.stats.fame = 30
+    career.rivals[0]!.fame = 30
+    career.rivals[1]!.fame = 31
+    career.rivals[2]!.fame = 80
+    const event = getEventById('comp_rival_subtweet')!
+    const next = applyChoice(career, event, event.choices[0]!, makeRng(3))
+    expect(next.rivals.filter((r) => r.discovered)).toHaveLength(1)
   })
 })

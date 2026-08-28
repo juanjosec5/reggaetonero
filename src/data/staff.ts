@@ -40,9 +40,15 @@ export function staffForRole(role: TeamRole): StaffDef[] {
   return STAFF.filter((s) => s.role === role)
 }
 
-/** Weighted pick of a candidate for `role`, respecting an optional budget ceiling. */
+/**
+ * Weighted pick of a candidate for `role` within the budget ceiling. If nothing
+ * fits the budget, returns the single cheapest candidate rather than a
+ * skill-weighted pick (which would hand a broke artist the priciest hire).
+ */
 export function pickStaff(role: TeamRole, rng: Rng, maxCost?: number): StaffDef | undefined {
   const all = staffForRole(role)
-  const pool = maxCost === undefined ? all : all.filter((s) => s.cost <= maxCost)
-  return weightedPick(pool.length > 0 ? pool : all, (s) => 1 + s.skill / 50, rng)
+  if (all.length === 0) return undefined
+  const affordable = maxCost === undefined ? all : all.filter((s) => s.cost <= maxCost)
+  if (affordable.length === 0) return all.reduce((a, b) => (b.cost < a.cost ? b : a))
+  return weightedPick(affordable, (s) => 1 + s.skill / 50, rng)
 }

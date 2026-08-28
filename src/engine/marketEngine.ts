@@ -85,7 +85,11 @@ export function applyMarketStats(career: Career): void {
     return sum + (state.penetration / 100) * getMarket(state.id).size
   }, 0)
 
-  career.stats.internationalReach = clampStat(weightedReach / 3)
+  // Markets set the floor for reach; collaboration/tour events push it above
+  // that, and their gains must survive the next year's recompute.
+  career.stats.internationalReach = clampStat(
+    Math.max(career.stats.internationalReach, weightedReach / 3),
+  )
   career.stats.culturalImpact = clampStat(
     Math.max(career.stats.culturalImpact, established.length * 12 + career.stats.internationalReach * 0.3),
   )
