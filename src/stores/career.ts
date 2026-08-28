@@ -1,6 +1,7 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import { computed, ref, toRaw } from 'vue'
 
+import { homeCity } from '@/data/cities'
 import { LEGACY_ERA_REMAP } from '@/data/eras'
 import { getEventById } from '@/data/events'
 import { pickRivals } from '@/data/fictionalArtists'
@@ -73,6 +74,20 @@ export function migrateSave(raw: Career): Career {
     c.era = LEGACY_ERA_REMAP[c.era as string] ?? computeEra(c.year)
     for (const entry of c.history ?? []) {
       entry.era = LEGACY_ERA_REMAP[entry.era as string] ?? computeEra(entry.year)
+    }
+  }
+
+  if (version < 6) {
+    const rec = career.record as unknown as Record<string, number>
+    for (const k of ['platinumRecords', 'grammys', 'billboards', 'clubShows', 'stadiumShows', 'ticketsSold']) {
+      rec[k] = rec[k] ?? 0
+    }
+    career.residence = career.residence ?? homeCity(career.artist.country)
+    // Per-year record/residence snapshots can't be reconstructed - point every
+    // old year at the current totals so the era table has something to show.
+    for (const entry of career.history ?? []) {
+      entry.recordSnapshot = entry.recordSnapshot ?? { ...career.record }
+      entry.residence = entry.residence ?? career.residence
     }
   }
 

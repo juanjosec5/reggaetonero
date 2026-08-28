@@ -3,6 +3,7 @@ import html2canvas from 'html2canvas'
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
+import CareerEraTable from '@/components/CareerEraTable.vue'
 import CareerStatsPanel from '@/components/CareerStatsPanel.vue'
 import LegacyCard from '@/components/LegacyCard.vue'
 import TrajectoryChart from '@/components/TrajectoryChart.vue'
@@ -66,6 +67,8 @@ function newCareer() {
 <template>
   <main v-if="store.career" class="mx-auto flex w-full max-w-md flex-1 flex-col items-center gap-6 p-6">
     <LegacyCard ref="cardRef" :career="store.career" />
+
+    <CareerEraTable :career="store.career" />
 
     <section class="flex w-full flex-col gap-6 rounded-2xl bg-neutral-900/60 p-5 ring-1 ring-white/5">
       <h2 class="text-sm font-semibold text-neutral-200">Cómo llegaste aquí</h2>

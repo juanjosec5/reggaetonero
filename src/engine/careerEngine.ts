@@ -3,6 +3,7 @@ import { applyFinances } from '@/engine/financeEngine'
 import { advanceMarkets } from '@/engine/marketEngine'
 import { applyProgression, computeEra } from '@/engine/progressionEngine'
 import { decayRelationships } from '@/engine/relationshipEngine'
+import { accrueCareerRecord } from '@/engine/recordEngine'
 import { progressRivals } from '@/engine/rivalEngine'
 import type { Rng } from '@/engine/rng'
 import { applyReleasesToCareer, generateReleases } from '@/engine/releaseEngine'
@@ -39,6 +40,7 @@ export function simulateYear(career: Career, rng: Rng): Career {
   progressRivals(next, rng)
 
   next.peakFame = Math.max(next.peakFame, next.stats.fame)
+  accrueCareerRecord(next, rng)
 
   const { event, remainingPendingEffects } = selectYearEvent(next, rng)
   next.pendingEffects = remainingPendingEffects
@@ -50,6 +52,8 @@ export function simulateYear(career: Career, rng: Rng): Career {
     releases: releasesThisYear.map((r) => r.release),
     eventId: event?.id,
     statsSnapshot: { ...next.stats },
+    recordSnapshot: { ...next.record },
+    residence: next.residence,
   }
   next.history.push(yearEntry)
 

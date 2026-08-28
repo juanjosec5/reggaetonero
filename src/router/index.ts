@@ -19,11 +19,6 @@ const router = createRouter({
       component: () => import('@/views/CareerView.vue'),
     },
     {
-      path: '/history',
-      name: 'history',
-      component: () => import('@/views/HistoryView.vue'),
-    },
-    {
       path: '/legacy',
       name: 'legacy',
       component: () => import('@/views/LegacyView.vue'),

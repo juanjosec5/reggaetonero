@@ -2,8 +2,8 @@
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 
+import CareerEraTable from '@/components/CareerEraTable.vue'
 import CareerHeader from '@/components/CareerHeader.vue'
-import CareerTimeline from '@/components/CareerTimeline.vue'
 import DecisionCard from '@/components/DecisionCard.vue'
 import MarketProgress from '@/components/MarketProgress.vue'
 import RivalPanel from '@/components/RivalPanel.vue'
@@ -71,13 +71,7 @@ function goRetire() {
 
 <template>
   <main v-if="career" class="mx-auto flex w-full max-w-4xl flex-1 flex-col gap-6 p-6">
-    <CareerHeader :career="career">
-      <template #actions>
-        <button type="button" class="text-xs text-neutral-400" @click="router.push('/history')">
-          Historial
-        </button>
-      </template>
-    </CareerHeader>
+    <CareerHeader :career="career" />
 
     <div
       class="flex flex-col gap-6"
@@ -119,7 +113,7 @@ function goRetire() {
           </button>
         </template>
 
-        <CareerTimeline :history="career.history" />
+        <CareerEraTable :career="career" />
       </div>
 
       <!-- Team / markets / rivals column - only once there's something to show -->
