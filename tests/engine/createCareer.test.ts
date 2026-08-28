@@ -8,7 +8,6 @@ import type { CreationInput } from '@/types/career'
 const baseProfile: CreationInput = {
   stageName: 'MC Prueba',
   country: 'Colombia',
-  age: 19,
 }
 
 describe('createCareer', () => {
@@ -63,7 +62,7 @@ describe('createCareer', () => {
   it('starts with sane defaults', () => {
     const career = createCareer({ profile: baseProfile, seed: 7 })
     expect(career.status).toBe('active')
-    expect(career.era).toBe('underground')
+    expect(career.era).toBe('debut')
     expect(career.year).toBe(1)
     expect(career.releases).toEqual([])
     expect(career.history).toEqual([])

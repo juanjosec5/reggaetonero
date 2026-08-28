@@ -67,7 +67,7 @@ function legacySave(): Career {
     firedEventIds: [],
     age: 22,
     year: 4,
-    era: 'first_buzz',
+    era: 'first_buzz', // a pre-revamp 8-era value
     currentMarket: 'Puerto Rico',
   } as unknown as Career
 }
@@ -84,6 +84,9 @@ describe('migrateSave', () => {
     expect(migrated.rivals.every((r) => r.discovered)).toBe(true)
     expect(migrated.relationships[0]!.memory).toEqual([])
     expect(migrated.relationships[0]!.name).toBeDefined()
+    // v4 → v5: 8-era value remapped, peakFame backfilled
+    expect(migrated.era).toBe('debut')
+    expect(migrated.peakFame).toBe(migrated.stats.fame)
   })
 
   it('seeds a full rival roster for a Phase 1 save that had none', () => {

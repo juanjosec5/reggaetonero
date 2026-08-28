@@ -26,7 +26,7 @@ const STAT_PANEL_MARKERS = ['Poder en vivo', 'Respeto de la industria', 'Impacto
 
 function seededCareer(years: number) {
   const rng = makeRng(99)
-  let career = createCareer({ profile: { stageName: 'MC Test', country: 'Colombia', age: 20 }, seed: 99 })
+  let career = createCareer({ profile: { stageName: 'MC Test', country: 'Colombia' }, seed: 99 })
   for (let i = 0; i < years; i++) career = simulateYear(career, rng)
   return career
 }

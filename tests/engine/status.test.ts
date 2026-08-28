@@ -4,7 +4,7 @@ import { createCareer } from '@/engine/createCareer'
 import { formatMoney, globalStatusBand, recognitionBand } from '@/engine/status'
 
 function baseCareer() {
-  return createCareer({ profile: { stageName: 'X', country: 'Colombia', age: 20 }, seed: 1 })
+  return createCareer({ profile: { stageName: 'X', country: 'Colombia' }, seed: 1 })
 }
 
 describe('formatMoney', () => {

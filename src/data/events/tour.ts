@@ -7,7 +7,7 @@ export const TOUR_EVENTS: CareerEvent[] = [
     title: 'Te ofrecen una gira corta por tu región',
     description: 'Un promotor arma diez fechas por ciudades cercanas. Los gastos de carretera corren por tu cuenta.',
     visibleRisk: 'medium',
-    condition: (c) => c.stats.fanbase >= 12 && c.era !== 'legacy',
+    condition: (c) => c.stats.fanbase >= 12 && c.era !== 'leyenda',
     weight: () => 4,
     choices: [
       {

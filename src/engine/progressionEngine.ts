@@ -3,16 +3,13 @@ import type { Rng } from '@/engine/rng'
 import { rollRange } from '@/engine/rng'
 import type { Career, Era } from '@/types/career'
 
-/** Maps a career year to its narrative era. Purely year-based for the Phase 1 MVP. */
+/** Maps a career year to its era — one per 4-year age bucket (year N ⇒ age 19 + N). */
 export function computeEra(year: number): Era {
-  if (year <= 2) return 'underground'
-  if (year <= 4) return 'first_buzz'
-  if (year <= 6) return 'breakout'
-  if (year <= 9) return 'national'
-  if (year <= 12) return 'international'
-  if (year <= 15) return 'superstar'
-  if (year <= 18) return 'reinvention'
-  return 'legacy'
+  if (year <= 4) return 'debut' // ages 20-23
+  if (year <= 8) return 'ascenso' // 24-27
+  if (year <= 12) return 'cima' // 28-31
+  if (year <= 16) return 'veterano' // 32-35
+  return 'leyenda' // 36-40
 }
 
 /**

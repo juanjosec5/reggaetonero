@@ -56,7 +56,7 @@ export const MONEY_EVENTS: CareerEvent[] = [
     title: 'Un asesor te propone invertir',
     description: 'Un asesor financiero te propone meter tus ahorros en un negocio fuera de la música.',
     visibleRisk: 'high',
-    condition: (c) => c.finances.cash >= 80,
+    condition: (c) => c.finances.cash >= 400 && c.year >= 3,
     weight: () => 3,
     choices: [
       {

@@ -40,7 +40,14 @@ export function computeLegacy(career: Career): LegacyResult {
       hiddenTraits.adaptability * 0.2,
   )
 
-  const longevity = clampStat(career.year * 5)
+  // Every career now runs a fixed 21 years, so raw length says nothing. Reward
+  // *sustained* relevance: mean fame across the run rewards a long plateau and
+  // punishes a brief peak or a late rise / early collapse.
+  const fameHistory = career.history.map((h) => h.statsSnapshot.fame)
+  const meanFame = fameHistory.length
+    ? fameHistory.reduce((sum, f) => sum + f, 0) / fameHistory.length
+    : stats.fame
+  const longevity = clampStat(meanFame * 0.7 + career.peakFame * 0.3)
   const catalogValueScore = clampStat(finances.catalogValue / 10)
 
   const legacyScore = clampStat(

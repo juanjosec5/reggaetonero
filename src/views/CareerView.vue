@@ -9,7 +9,7 @@ import MarketProgress from '@/components/MarketProgress.vue'
 import RivalPanel from '@/components/RivalPanel.vue'
 import TeamPanel from '@/components/TeamPanel.vue'
 import { getEventById } from '@/data/events'
-import { RETIREMENT_MIN_YEAR } from '@/engine/constants'
+import { MAX_CAREER_YEAR, RETIREMENT_MIN_YEAR } from '@/engine/constants'
 import { useCareerStore } from '@/stores/career'
 import type { CareerChoice, CareerEvent } from '@/types/career'
 
@@ -25,6 +25,8 @@ onMounted(() => {
 
 const career = computed(() => store.career)
 const lastYear = computed(() => career.value?.history.at(-1))
+const careerOver = computed(() => (career.value?.year ?? 0) >= MAX_CAREER_YEAR)
+const canRetire = computed(() => (career.value?.year ?? 0) >= RETIREMENT_MIN_YEAR)
 
 // The side column only appears once the player has something in it: a hire, a
 // second market broken into, or a rival a decision has actually surfaced.
@@ -95,7 +97,11 @@ function goRetire() {
         </Transition>
 
         <template v-if="!store.pendingChoice">
+          <p v-if="careerOver" class="text-sm text-neutral-400">
+            Llegaste a los 40. Es hora de cerrar el ciclo.
+          </p>
           <button
+            v-if="!careerOver"
             type="button"
             class="w-full rounded-2xl bg-fuchsia-500 px-4 py-3.5 text-sm font-semibold text-white active:scale-[0.98]"
             @click="advance"
@@ -103,9 +109,10 @@ function goRetire() {
             Avanzar al próximo año
           </button>
           <button
-            v-if="career.year >= RETIREMENT_MIN_YEAR"
+            v-if="canRetire"
             type="button"
-            class="w-full rounded-2xl bg-neutral-800 px-4 py-3.5 text-sm font-semibold text-neutral-100 active:scale-[0.98]"
+            class="w-full rounded-2xl px-4 py-3.5 text-sm font-semibold active:scale-[0.98]"
+            :class="careerOver ? 'bg-fuchsia-500 text-white' : 'bg-neutral-800 text-neutral-100'"
             @click="goRetire"
           >
             Retirarte

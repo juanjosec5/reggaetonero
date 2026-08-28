@@ -34,7 +34,7 @@ export const BUSINESS_EVENTS: CareerEvent[] = [
     title: 'Puedes lanzar tu propia marca',
     description: 'Ropa, licor o tu propio sello: tienes el nombre para montar un negocio propio.',
     visibleRisk: 'high',
-    condition: (c) => c.finances.cash >= 150 && c.attributes.business >= 45,
+    condition: (c) => c.stats.fame >= 35 && c.year >= 5 && c.finances.cash >= 150 && c.attributes.business >= 45,
     weight: () => 3,
     oncePerCareer: true,
     choices: [
@@ -89,7 +89,7 @@ export const BUSINESS_EVENTS: CareerEvent[] = [
     title: 'Un fondo quiere comprar tu catálogo',
     description: 'Te ofrecen un cheque enorme hoy a cambio de todos los derechos de tu música.',
     visibleRisk: 'high',
-    condition: (c) => c.finances.catalogValue >= 120 && c.year >= 8,
+    condition: (c) => c.finances.catalogValue >= 120 && c.year >= 10,
     weight: () => 2,
     oncePerCareer: true,
     choices: [

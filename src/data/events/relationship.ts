@@ -66,7 +66,7 @@ export const RELATIONSHIP_EVENTS: CareerEvent[] = [
     title: 'Un veterano te toma bajo su ala',
     description: 'Un artista de la vieja escuela te ofrece consejo y contactos sin pedir nada a cambio.',
     visibleRisk: 'low',
-    condition: (c) => c.year >= 2 && c.year <= 8,
+    condition: (c) => c.year >= 2 && c.year <= 10,
     weight: () => 3,
     oncePerCareer: true,
     choices: [
