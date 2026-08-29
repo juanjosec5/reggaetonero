@@ -65,14 +65,14 @@ describe('verdict distribution (balance regression guard)', () => {
     const counts: Record<string, number> = {}
     const N = 200
     for (let s = 0; s < N; s++) {
-      const v = playToRetirement(s * 13 + 1, 13).legacy!.verdictId
+      const v = playToRetirement(s * 13 + 1, 14).legacy!.verdictId
       counts[v] = (counts[v] ?? 0) + 1
     }
     const distinct = Object.keys(counts).length
     const topShare = Math.max(...Object.values(counts)) / N
 
-    // Over a full career (22 → 35) with varied choices, at least 5 of the 7
-    // verdicts should show up and none should swallow the field.
+    // A full career is 14 simulated years (22 → 35). With varied choices, at
+    // least 5 of the 7 verdicts should show up and none should swallow the field.
     expect(distinct).toBeGreaterThanOrEqual(5)
     expect(topShare).toBeLessThan(0.45)
   })

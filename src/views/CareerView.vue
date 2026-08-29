@@ -107,7 +107,7 @@ function nextAward() {
 
         <template v-if="!store.pendingChoice">
           <p v-if="careerOver" class="text-sm text-neutral-400">
-            Llegaste a los 40. Es hora de cerrar el ciclo.
+            Llegaste a los 35. Es hora de cerrar el ciclo.
           </p>
           <button
             v-if="!careerOver"

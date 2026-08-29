@@ -34,4 +34,12 @@ describe('CareerTable', () => {
     const wrapper = mount(CareerTable, { props: { career: playedCareer(3) } })
     expect(wrapper.text()).toContain('Medellín')
   })
+
+  it('fills the age-22 first row from year 1 (no off-by-one gap)', () => {
+    const wrapper = mount(CareerTable, { props: { career: playedCareer(1) } })
+    const row0 = wrapper.findAll('tbody tr')[0]!
+    expect(row0.text()).toContain('22')
+    expect(row0.text()).not.toContain('—') // played, not a placeholder
+    expect(row0.text()).toContain('ahora')
+  })
 })

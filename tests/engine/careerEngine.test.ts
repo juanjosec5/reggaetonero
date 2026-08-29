@@ -44,6 +44,6 @@ describe('simulateYear', () => {
       career = simulateYear(career, rng)
     }
     expect(career.history).toHaveLength(5)
-    expect(career.year).toBe(6)
+    expect(career.year).toBe(5) // fresh career seeds at year 0, so 5 sims ⇒ year 5
   })
 })

@@ -136,4 +136,60 @@ export const MEDIA_EVENTS: CareerEvent[] = [
       },
     ],
   },
+  {
+    id: 'media_first_cover',
+    category: 'media',
+    title: 'Tu primera portada',
+    description: 'Una revista de música te ofrece la portada del mes. El fotógrafo tiene una idea de imagen que no es del todo tú.',
+    visibleRisk: 'low',
+    condition: (c) => c.stats.fame >= 20 && c.stats.fame < 55,
+    weight: () => 4,
+    choices: [
+      {
+        text: 'Dejarte guiar, ellos saben vender',
+        style: 'commercial',
+        effects: [
+          { target: 'stats.hype', min: 3, max: 8 },
+          { target: 'hiddenTraits.authenticity', min: -3, max: 0 },
+        ],
+      },
+      {
+        text: 'Imponer tu propia estética',
+        style: 'creative',
+        effects: [
+          { target: 'attributes.originality', min: 2, max: 5 },
+          { target: 'stats.credibility', min: 1, max: 4 },
+          { target: 'stats.hype', min: 0, max: 3 },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'media_state_of_the_genre',
+    category: 'media',
+    title: 'Te quieren como la voz de "la vieja escuela"',
+    description: 'Un pódcast grande te invita a hablar de cómo era el género antes y a opinar de lo que suena ahora. Saben que va a dar titulares.',
+    visibleRisk: 'medium',
+    condition: (c) => c.age >= 31 && c.stats.credibility >= 25,
+    weight: () => 3,
+    choices: [
+      {
+        text: 'Decir lo que piensas, sin filtro',
+        style: 'ambitious',
+        effects: [
+          { target: 'stats.hype', min: 3, max: 8 },
+          { target: 'stats.credibility', min: -2, max: 5 },
+          { target: 'hiddenTraits.ego', min: 1, max: 4 },
+        ],
+      },
+      {
+        text: 'Tender puentes con la nueva generación',
+        style: 'loyal',
+        effects: [
+          { target: 'stats.culturalImpact', min: 2, max: 6 },
+          { target: 'hiddenTraits.adaptability', min: 2, max: 5 },
+        ],
+      },
+    ],
+  },
 ]

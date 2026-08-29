@@ -2,6 +2,7 @@ import type { CareerEvent } from '@/types/career'
 
 import { BUSINESS_EVENTS } from './business'
 import { COLLABORATION_EVENTS } from './collaboration'
+import { COMEUP_EVENTS } from './comeup'
 import { COMPETITION_EVENTS } from './competition'
 import { CONTROVERSY_EVENTS } from './controversy'
 import { HEALTH_EVENTS } from './health'
@@ -15,6 +16,7 @@ import { SETBACK_EVENTS } from './setbacks'
 import { TOUR_EVENTS } from './tour'
 
 export const ALL_EVENTS: CareerEvent[] = [
+  ...COMEUP_EVENTS,
   ...MUSIC_EVENTS,
   ...LABEL_EVENTS,
   ...COLLABORATION_EVENTS,

@@ -34,6 +34,40 @@ describe('pickEligibleEvent', () => {
       expect(event?.id).not.toBe('label_major_three_album_deal')
     }
   })
+
+  it('damps an event that fired last year vs. a never-fired peer', () => {
+    const base = createCareer({ profile: baseProfile, seed: 1 })
+    base.year = 5
+
+    const withoutHistory = { ...base, history: [] as typeof base.history }
+    const withRecent = {
+      ...base,
+      history: [{ year: 4, eventId: 'music_trending_sound_pivot' } as (typeof base.history)[number]],
+    }
+
+    const hits = (career: typeof base) => {
+      let n = 0
+      for (let s = 0; s < 400; s++) {
+        if (pickEligibleEvent(career, makeRng(s))?.id === 'music_trending_sound_pivot') n++
+      }
+      return n
+    }
+
+    expect(hits(withRecent)).toBeLessThan(hits(withoutHistory))
+  })
+
+  it('still returns an event when the only eligible ones fired last year', () => {
+    const career = createCareer({ profile: baseProfile, seed: 1 })
+    career.year = 5
+    // recencyFactor floors at 0.15, never 0 - selection must not collapse.
+    career.history = [
+      { year: 4, eventId: 'music_trending_sound_pivot' },
+      { year: 4, eventId: 'music_writers_block' },
+    ] as typeof career.history
+    for (const seed of [1, 2, 3, 4, 5]) {
+      expect(pickEligibleEvent(career, makeRng(seed))).toBeDefined()
+    }
+  })
 })
 
 describe('selectYearEvent', () => {

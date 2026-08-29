@@ -102,4 +102,40 @@ export const MONEY_EVENTS: CareerEvent[] = [
       },
     ],
   },
+  {
+    id: 'money_first_real_royalty',
+    category: 'money',
+    title: 'El primer cheque de royalties con ceros',
+    description: 'Llega la liquidación del semestre y por primera vez es dinero de verdad. Puedes vivir de esto un rato — o hacerlo crecer.',
+    visibleRisk: 'medium',
+    condition: (c) => c.year >= 4 && c.year <= 9 && c.stats.fame >= 25,
+    weight: () => 4,
+    choices: [
+      {
+        text: 'Reinvertirlo todo en la próxima campaña',
+        style: 'ambitious',
+        effects: [
+          { target: 'stats.hype', min: 4, max: 9 },
+          { target: 'finances.cash', min: -10, max: 20 },
+        ],
+      },
+      {
+        text: 'Comprarte por fin algo tuyo',
+        style: 'commercial',
+        effects: [
+          { target: 'finances.cash', min: -20, max: 10 },
+          { target: 'hiddenTraits.ego', min: 1, max: 4 },
+          { target: 'stats.hype', min: 1, max: 4 },
+        ],
+      },
+      {
+        text: 'Guardarlo y montar un fondo',
+        style: 'safe',
+        effects: [
+          { target: 'finances.cash', min: 40, max: 90 },
+          { target: 'attributes.business', min: 1, max: 4 },
+        ],
+      },
+    ],
+  },
 ]

@@ -8,14 +8,7 @@ import { homeMarketId, initialMarkets } from '@/data/markets'
 import { OPPORTUNITIES } from '@/data/opportunities'
 import type { OpportunityId } from '@/data/opportunities'
 import { getOpportunity } from '@/data/opportunities'
-import {
-  clampAttribute,
-  clampStat,
-  clampTrait,
-  STARTING_AGE,
-  STARTING_CASH,
-  STARTING_YEAR,
-} from '@/engine/constants'
+import { clampAttribute, clampStat, clampTrait, STARTING_AGE, STARTING_CASH } from '@/engine/constants'
 import { makeRng, rollRange } from '@/engine/rng'
 import { CURRENT_SAVE_VERSION } from '@/types/career'
 import type {
@@ -194,8 +187,8 @@ export function createCareer(input: CreateCareerInput): Career {
     pendingEffects: [],
     firedEventIds: [],
 
-    age: STARTING_AGE,
-    year: STARTING_YEAR,
+    age: STARTING_AGE - 1,
+    year: 0, // years completed; 0 = not yet simulated. `startCareer` runs year 1 immediately.
     era: 'debut',
     awards: [],
     peakFame: 0,

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import { ARCHETYPES } from '@/data/archetypes'
 import { GENRES } from '@/data/genres'
+import { STARTING_AGE } from '@/engine/constants'
 import { createCareer } from '@/engine/createCareer'
 import type { CreationInput } from '@/types/career'
 
@@ -63,7 +64,11 @@ describe('createCareer', () => {
     const career = createCareer({ profile: baseProfile, seed: 7 })
     expect(career.status).toBe('active')
     expect(career.era).toBe('debut')
-    expect(career.year).toBe(1)
+    // A fresh career is seeded pre-simulation at year 0 / age 21; the store runs
+    // year 1 immediately so the player lands inside a real age-22 year.
+    expect(career.year).toBe(0)
+    expect(career.age).toBe(STARTING_AGE - 1)
+    expect(career.artist.age).toBe(STARTING_AGE)
     expect(career.releases).toEqual([])
     expect(career.history).toEqual([])
     expect(career.finances.ownershipPercent).toBe(100)

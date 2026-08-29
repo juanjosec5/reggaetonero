@@ -214,4 +214,64 @@ export const TOUR_EVENTS: CareerEvent[] = [
       },
     ],
   },
+  {
+    id: 'tour_support_slot_offer',
+    category: 'tour',
+    title: 'Te ofrecen abrir para un artista grande',
+    description: 'Un nombre pesado te quiere de telonero en su gira. Tocas para su público, no el tuyo, y cobras poco — pero te ven miles cada noche.',
+    visibleRisk: 'medium',
+    condition: (c) => c.stats.fame >= 22 && c.stats.fame < 55 && c.era !== 'leyenda',
+    weight: () => 4,
+    choices: [
+      {
+        text: 'Aceptar y robarte cada noche',
+        style: 'ambitious',
+        effects: [
+          { target: 'stats.fanbase', min: 4, max: 10 },
+          { target: 'stats.livePower', min: 3, max: 7 },
+          { target: 'finances.cash', min: -20, max: 10 },
+          { target: 'hiddenTraits.ego', min: -2, max: 2 },
+        ],
+      },
+      {
+        text: 'Pedir headline propio en salas chicas',
+        style: 'loyal',
+        effects: [
+          { target: 'stats.credibility', min: 2, max: 6 },
+          { target: 'stats.livePower', min: 1, max: 4 },
+          { target: 'stats.hype', min: -3, max: 1 },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'tour_anniversary_run',
+    category: 'tour',
+    title: 'Una gira aniversario de tu primer disco',
+    description: 'Un promotor quiere celebrar los años de tu debut tocándolo entero, ciudad por ciudad. Es nostalgia pura y paga muy bien.',
+    visibleRisk: 'low',
+    condition: (c) => c.age >= 31 && c.stats.catalogStrength >= 25,
+    weight: () => 3,
+    choices: [
+      {
+        text: 'Montar la gira aniversario',
+        style: 'commercial',
+        effects: [
+          { target: 'finances.cash', min: 40, max: 110 },
+          { target: 'record.ticketsSold', min: 30_000, max: 90_000 },
+          { target: 'stats.livePower', min: 2, max: 6 },
+          { target: 'stats.hype', min: -4, max: 2 },
+        ],
+      },
+      {
+        text: 'Solo si abres con material nuevo',
+        style: 'creative',
+        effects: [
+          { target: 'stats.catalogStrength', min: 2, max: 6 },
+          { target: 'stats.credibility', min: 1, max: 4 },
+          { target: 'finances.cash', min: 10, max: 40 },
+        ],
+      },
+    ],
+  },
 ]

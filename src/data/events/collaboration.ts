@@ -83,4 +83,40 @@ export const COLLABORATION_EVENTS: CareerEvent[] = [
       },
     ],
   },
+  {
+    id: 'collab_posse_cut',
+    category: 'collaboration',
+    title: 'Te llaman para un tema con medio género encima',
+    description: 'Un productor arma un tema-evento con seis o siete artistas. Vas a compartir el crédito con todos, y tu verso puede quedar enterrado o robarse la canción.',
+    visibleRisk: 'medium',
+    condition: (c) => c.stats.fame >= 20 && c.stats.fame < 60,
+    weight: () => 3,
+    choices: [
+      {
+        text: 'Entrar y tirar tu mejor verso',
+        style: 'ambitious',
+        effects: [
+          { target: 'stats.hype', min: 3, max: 8 },
+          { target: 'attributes.writing', min: 1, max: 4 },
+          { target: 'stats.industryRespect', min: 1, max: 4 },
+        ],
+      },
+      {
+        text: 'Pedir cerrar el tema o nada',
+        style: 'commercial',
+        effects: [
+          { target: 'hiddenTraits.ego', min: 1, max: 4 },
+          { target: 'stats.hype', min: -2, max: 4 },
+        ],
+      },
+      {
+        text: 'Pasar, prefieres que tu nombre pese solo',
+        style: 'loyal',
+        effects: [
+          { target: 'stats.credibility', min: 1, max: 4 },
+          { target: 'hiddenTraits.authenticity', min: 1, max: 3 },
+        ],
+      },
+    ],
+  },
 ]

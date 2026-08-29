@@ -30,6 +30,14 @@ describe('career store', () => {
     expect(store.hasSave()).toBe(true)
   })
 
+  it('lands the player inside a simulated year 1 (age 22)', () => {
+    const store = useCareerStore()
+    store.startCareer(profile, 42)
+    expect(store.career?.year).toBe(1)
+    expect(store.career?.age).toBe(22)
+    expect(store.career?.history).toHaveLength(1)
+  })
+
   it('blocks advanceYear while a decision is pending', () => {
     const store = useCareerStore()
     store.startCareer(profile, 42)

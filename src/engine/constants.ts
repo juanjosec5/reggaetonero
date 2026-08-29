@@ -34,8 +34,11 @@ export const BAND_THRESHOLDS = {
 } as const
 
 export const STARTING_CASH = 500
-export const STARTING_YEAR = 1
-/** Everyone starts at 22; career year N ⇒ age 21 + N. */
+/**
+ * Everyone starts at 22; career year N ⇒ age 21 + N. A fresh career is seeded at
+ * `year: 0` (the pre-sim state) and the store simulates year 1 immediately, so
+ * the player always lands inside a real age-22 year.
+ */
 export const STARTING_AGE = 22
 /** Last playable career year (age 35) — after this the career is forced to end. */
 export const MAX_CAREER_YEAR = 14

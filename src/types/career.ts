@@ -290,8 +290,8 @@ export interface CareerEvent {
 }
 
 // ---- Timeline ----
-// One era per 4-year age bucket, matching the 5 rows of the career table:
-// debut 20-23 · ascenso 24-27 · cima 28-31 · veterano 32-35 · leyenda 36-40.
+// One era per stage of the 22 → 35 arc:
+// debut 22-24 · ascenso 25-27 · cima 28-30 · veterano 31-33 · leyenda 34-35.
 export type Era = 'debut' | 'ascenso' | 'cima' | 'veterano' | 'leyenda'
 
 export interface CareerYear {

@@ -21,9 +21,28 @@ function isEligible(career: Career, event: CareerEvent): boolean {
   return event.condition(career)
 }
 
+// Weight multiplier for how recently a repeatable event last fired, so the same
+// prompt doesn't come back year after year. Index 0 = fired last year.
+const RECENCY_DECAY = [0.15, 0.4, 0.7] as const
+
+/** 1 if the event never fired or fired 4+ years ago, otherwise a decayed factor. */
+function recencyFactor(career: Career, eventId: string): number {
+  const h = career.history
+  // `history` here is last year's and earlier - this year's entry isn't pushed yet.
+  for (let i = h.length - 1; i >= 0; i--) {
+    if (h[i]?.eventId === eventId) {
+      return RECENCY_DECAY[h.length - 1 - i] ?? 1
+    }
+  }
+  return 1
+}
+
 export function pickEligibleEvent(career: Career, rng: Rng): CareerEvent | undefined {
   const eligible = ALL_EVENTS.filter((event) => isEligible(career, event))
-  return weightedPick(eligible, (event) => event.weight(career), rng)
+  // The decay floor is 0.15 (never 0), so this can only return undefined when
+  // nothing is eligible - same as before. No fallback roll: a second weightedPick
+  // would consume an extra rng() and desync the year's stream.
+  return weightedPick(eligible, (event) => event.weight(career) * recencyFactor(career, event.id), rng)
 }
 
 export interface YearEventSelection {

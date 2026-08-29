@@ -36,6 +36,13 @@ const CHOICE_SALT = 2
  * - v5 → v6: new record counters, `residence`, per-year snapshots.
  * - v6 → v7: rebuild the `awards` log from the existing counters.
  * - v7 → v8: career arc shortened to 22 → 35; re-derive eras.
+ *
+ * The year-1 off-by-one fix (fresh careers now simulate year 1 immediately) is
+ * deliberately NOT migrated: a v8 save's `history` starts at year 2, and a
+ * fabricated year-1 entry would feed invented snapshots into `computeLegacy`'s
+ * mean-fame / longevity averages and skew the final verdict. An in-progress old
+ * save just keeps one blank first row in the career table; every new career is
+ * correct. No version bump.
  */
 export function migrateSave(raw: Career): Career {
   const career = raw as Career & { saveVersion?: number }
@@ -139,9 +146,21 @@ export const useCareerStore = defineStore('career', () => {
     return eventId ? getEventById(eventId) : undefined
   })
 
+  // Simulates the next career year with the per-year derived seed and persists.
+  // Shared by `startCareer` (year 0 → 1) and `advanceYear` so the two can never
+  // drift on how the year is seeded.
+  function runYear() {
+    if (!career.value) return
+    const rng = makeRng(hashSeed(career.value.seed, career.value.year + 1, ADVANCE_SALT))
+    career.value = simulateYear(toRaw(career.value), rng)
+    save()
+  }
+
   function startCareer(profile: CreationInput, seed: number, options: { mode?: CareerMode } = {}) {
     career.value = createCareer({ profile, seed, mode: options.mode ?? 'quick' })
-    save()
+    // A fresh career is seeded at year 0; simulate year 1 right away so the
+    // player lands inside a real age-22 year with its decision already pending.
+    runYear()
   }
 
   const canAdvance = computed(
@@ -152,9 +171,7 @@ export const useCareerStore = defineStore('career', () => {
   function advanceYear() {
     if (!career.value || career.value.status !== 'active' || pendingChoice.value) return
     if (career.value.year >= MAX_CAREER_YEAR) return
-    const rng = makeRng(hashSeed(career.value.seed, career.value.year + 1, ADVANCE_SALT))
-    career.value = simulateYear(toRaw(career.value), rng)
-    save()
+    runYear()
   }
 
   function applyChoice(choice: CareerChoice) {

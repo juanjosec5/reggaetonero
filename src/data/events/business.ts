@@ -201,4 +201,68 @@ export const BUSINESS_EVENTS: CareerEvent[] = [
       },
     ],
   },
+  {
+    id: 'biz_endorsement_pick',
+    category: 'business',
+    title: 'Dos marcas, un solo trato',
+    description: 'Te llegan dos ofertas de patrocinio a la vez: una bebida energética que paga fuerte y una marca de tenis de barrio que paga poco pero es respetada.',
+    visibleRisk: 'low',
+    condition: (c) => c.stats.fame >= 25 && c.stats.fame < 60,
+    weight: () => 4,
+    choices: [
+      {
+        text: 'La que paga más',
+        style: 'commercial',
+        effects: [
+          { target: 'finances.cash', min: 30, max: 75 },
+          { target: 'hiddenTraits.authenticity', min: -4, max: -1 },
+        ],
+      },
+      {
+        text: 'La de barrio, aunque pague poco',
+        style: 'loyal',
+        effects: [
+          { target: 'stats.credibility', min: 3, max: 7 },
+          { target: 'hiddenTraits.authenticity', min: 1, max: 4 },
+          { target: 'finances.cash', min: 5, max: 20 },
+        ],
+      },
+      {
+        text: 'Estirar la negociación para que suban las dos',
+        style: 'ambitious',
+        effects: [
+          { target: 'attributes.business', min: 2, max: 5 },
+          { target: 'finances.cash', min: -5, max: 40 },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'biz_publishing_slice',
+    category: 'business',
+    title: 'Vender un pedazo de tu publishing',
+    description: 'Una editora te ofrece un cheque grande hoy por una parte de lo que tus canciones generen de aquí en adelante como compositor.',
+    visibleRisk: 'high',
+    condition: (c) => c.age >= 30 && c.finances.catalogValue >= 200,
+    weight: () => 3,
+    choices: [
+      {
+        text: 'Firmar, el dinero ahora vale más',
+        style: 'commercial',
+        effects: [
+          { target: 'finances.cash', min: 120, max: 260 },
+          { target: 'finances.ownershipPercent', min: -12, max: -5 },
+          { target: 'hiddenTraits.riskTolerance', min: -2, max: 1 },
+        ],
+      },
+      {
+        text: 'Quedarte con todo lo tuyo',
+        style: 'safe',
+        effects: [
+          { target: 'finances.ownershipPercent', min: 1, max: 4 },
+          { target: 'stats.industryRespect', min: 1, max: 4 },
+        ],
+      },
+    ],
+  },
 ]
