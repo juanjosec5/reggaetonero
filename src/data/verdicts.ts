@@ -21,8 +21,8 @@ export const VERDICTS: VerdictDefinition[] = [
     description: 'Cada disco que soltaste terminó sonando en todos lados.',
     score: (legacy, career) =>
       legacy.commercialScore * 1.3 -
-      legacy.artisticScore * 0.45 +
-      Math.max(0, legacy.commercialScore - 50) * 0.9 +
+      legacy.artisticScore * 0.3 +
+      Math.max(0, legacy.commercialScore - 42) * 1.15 +
       career.record.smashHits * 8 +
       career.record.hits * 3,
   },
@@ -43,7 +43,7 @@ export const VERDICTS: VerdictDefinition[] = [
     description: 'Tu nombre va a seguir sonando mucho después de que te retiraste.',
     // Reserved for the rare career that stayed great for years, across axes.
     score: (legacy, career) =>
-      Math.max(0, legacy.longevityScore - 49) * 2.8 +
+      Math.max(0, legacy.longevityScore - 54) * 3 +
       career.stats.culturalImpact * 0.25 +
       career.peakFame * 0.12 +
       establishedMarkets(career) * 2,
@@ -54,11 +54,11 @@ export const VERDICTS: VerdictDefinition[] = [
     description: 'No hubo tarima ni fiesta que no fuera tuya.',
     // The stage/street king - not the studio craftsman.
     score: (legacy, career) =>
-      legacy.liveScore * 1.4 +
-      career.stats.culturalImpact * 0.2 +
+      legacy.liveScore * 1.55 +
+      career.stats.culturalImpact * 0.28 +
       career.hiddenTraits.authenticity * 0.2 +
       establishedMarkets(career) * 3 -
-      legacy.artisticScore * 0.4,
+      legacy.artisticScore * 0.25,
   },
   {
     id: 'el_artista_de_culto',

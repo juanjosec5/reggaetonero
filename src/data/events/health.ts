@@ -120,4 +120,41 @@ export const HEALTH_EVENTS: CareerEvent[] = [
       },
     ],
   },
+  {
+    id: 'health_grind_catches_up',
+    category: 'health',
+    title: 'El ritmo te está pasando factura',
+    description: 'Entre estudio, promo y fechas llevas meses durmiendo cuatro horas. El equipo médico te dice que pares antes de que algo pare por ti.',
+    visibleRisk: 'medium',
+    condition: (c) => c.year >= 4 && c.year <= 10 && c.stats.hype >= 25,
+    weight: () => 3,
+    choices: [
+      {
+        text: 'Tomarte un trimestre real de descanso',
+        style: 'safe',
+        effects: [
+          { target: 'hiddenTraits.resilience', min: 3, max: 7 },
+          { target: 'stats.hype', min: -8, max: -3 },
+          { target: 'attributes.talent', min: 1, max: 3 },
+        ],
+      },
+      {
+        text: 'Bajar el ritmo solo un poco',
+        style: 'safe',
+        effects: [
+          { target: 'hiddenTraits.discipline', min: 1, max: 4 },
+          { target: 'stats.hype', min: -3, max: 0 },
+        ],
+      },
+      {
+        text: 'Aguantar, el momento es ahora',
+        style: 'ambitious',
+        effects: [
+          { target: 'stats.hype', min: 2, max: 6 },
+          { target: 'hiddenTraits.resilience', min: -5, max: -1 },
+          { target: 'hiddenTraits.ambition', min: 1, max: 3 },
+        ],
+      },
+    ],
+  },
 ]

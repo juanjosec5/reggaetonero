@@ -246,4 +246,40 @@ export const MANAGEMENT_EVENTS: CareerEvent[] = [
       },
     ],
   },
+  {
+    id: 'mgmt_label_takes_a_meeting',
+    category: 'management',
+    title: 'Un sello grande te cita a una reunión',
+    description: 'No es una oferta todavía. Quieren conocerte, ver de qué vas y medir cuánto pedirías. Cómo llegues a esa sala marca el resto.',
+    visibleRisk: 'low',
+    condition: (c) => !c.team.label && c.stats.hype >= 22 && c.stats.hype < 55,
+    weight: () => 4,
+    choices: [
+      {
+        text: 'Ir con cifras y un plan claro',
+        style: 'ambitious',
+        effects: [
+          { target: 'attributes.business', min: 2, max: 5 },
+          { target: 'stats.industryRespect', min: 2, max: 6 },
+        ],
+      },
+      {
+        text: 'Ir de frío, a ver qué ofrecen',
+        style: 'safe',
+        effects: [
+          { target: 'stats.industryRespect', min: -2, max: 3 },
+          { target: 'hiddenTraits.patience', min: 1, max: 3 },
+        ],
+      },
+      {
+        text: 'Mandar a tu gente y hacerte el difícil',
+        style: 'commercial',
+        effects: [
+          { target: 'stats.hype', min: 1, max: 5 },
+          { target: 'hiddenTraits.ego', min: 1, max: 4 },
+          { target: 'stats.industryRespect', min: -3, max: 2 },
+        ],
+      },
+    ],
+  },
 ]

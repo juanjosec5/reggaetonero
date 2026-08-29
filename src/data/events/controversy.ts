@@ -85,4 +85,40 @@ export const CONTROVERSY_EVENTS: CareerEvent[] = [
       },
     ],
   },
+  {
+    id: 'controversy_old_post_resurfaces',
+    category: 'controversy',
+    title: 'Desentierran algo que publicaste hace años',
+    description: 'Cuando eras un desconocido escribiste algo feo en redes. Ahora que te miran, alguien lo encontró y lo está moviendo.',
+    visibleRisk: 'medium',
+    condition: (c) => c.year >= 4 && c.stats.fame >= 30,
+    weight: () => 3,
+    choices: [
+      {
+        text: 'Disculparte de frente y sin excusas',
+        style: 'safe',
+        effects: [
+          { target: 'stats.credibility', min: -4, max: 2 },
+          { target: 'hiddenTraits.resilience', min: 2, max: 5 },
+          { target: 'stats.hype', min: -3, max: 2 },
+        ],
+      },
+      {
+        text: 'Contextualizar: eras otra persona',
+        style: 'ambitious',
+        effects: [
+          { target: 'stats.credibility', min: -6, max: 1 },
+          { target: 'stats.hype', min: 1, max: 5 },
+        ],
+      },
+      {
+        text: 'No decir nada y dejar que se apague',
+        style: 'safe',
+        effects: [
+          { target: 'stats.hype', min: -5, max: -1 },
+          { target: 'hiddenTraits.patience', min: 1, max: 4 },
+        ],
+      },
+    ],
+  },
 ]

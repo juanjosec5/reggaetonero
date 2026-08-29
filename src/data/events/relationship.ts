@@ -182,7 +182,7 @@ export const RELATIONSHIP_EVENTS: CareerEvent[] = [
     title: 'Un pibe nuevo quiere tu co-sign',
     description: 'Un artista diez años más joven te manda un tema para que le tires un verso. Podría ser el próximo grande — o nada.',
     visibleRisk: 'low',
-    condition: (c) => c.age >= 32 && (c.stats.industryRespect >= 22 || c.stats.fame >= 45),
+    condition: (c) => c.age >= 30 && (c.stats.industryRespect >= 22 || c.stats.fame >= 45),
     weight: () => 3,
     choices: [
       {
@@ -206,6 +206,72 @@ export const RELATIONSHIP_EVENTS: CareerEvent[] = [
         text: 'Ignorarlo, que se lo gane',
         style: 'ambitious',
         effects: [{ target: 'hiddenTraits.ego', min: 1, max: 4 }],
+      },
+    ],
+  },
+  {
+    id: 'rel_day_one_cant_keep_up',
+    category: 'relationship',
+    title: 'Tu amigo del día uno se quedó atrás',
+    description: 'El pana que te grababa desde el principio ya no da la talla para donde vas, pero sigue ahí, en la nómina, esperando que no lo notes.',
+    visibleRisk: 'medium',
+    condition: (c) => c.year >= 4 && c.stats.fame >= 25,
+    weight: () => 3,
+    choices: [
+      {
+        text: 'Mantenerlo cerca aunque cueste',
+        style: 'loyal',
+        effects: [
+          { target: 'hiddenTraits.loyalty', min: 3, max: 7 },
+          { target: 'finances.cash', min: -25, max: -8 },
+          { target: 'attributes.productionSense', min: -2, max: 1 },
+        ],
+      },
+      {
+        text: 'Moverlo a otro rol y traer un profesional',
+        style: 'safe',
+        effects: [
+          { target: 'attributes.business', min: 1, max: 4 },
+          { target: 'hiddenTraits.loyalty', min: -3, max: 0 },
+          { target: 'stats.industryRespect', min: 1, max: 4 },
+        ],
+      },
+      {
+        text: 'Cortar por lo sano',
+        style: 'ambitious',
+        effects: [
+          { target: 'hiddenTraits.loyalty', min: -6, max: -2 },
+          { target: 'hiddenTraits.discipline', min: 1, max: 4 },
+          { target: 'stats.credibility', min: -3, max: 0 },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'rel_protege_forgets_you',
+    category: 'relationship',
+    title: 'Al que ayudaste ya no te menciona',
+    description: 'Un artista que empujaste cuando nadie lo miraba ahora llena sitios y en las entrevistas cuenta su historia sin tu nombre.',
+    visibleRisk: 'low',
+    condition: (c) => c.age >= 32 && c.stats.industryRespect >= 20,
+    weight: () => 3,
+    choices: [
+      {
+        text: 'Dejarlo pasar, tú sabes lo que hiciste',
+        style: 'safe',
+        effects: [
+          { target: 'hiddenTraits.patience', min: 2, max: 5 },
+          { target: 'stats.credibility', min: 1, max: 3 },
+        ],
+      },
+      {
+        text: 'Recordárselo en público',
+        style: 'ambitious',
+        effects: [
+          { target: 'stats.hype', min: 2, max: 6 },
+          { target: 'hiddenTraits.ego', min: 2, max: 5 },
+          { target: 'stats.credibility', min: -3, max: 1 },
+        ],
       },
     ],
   },

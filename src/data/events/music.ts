@@ -225,7 +225,7 @@ export const MUSIC_EVENTS: CareerEvent[] = [
     title: 'Ya no suenas a lo de ahora',
     description: 'La radio pide otra cosa y tu último disco pasó sin ruido. Tienes que decidir qué artista eres a esta altura.',
     visibleRisk: 'high',
-    condition: (c) => c.age >= 33 && c.stats.hype < 45,
+    condition: (c) => c.age >= 30 && c.stats.hype < 45,
     weight: () => 3,
     choices: [
       {

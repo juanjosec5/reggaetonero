@@ -15,15 +15,15 @@ function playedCareer(years: number) {
 }
 
 describe('CareerTable', () => {
-  it('renders one row per career year (age 20 → 40), with the current year flagged', () => {
-    const career = playedCareer(5) // age 25
+  it('renders one row per career year (age 22 → 35), with the current year flagged', () => {
+    const career = playedCareer(5) // age 27
     const wrapper = mount(CareerTable, { props: { career } })
 
     const rows = wrapper.findAll('tbody tr')
-    expect(rows).toHaveLength(MAX_CAREER_YEAR) // 21 rows, ages 20-40
+    expect(rows).toHaveLength(MAX_CAREER_YEAR) // 14 rows, ages 22-35
 
-    expect(rows[0]!.text()).toContain('20')
-    expect(rows[20]!.text()).toContain('40')
+    expect(rows[0]!.text()).toContain('22')
+    expect(rows[13]!.text()).toContain('35')
     expect(wrapper.text()).toContain('ahora')
 
     // Year 6 onward is unplayed -> placeholders.
@@ -33,5 +33,13 @@ describe('CareerTable', () => {
   it('shows the home city for played years before the artist moves', () => {
     const wrapper = mount(CareerTable, { props: { career: playedCareer(3) } })
     expect(wrapper.text()).toContain('Medellín')
+  })
+
+  it('fills the age-22 first row from year 1 (no off-by-one gap)', () => {
+    const wrapper = mount(CareerTable, { props: { career: playedCareer(1) } })
+    const row0 = wrapper.findAll('tbody tr')[0]!
+    expect(row0.text()).toContain('22')
+    expect(row0.text()).not.toContain('—') // played, not a placeholder
+    expect(row0.text()).toContain('ahora')
   })
 })

@@ -162,7 +162,7 @@ export const COMPETITION_EVENTS: CareerEvent[] = [
     title: 'Tu mayor rival se está apagando',
     description: 'El artista con el que competiste toda la carrera lleva un par de años en caída.',
     visibleRisk: 'low',
-    condition: (c) => c.rivals.some((r) => r.fame < c.stats.fame - 20) && c.year >= 9,
+    condition: (c) => c.rivals.some((r) => r.fame < c.stats.fame - 20) && c.year >= 6,
     weight: () => 2,
     choices: [
       {
