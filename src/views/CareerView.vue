@@ -94,7 +94,7 @@ function nextAward() {
     <CareerHeader :career="career" />
     <AwardShelf :awards="career.awards" />
 
-    <div class="flex flex-col gap-6 md:grid md:grid-cols-[minmax(0,17rem)_minmax(0,1fr)] md:items-start">
+    <div class="flex flex-col gap-6 md:grid md:grid-cols-[1fr_2fr] md:items-start">
       <!-- Decisions / actions -->
       <div class="flex flex-col gap-3">
         <DecisionCard

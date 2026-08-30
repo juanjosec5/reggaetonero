@@ -16,8 +16,12 @@ const rows = computed(() => {
   return Array.from({ length: MAX_CAREER_YEAR }, (_, i) => {
     const year = i + 1
     const entry = byYear.get(year)
-    if (!entry) {
-      return { year, age: STARTING_AGE + i, played: false, current: false }
+    const current = year === props.career.year && props.career.status === 'active'
+    // A year only shows on the table once its decision is in (or it had none) -
+    // a fresh career sits on year 1 with the row still blank until you choose.
+    const resolved = entry && (Boolean(entry.choiceTaken) || !entry.eventId)
+    if (!entry || !resolved) {
+      return { year, age: entry?.age ?? STARTING_AGE + i, played: false, current }
     }
     const prev = byYear.get(year - 1)?.recordSnapshot ?? ZERO_DELTA
     const d = recordDelta(entry.recordSnapshot, prev)
@@ -25,7 +29,7 @@ const rows = computed(() => {
       year,
       age: entry.age,
       played: true,
-      current: year === props.career.year && props.career.status === 'active',
+      current,
       city: entry.residence || startCity,
       stars: recordStars(d, entry.statsSnapshot),
       tickets: d.ticketsSold > 0 ? formatCount(d.ticketsSold) : '·',
