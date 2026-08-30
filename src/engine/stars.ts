@@ -1,4 +1,4 @@
-import type { MusicCareerRecord } from '@/types/career'
+import type { CareerStats, MusicCareerRecord } from '@/types/career'
 
 /** The achievement counters a year's star rating is derived from. */
 export type RecordDelta = Pick<
@@ -25,29 +25,42 @@ export function recordDelta(end: MusicCareerRecord, start: RecordDelta): RecordD
 }
 
 const STAR_BANDS: [max: number, stars: number][] = [
-  [1, 0],
-  [3, 0.5],
-  [7, 1],
-  [12, 1.5],
-  [19, 2],
-  [28, 2.5],
-  [40, 3],
-  [55, 3.5],
-  [74, 4],
-  [98, 4.5],
+  [3, 0],
+  [13, 0.5],
+  [22, 1],
+  [31, 1.5],
+  [42, 2],
+  [56, 2.5],
+  [72, 3],
+  [90, 3.5],
+  [112, 4],
+  [138, 4.5],
   [Infinity, 5],
 ]
 
-/** 0–5 stars in half steps for what the artist achieved in a single year. */
-export function recordStars(d: RecordDelta): number {
-  const score =
-    d.grammys * 14 +
-    d.billboards * 10 +
-    d.platinumRecords * 8 +
-    d.stadiumShows * 3 +
-    d.clubShows * 0.6 +
-    d.ticketsSold / 22_000
-  return STAR_BANDS.find(([max]) => score < max)![1]
+/** The current-standing stats that give a year its baseline star rating. */
+export type StarStats = Pick<CareerStats, 'fame' | 'fanbase' | 'culturalImpact' | 'internationalReach'>
+
+/**
+ * 0–5 stars in half steps for the year. Two parts: the "stature" the artist
+ * carries (fame/fanbase/impact — a rising line that holds in a quiet year) plus
+ * the "activity" they racked up (shows, tickets, awards won that year). Pass the
+ * year's stats snapshot; omitting it scores activity only (legacy rows).
+ */
+export function recordStars(d: RecordDelta, stats?: StarStats): number {
+  const activity = Math.min(
+    66,
+    d.grammys * 12 +
+      d.billboards * 9 +
+      d.platinumRecords * 7 +
+      d.stadiumShows * 2 +
+      d.clubShows * 0.7 +
+      d.ticketsSold / 28_000,
+  )
+  const stature = stats
+    ? stats.fame * 0.6 + stats.fanbase * 0.22 + stats.culturalImpact * 0.32 + stats.internationalReach * 0.16
+    : 0
+  return STAR_BANDS.find(([max]) => stature + activity < max)![1]
 }
 
 /** "840" · "12k" · "1.4M" — compact ticket / count formatting. */

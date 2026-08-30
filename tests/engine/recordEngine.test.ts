@@ -31,7 +31,7 @@ describe('accrueCareerRecord', () => {
     expect(career.record.clubShows).toBe(0)
   })
 
-  it('relocates to the hub once you break internationally, one-way', () => {
+  it('relocates to the crossover hub once you break internationally, upward-only', () => {
     expect(career.residence).toBe('Medellín')
     career.stats.internationalReach = 45
     accrueCareerRecord(career, makeRng(3))
@@ -40,6 +40,23 @@ describe('accrueCareerRecord', () => {
     career.stats.internationalReach = 5 // slips back
     accrueCareerRecord(career, makeRng(4))
     expect(career.residence).toBe(INTERNATIONAL_HUB) // stays
+  })
+
+  it('moves to the hub of the biggest established market', () => {
+    const local = createCareer({ profile: { stageName: 'x', country: 'Venezuela' }, seed: 9 })
+    expect(local.residence).toBe('Caracas')
+    const mx = local.markets.find((m) => m.id === 'mx')!
+    mx.unlocked = true
+    mx.penetration = 60
+    local.stats.internationalReach = 25
+    accrueCareerRecord(local, makeRng(7))
+    expect(local.residence).toBe('Ciudad de México')
+  })
+
+  it('stays home while still a local act', () => {
+    career.stats.internationalReach = 8
+    accrueCareerRecord(career, makeRng(8))
+    expect(career.residence).toBe('Medellín')
   })
 
   it('accrues platinum plaques from a strong commercial catalogue', () => {

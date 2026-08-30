@@ -1,5 +1,6 @@
 import { grantAward, grantMilestone, hasMilestone, MILESTONES } from '@/data/awards'
-import { INTERNATIONAL_HUB, RELOCATE_REACH } from '@/data/cities'
+import { relocationTarget, sceneVenueBoost } from '@/data/cities'
+import { clampStat } from '@/engine/constants'
 import type { Rng } from '@/engine/rng'
 import { rollRange } from '@/engine/rng'
 import type { Career } from '@/types/career'
@@ -22,13 +23,24 @@ export function accrueCareerRecord(career: Career, rng: Rng): void {
   )
 
   if (shows > 0) {
-    const stadiumTier = stats.fame >= 52 && (stats.livePower >= 30 || stats.internationalReach >= 30)
-    if (stadiumTier) {
-      record.stadiumShows += shows
-      record.ticketsSold += shows * (26_000 + Math.round(stats.fanbase * 380))
-    } else {
-      record.clubShows += shows
-      record.ticketsSold += shows * (1_100 + Math.round(stats.fanbase * 95))
+    // Rooms scale smoothly with fame instead of flipping at a hard threshold:
+    // ~all clubs at fame 34, ~all stadiums by fame 64, with live chops, reach
+    // and the scene you live in nudging it up.
+    const venueScale = clampStat(
+      100 *
+        ((stats.fame - 34) / 30 +
+          (Math.max(stats.livePower, stats.internationalReach) / 100) * 0.3 +
+          sceneVenueBoost(career.residence)),
+    ) / 100
+    const stadiumRun = Math.round(shows * venueScale)
+    const clubRun = shows - stadiumRun
+    if (stadiumRun > 0) {
+      record.stadiumShows += stadiumRun
+      record.ticketsSold += stadiumRun * (24_000 + Math.round(stats.fanbase * 360))
+    }
+    if (clubRun > 0) {
+      record.clubShows += clubRun
+      record.ticketsSold += clubRun * (1_600 + Math.round(stats.fanbase * 120))
     }
   }
 
@@ -56,8 +68,8 @@ export function accrueCareerRecord(career: Career, rng: Rng): void {
     if (!hasMilestone(career, m.id) && m.reached(career)) grantMilestone(career, m)
   }
 
-  // Once you've truly broken internationally you move to the hub. One-way.
-  if (career.residence !== INTERNATIONAL_HUB && stats.internationalReach >= RELOCATE_REACH) {
-    career.residence = INTERNATIONAL_HUB
-  }
+  // As bigger markets open you move to the scene carrying you — a regional hub,
+  // then Miami, then a global base. Automatic and upward-only.
+  const move = relocationTarget(career.residence, stats.internationalReach, career.markets)
+  if (move) career.residence = move
 }
