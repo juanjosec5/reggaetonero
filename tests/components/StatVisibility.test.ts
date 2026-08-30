@@ -66,5 +66,6 @@ describe('stat visibility', () => {
     }
     expect(wrapper.text()).toContain('Tu trayectoria')
     expect(wrapper.text()).toContain('Cómo llegaste aquí')
+    expect(wrapper.text()).toContain('Cómo se te va a recordar')
   })
 })
