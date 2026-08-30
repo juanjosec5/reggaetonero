@@ -42,9 +42,10 @@ export function applyProgression(career: Career, rng: Rng): void {
   applyStatDelta(career, 'stats.fanbase', fanDelta)
 
   // Momentum becomes recognition: a slice of this year's hype converts to fame,
-  // with diminishing returns once you're already huge.
-  const fameHeadroom = Math.max(0.35, 1 - career.stats.fame / 220)
-  applyStatDelta(career, 'stats.fame', Math.round(career.stats.hype * 0.28 * fameHeadroom))
+  // with diminishing returns once you're already huge - the climb from famous to
+  // superstar is far harder than from nobody to famous.
+  const fameHeadroom = Math.max(0.3, 1 - career.stats.fame / 175)
+  applyStatDelta(career, 'stats.fame', Math.round(career.stats.hype * 0.25 * fameHeadroom))
   // Hype is use-it-or-lose-it: it cools fast, so holding on to fame means a
   // steady stream of releases/moments, not one big year.
   applyStatDelta(career, 'stats.hype', -Math.round(career.stats.hype * 0.32))
@@ -56,9 +57,9 @@ export function applyProgression(career: Career, rng: Rng): void {
   // famous into your mid-30s means fighting it with fresh output. A big
   // catalogue and cultural weight cushion the fall but don't stop it. This is
   // what turns a career into an arc instead of an endless ramp.
-  const fameFloor = career.stats.catalogStrength * 0.45 + career.stats.culturalImpact * 0.3
+  const fameFloor = career.stats.catalogStrength * 0.4 + career.stats.culturalImpact * 0.28
   const above = Math.max(0, career.stats.fame - fameFloor)
-  const decayRate = 0.02 + Math.max(0, career.age - 30) * 0.02
+  const decayRate = 0.026 + Math.max(0, career.age - 30) * 0.024
   applyStatDelta(career, 'stats.fame', -Math.round(above * decayRate))
 
   const credibilityDelta = Math.round((career.hiddenTraits.authenticity - career.stats.credibility) * 0.05)

@@ -116,6 +116,12 @@ export function applyChoice(career: Career, event: CareerEvent, choice: CareerCh
   if (currentYear && currentYear.eventId === event.id) {
     currentYear.choiceTaken = choice.text
     currentYear.choiceStyle = choice.style
+    // The snapshots were frozen in `simulateYear` before the player chose - refresh
+    // them so this year's row reflects the decision (an award won here shows up
+    // now, not a year late).
+    currentYear.statsSnapshot = { ...next.stats }
+    currentYear.recordSnapshot = { ...next.record }
+    currentYear.residence = next.residence
   }
 
   return next

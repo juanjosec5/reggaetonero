@@ -31,10 +31,10 @@ const STAR_BANDS: [max: number, stars: number][] = [
   [31, 1.5],
   [42, 2],
   [56, 2.5],
-  [72, 3],
-  [90, 3.5],
-  [112, 4],
-  [138, 4.5],
+  [70, 3],
+  [88, 3.5],
+  [106, 4],
+  [128, 4.5],
   [Infinity, 5],
 ]
 
@@ -58,7 +58,7 @@ export function recordStars(d: RecordDelta, stats?: StarStats): number {
       d.ticketsSold / 28_000,
   )
   const stature = stats
-    ? stats.fame * 0.6 + stats.fanbase * 0.22 + stats.culturalImpact * 0.32 + stats.internationalReach * 0.16
+    ? stats.fame * 0.66 + stats.fanbase * 0.24 + stats.culturalImpact * 0.34 + stats.internationalReach * 0.16
     : 0
   return STAR_BANDS.find(([max]) => stature + activity < max)![1]
 }

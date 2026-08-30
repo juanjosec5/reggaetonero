@@ -29,7 +29,7 @@ const rows = computed(() => {
       city: entry.residence || startCity,
       stars: recordStars(d, entry.statsSnapshot),
       tickets: d.ticketsSold > 0 ? formatCount(d.ticketsSold) : '·',
-      awards: d.grammys + d.billboards > 0 ? `${d.grammys}·${d.billboards}` : '·',
+      awards: d.grammys + d.billboards,
     }
   })
 })

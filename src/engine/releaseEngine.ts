@@ -116,7 +116,7 @@ export function applyReleasesToCareer(career: Career, releases: { release: Relea
     const impact = release.hitScore / 10
     // Each hit moves the needle less once you're already famous - the jump from
     // unknown to somebody is far bigger than from star to bigger star.
-    const fameGain = impact * 1.7 * Math.max(0.3, 1 - career.stats.fame / 210)
+    const fameGain = impact * 1.55 * Math.max(0.28, 1 - career.stats.fame / 175)
     career.stats.hype = clampStat(career.stats.hype + impact * 2.2)
     career.stats.fame = clampStat(career.stats.fame + fameGain)
     career.stats.catalogStrength = clampStat(career.stats.catalogStrength + impact * 1.05)
