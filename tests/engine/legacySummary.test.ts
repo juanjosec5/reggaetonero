@@ -5,7 +5,7 @@ import { createCareer } from '@/engine/createCareer'
 import { applyChoice } from '@/engine/decisionEngine'
 import { getEventById } from '@/data/events'
 import { retire } from '@/engine/legacyEngine'
-import { buildRecap, buildShareText, formatStars, peakStars, scoreBand } from '@/engine/legacySummary'
+import { buildRecap, buildShareText, formatStars, peakStars, scoreBand, starEmoji } from '@/engine/legacySummary'
 import { makeRng } from '@/engine/rng'
 import type { Career } from '@/types/career'
 
@@ -41,6 +41,15 @@ describe('formatStars', () => {
   })
 })
 
+describe('starEmoji', () => {
+  it('fills whole stars and adds a sparkle for a half', () => {
+    expect(starEmoji(0)).toBe('')
+    expect(starEmoji(3)).toBe('⭐⭐⭐')
+    expect(starEmoji(3.5)).toBe('⭐⭐⭐✨')
+    expect(starEmoji(4)).toBe('⭐⭐⭐⭐')
+  })
+})
+
 describe('peakStars', () => {
   it('is a 0-5 half step over a full career', () => {
     const p = peakStars(playedToRetirement(7))
@@ -61,27 +70,20 @@ describe('buildRecap', () => {
 })
 
 describe('buildShareText', () => {
-  it('includes the name, country, verdict title, scores and legado', () => {
+  it('is a short headline with the name, verdict, trophies and legado', () => {
     const career = playedToRetirement(5)
     const text = buildShareText(career)
-    expect(text).toContain('MC Prueba · México')
+    expect(text).toContain('MC Prueba (México)')
+    expect(text).toMatch(/🏆 (EL |LA )/) // verdict title, uppercase in the data
+    expect(text).toContain('💿 ')
     expect(text).toContain(`Legado ${career.legacy!.legacyScore}/100`)
-    expect(text).toContain('Comercial')
-    expect(text).toContain('Permanencia')
-    // every verdict title is uppercase in the data
-    expect(text).toMatch(/EL |LA /)
+    expect(text.split('\n').filter((l) => l.trim()).length).toBeLessThanOrEqual(5)
   })
 
-  it('shows a city arrow once the artist has relocated', () => {
-    // A long strong run relocates; find one and check the arrow renders.
-    for (const seed of [1, 2, 4, 8, 11, 21, 33, 40]) {
-      const career = playedToRetirement(seed, 14)
-      const cities = new Set(career.history.map((h) => h.residence))
-      if (cities.size > 1) {
-        expect(buildShareText(career)).toContain(' → ')
-        return
-      }
+  it('drops the verbose sections from the old summary', () => {
+    const text = buildShareText(playedToRetirement(5))
+    for (const gone of ['Comercial', 'Permanencia', 'Patrimonio', 'masters propios']) {
+      expect(text).not.toContain(gone)
     }
-    throw new Error('expected at least one seeded career to relocate')
   })
 })

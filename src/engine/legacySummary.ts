@@ -1,9 +1,7 @@
 import { homeCity } from '@/data/cities'
 import { VERDICTS } from '@/data/verdicts'
-import { STARTING_AGE, MAX_CAREER_YEAR } from '@/engine/constants'
 import { computeIdentity } from '@/engine/identityEngine'
 import { formatCount, recordDelta, recordStars, ZERO_DELTA } from '@/engine/stars'
-import { formatMoney } from '@/engine/status'
 import type { Career, LegacyResult } from '@/types/career'
 
 /**
@@ -64,6 +62,11 @@ export function formatStars(n: number): string {
   return `${whole}${half ? '½' : ''}★`
 }
 
+/** "⭐⭐⭐✨" for 3.5, "⭐⭐⭐⭐" for 4, "" for 0 — for the share text. */
+export function starEmoji(n: number): string {
+  return '⭐'.repeat(Math.floor(n)) + (n % 1 >= 0.5 ? '✨' : '')
+}
+
 const AXES = [
   { key: 'commercialScore', label: 'lo comercial' },
   { key: 'artisticScore', label: 'la obra' },
@@ -77,12 +80,6 @@ const LEGADO_PHRASE: Record<string, string> = {
   Sólido: 'un nombre que la escena va a recordar',
   Fuerte: 'de los que marcaron su época',
   'De época': 'un nombre que se va a seguir nombrando por años',
-}
-
-function careerSpan(career: Career): string {
-  const start = career.history[0]?.age ?? STARTING_AGE
-  const end = career.history.at(-1)?.age ?? STARTING_AGE + MAX_CAREER_YEAR - 1
-  return `${start}→${end}`
 }
 
 function highlights(career: Career): string[] {
@@ -142,42 +139,26 @@ export function buildRecap(career: Career, opts: { verdict?: boolean; legado?: b
   return sentences.join(' ')
 }
 
-/** The plain-text block behind "Copiar resumen". */
+/** The short plain-text block behind "Copiar resumen". */
 export function buildShareText(career: Career): string {
   const legacy = career.legacy
   if (!legacy) return ''
   const verdict = VERDICTS.find((v) => v.id === legacy.verdictId)
-  const identity = computeIdentity(career)
-  const cities = citiesLived(career)
   const r = career.record
+  const pk = peakStars(career)
 
-  const scoreLine = LEGACY_METRICS.map((m) => `${m.label} ${legacy[m.key]}`).join(' · ')
-  const recordBits = [
-    `${r.hits} ${r.hits === 1 ? 'hit' : 'hits'}`,
-    `${r.platinumRecords} ${r.platinumRecords === 1 ? 'platino' : 'platinos'}`,
-    `${r.grammys + r.billboards} ${r.grammys + r.billboards === 1 ? 'premio' : 'premios'}`,
-    `mejor año ${formatStars(peakStars(career))}`,
-  ]
-  if (r.ticketsSold > 0) recordBits.push(`${formatCount(r.ticketsSold)} entradas`)
+  const trophies = [`💿 ${r.platinumRecords}`, `🏆 ${r.grammys + r.billboards}`]
+  if (r.ticketsSold > 0) trophies.push(`🎟 ${formatCount(r.ticketsSold)}`)
+  trophies.push(`Legado ${legacy.legacyScore}/100`)
 
   const origin = typeof window !== 'undefined' ? window.location.origin : ''
 
   return [
-    '🎤 REGGAETONERO',
-    `${career.artist.stageName} · ${career.artist.country} · ${careerSpan(career)}`,
-    '',
-    verdict?.title ?? '',
-    verdict ? `"${verdict.description}"` : '',
-    identity.defined ? `Título: ${identity.label}` : '',
-    '',
-    buildRecap(career, { verdict: false, legado: false }),
-    '',
-    `Legado ${legacy.legacyScore}/100 — ${LEGADO_PHRASE[scoreBand(legacy.legacyScore)]}`,
-    scoreLine,
-    recordBits.join(' · '),
-    cities.length > 1 ? cities.join(' → ') : cities[0] ?? '',
-    `Patrimonio ${formatMoney(career.finances.netWorth)} · ${Math.round(career.finances.ownershipPercent)}% masters propios`,
-    origin ? `\nJugá la tuya en ${origin}` : '',
+    `🎤 REGGAETONERO — ${career.artist.stageName} (${career.artist.country})`,
+    verdict ? `🏆 ${verdict.title}` : '',
+    pk >= 1 ? `Mejor año: ${starEmoji(pk)}` : '',
+    trophies.join(' · '),
+    origin ? `\n${origin}` : '',
   ]
     .filter((line) => line !== '')
     .join('\n')
