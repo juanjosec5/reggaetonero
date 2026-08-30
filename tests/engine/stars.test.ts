@@ -28,6 +28,14 @@ describe('recordStars', () => {
       expect(s * 2).toBe(Math.round(s * 2))
     }
   })
+
+  it('rates a year higher for a bigger artist even with the same activity', () => {
+    const activity = { ...ZERO_DELTA, clubShows: 10, ticketsSold: 120_000 }
+    const nobody = recordStars(activity, { fame: 12, fanbase: 6, culturalImpact: 0, internationalReach: 0 })
+    const star = recordStars(activity, { fame: 65, fanbase: 55, culturalImpact: 22, internationalReach: 25 })
+    expect(star).toBeGreaterThan(nobody)
+    expect(star).toBeGreaterThanOrEqual(3)
+  })
 })
 
 describe('recordDelta', () => {
