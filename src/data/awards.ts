@@ -7,13 +7,6 @@ export const AWARD_ICON: Record<AwardKind, string> = {
   milestone: '⭐',
 }
 
-export const AWARD_LABEL: Record<AwardKind, string> = {
-  grammy: 'Grammy',
-  billboard: 'Billboard',
-  platinum: 'Disco de platino',
-  milestone: 'Hito',
-}
-
 /** Grand once-in-a-career moments, checked every year after the record accrues. */
 export interface MilestoneDef {
   id: string

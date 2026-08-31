@@ -75,7 +75,7 @@ export interface Finances {
   annualIncome: number
 }
 
-export type ReleaseTier = 'flop' | 'normal' | 'good' | 'hit' | 'smash'
+export type ReleaseTier = 'flop' | 'normal' | 'hit' | 'smash'
 
 export interface Release {
   title: string
@@ -190,11 +190,8 @@ export type EventCategory =
   | 'controversy'
   | 'relationship'
   | 'health'
-  | 'technology'
-  | 'fashion'
   | 'business'
   | 'competition'
-  | 'legacy'
 
 export type ChoiceStyle = 'safe' | 'ambitious' | 'loyal' | 'creative' | 'commercial'
 export type VisibleRisk = 'low' | 'medium' | 'high'
