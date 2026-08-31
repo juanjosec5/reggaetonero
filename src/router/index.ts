@@ -23,6 +23,13 @@ const router = createRouter({
       name: 'legacy',
       component: () => import('@/views/LegacyView.vue'),
     },
+    {
+      // TEMPORARY — design-partner preview of the four visual directions.
+      // Remove this route + src/views/DesignDirections.vue once a direction is chosen.
+      path: '/design',
+      name: 'design',
+      component: () => import('@/views/DesignDirections.vue'),
+    },
   ],
 })
 
