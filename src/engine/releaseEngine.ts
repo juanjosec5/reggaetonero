@@ -16,10 +16,17 @@ function generateTitle(rng: Rng): string {
   return `${a} ${b}`
 }
 
+/**
+ * A release lands a "hit" at the old `good`-tier line. Release inputs top out
+ * around the low 60s for a strong artist, so the previous 75 bar made hits — and
+ * the whole hitmaker fantasy (awards, platinum, the `first_hit` milestone) —
+ * near-impossible. The `good` tier is folded into `hit`.
+ */
+const HIT_THRESHOLD = 60
+
 export function classifyTier(hitScore: number): ReleaseTier {
   if (hitScore >= BAND_THRESHOLDS.top) return 'smash'
-  if (hitScore >= BAND_THRESHOLDS.veryHigh) return 'hit'
-  if (hitScore >= BAND_THRESHOLDS.high) return 'good'
+  if (hitScore >= HIT_THRESHOLD) return 'hit'
   if (hitScore >= BAND_THRESHOLDS.mid) return 'normal'
   return 'flop'
 }

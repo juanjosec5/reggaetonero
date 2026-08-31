@@ -54,7 +54,7 @@ export const RELATIONSHIP_DECAY_RATE = 0.1
 export const TENSION_COOLDOWN_RATE = 0.2
 
 /** Fraction of a team member's annual cost that is actually billed each year. */
-export const TEAM_COST_FACTOR = 1
+export const TEAM_COST_FACTOR = 0.75
 /** Loyalty a team member gains/loses per year based on whether cash covers their pay. */
 export const TEAM_LOYALTY_PAID = 2
 export const TEAM_LOYALTY_UNPAID = -8

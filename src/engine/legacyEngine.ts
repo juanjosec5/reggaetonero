@@ -54,7 +54,7 @@ export function computeLegacy(career: Career): LegacyResult {
     ? fameHistory.reduce((sum, f) => sum + f, 0) / fameHistory.length
     : stats.fame
   const longevity = clampStat(meanFame * 0.7 + career.peakFame * 0.3)
-  const catalogValueScore = clampStat(finances.catalogValue / 10)
+  const catalogValueScore = clampStat(finances.catalogValue / 45)
 
   const legacyScore = clampStat(
     commercialScore * 0.2 +

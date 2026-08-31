@@ -42,6 +42,27 @@ describe('applyFinances', () => {
     expect(career.finances.catalogValue).toBeGreaterThan(before)
   })
 
+  it('makes a big career end far richer than a small one', () => {
+    const big = createCareer({ profile: baseProfile, seed: 1 })
+    big.stats.fame = 92
+    big.stats.fanbase = 78
+    big.stats.catalogStrength = 60
+    big.stats.livePower = 45
+    big.finances.catalogValue = 3000
+
+    const small = createCareer({ profile: baseProfile, seed: 1 })
+    small.stats.fame = 30
+    small.stats.fanbase = 20
+    small.stats.catalogStrength = 15
+    small.finances.catalogValue = 400
+
+    for (let y = 0; y < 12; y++) {
+      applyFinances(big, [])
+      applyFinances(small, [])
+    }
+    expect(big.finances.netWorth).toBeGreaterThan(small.finances.netWorth * 4)
+  })
+
   it('reduces income when ownership percent is lower', () => {
     const fullOwnership = createCareer({ profile: baseProfile, seed: 1 })
     fullOwnership.stats.fame = 50

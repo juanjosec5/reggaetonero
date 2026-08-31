@@ -8,7 +8,7 @@ export const MONEY_EVENTS: CareerEvent[] = [
     description: 'Una marca de ropa te ofrece dinero por usar y promocionar sus productos.',
     visibleRisk: 'low',
     condition: (c) => c.stats.fame >= 10,
-    weight: () => 4,
+    weight: () => 3,
     choices: [
       {
         text: 'Aceptar el patrocinio',
@@ -56,7 +56,7 @@ export const MONEY_EVENTS: CareerEvent[] = [
     title: 'Un asesor te propone invertir',
     description: 'Un asesor financiero te propone meter tus ahorros en un negocio fuera de la música.',
     visibleRisk: 'high',
-    condition: (c) => c.finances.cash >= 400 && c.year >= 3,
+    condition: (c) => c.finances.cash >= 250 && c.year >= 3,
     weight: () => 3,
     choices: [
       {

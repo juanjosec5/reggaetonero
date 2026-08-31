@@ -82,8 +82,8 @@ export const MUSIC_EVENTS: CareerEvent[] = [
     title: 'Un sonido nuevo está arrasando',
     description: 'Todo el mundo está haciendo el mismo tipo de canción y está funcionando.',
     visibleRisk: 'medium',
-    condition: (c) => c.year >= 2,
-    weight: () => 4,
+    condition: (c) => c.year >= 2 && c.year <= 10,
+    weight: () => 2,
     choices: [
       {
         text: 'Subirte a la ola',
@@ -153,7 +153,7 @@ export const MUSIC_EVENTS: CareerEvent[] = [
     description: 'Llevas semanas sin poder terminar una canción que te convenza.',
     visibleRisk: 'low',
     condition: (c) => c.year >= 2,
-    weight: () => 3,
+    weight: () => 2,
     choices: [
       {
         text: 'Tomarte un tiempo fuera para recargar',

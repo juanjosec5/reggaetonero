@@ -67,8 +67,8 @@ export const TOUR_EVENTS: CareerEvent[] = [
     title: 'Puedes saltar a recintos más grandes',
     description: 'Tu equipo cree que ya llenas arenas. Si no las llenas, la foto de las gradas vacías da la vuelta al mundo.',
     visibleRisk: 'high',
-    condition: (c) => c.stats.livePower >= 45,
-    weight: () => 3,
+    condition: (c) => c.stats.livePower >= 24,
+    weight: () => 4,
     choices: [
       {
         text: 'Anunciar arenas',
@@ -126,8 +126,8 @@ export const TOUR_EVENTS: CareerEvent[] = [
     title: 'La gira te está consumiendo',
     description: 'Llevas meses de bus en bus y el cuerpo te está pasando factura.',
     visibleRisk: 'medium',
-    condition: (c) => c.stats.livePower >= 35 && c.age >= 26,
-    weight: () => 3,
+    condition: (c) => c.stats.livePower >= 26 && c.age >= 26,
+    weight: () => 4,
     choices: [
       {
         text: 'Cancelar fechas y descansar',
@@ -156,8 +156,8 @@ export const TOUR_EVENTS: CareerEvent[] = [
     title: 'Te ofrecen una residencia fija',
     description: 'Un recinto grande en el extranjero te quiere para una serie de fechas fijas todo el año. Buen dinero, pero te ata.',
     visibleRisk: 'medium',
-    condition: (c) => c.stats.internationalReach >= 35,
-    weight: () => 2,
+    condition: (c) => c.stats.internationalReach >= 20,
+    weight: () => 3,
     choices: [
       {
         text: 'Aceptar la residencia',
@@ -187,8 +187,8 @@ export const TOUR_EVENTS: CareerEvent[] = [
     title: 'Puedes montar una gira de estadios',
     description: 'Los números dan para llenar estadios. Es la gira más grande de tu vida — y la más cara de producir si falla.',
     visibleRisk: 'high',
-    condition: (c) => c.stats.fame >= 48 && (c.stats.livePower >= 28 || c.stats.internationalReach >= 28),
-    weight: () => 3,
+    condition: (c) => c.stats.fame >= 46 && (c.stats.livePower >= 22 || c.stats.internationalReach >= 22),
+    weight: () => 5,
     oncePerCareer: true,
     choices: [
       {

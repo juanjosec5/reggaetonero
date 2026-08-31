@@ -62,7 +62,7 @@ export const MEDIA_EVENTS: CareerEvent[] = [
     description: 'Un cambio en las plataformas de streaming está afectando cómo te descubre la gente.',
     visibleRisk: 'low',
     condition: (c) => c.year >= 3,
-    weight: () => 3,
+    weight: () => 2,
     choices: [
       {
         text: 'Adaptar tu estrategia de contenido',

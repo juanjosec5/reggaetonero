@@ -7,7 +7,7 @@ export const RELATIONSHIP_EVENTS: CareerEvent[] = [
     title: 'Un productor dice que no le diste crédito',
     description: 'DJ Marea asegura que media base de tu último hit es suya y no aparece en los créditos.',
     visibleRisk: 'medium',
-    condition: (c) => c.record.hits >= 1 && c.year >= 3,
+    condition: (c) => c.record.releases >= 4 && c.year >= 3,
     weight: () => 3,
     choices: [
       {
@@ -253,8 +253,8 @@ export const RELATIONSHIP_EVENTS: CareerEvent[] = [
     title: 'Al que ayudaste ya no te menciona',
     description: 'Un artista que empujaste cuando nadie lo miraba ahora llena sitios y en las entrevistas cuenta su historia sin tu nombre.',
     visibleRisk: 'low',
-    condition: (c) => c.age >= 32 && c.stats.industryRespect >= 20,
-    weight: () => 3,
+    condition: (c) => c.age >= 31 && (c.stats.industryRespect >= 8 || c.stats.culturalImpact >= 15),
+    weight: () => 4,
     choices: [
       {
         text: 'Dejarlo pasar, tú sabes lo que hiciste',
