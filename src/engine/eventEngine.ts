@@ -21,11 +21,11 @@ function isEligible(career: Career, event: CareerEvent): boolean {
   return event.condition(career)
 }
 
-// Weight multiplier for how recently a repeatable event last fired, so the same
-// prompt doesn't come back year after year. Index 0 = fired last year.
-const RECENCY_DECAY = [0.15, 0.4, 0.7] as const
+// Weight multiplier for how recently a repeatable event last fired — the
+// tie-breaker on the fallback path below. Index 0 = fired last year.
+const RECENCY_DECAY = [0.1, 0.25, 0.45, 0.7] as const
 
-/** 1 if the event never fired or fired 4+ years ago, otherwise a decayed factor. */
+/** 1 if the event never fired or fired 5+ years ago, otherwise a decayed factor. */
 function recencyFactor(career: Career, eventId: string): number {
   const h = career.history
   // `history` here is last year's and earlier - this year's entry isn't pushed yet.
@@ -37,12 +37,24 @@ function recencyFactor(career: Career, eventId: string): number {
   return 1
 }
 
+/**
+ * Below this many never-before-seen eligible events, we let already-fired ones
+ * back into the pool (recency-decayed) so a thin life-stage can't dead-end.
+ */
+const MIN_FRESH_POOL = 4
+
 export function pickEligibleEvent(career: Career, rng: Rng): CareerEvent | undefined {
   const eligible = ALL_EVENTS.filter((event) => isEligible(career, event))
-  // The decay floor is 0.15 (never 0), so this can only return undefined when
-  // nothing is eligible - same as before. No fallback roll: a second weightedPick
-  // would consume an extra rng() and desync the year's stream.
-  return weightedPick(eligible, (event) => event.weight(career) * recencyFactor(career, event.id), rng)
+
+  // Prefer events this career has never seen. The catalogue is deliberately big
+  // (~70 repeatable, and 10-40 eligible in any given year) so a full career
+  // should almost never repeat a decision.
+  const seen = new Set(career.history.map((y) => y.eventId).filter(Boolean))
+  const fresh = eligible.filter((event) => !seen.has(event.id))
+  const pool = fresh.length >= MIN_FRESH_POOL ? fresh : eligible
+
+  // One weightedPick call either way, so the year's rng stream stays deterministic.
+  return weightedPick(pool, (event) => event.weight(career) * recencyFactor(career, event.id), rng)
 }
 
 export interface YearEventSelection {
