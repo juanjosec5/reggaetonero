@@ -35,35 +35,45 @@ describe('pickEligibleEvent', () => {
     }
   })
 
-  it('damps an event that fired last year vs. a never-fired peer', () => {
-    const base = createCareer({ profile: baseProfile, seed: 1 })
-    base.year = 5
-
-    const withoutHistory = { ...base, history: [] as typeof base.history }
-    const withRecent = {
-      ...base,
-      history: [{ year: 4, eventId: 'music_trending_sound_pivot' } as (typeof base.history)[number]],
-    }
-
-    const hits = (career: typeof base) => {
-      let n = 0
-      for (let s = 0; s < 400; s++) {
-        if (pickEligibleEvent(career, makeRng(s))?.id === 'music_trending_sound_pivot') n++
-      }
-      return n
-    }
-
-    expect(hits(withRecent)).toBeLessThan(hits(withoutHistory))
-  })
-
-  it('still returns an event when the only eligible ones fired last year', () => {
+  it('does not re-offer an event this career already saw while the pool is healthy', () => {
     const career = createCareer({ profile: baseProfile, seed: 1 })
-    career.year = 5
-    // recencyFactor floors at 0.15, never 0 - selection must not collapse.
+    career.year = 6
     career.history = [
-      { year: 4, eventId: 'music_trending_sound_pivot' },
+      { year: 3, eventId: 'music_trending_sound_pivot' },
       { year: 4, eventId: 'music_writers_block' },
     ] as typeof career.history
+
+    for (let s = 0; s < 300; s++) {
+      const id = pickEligibleEvent(career, makeRng(s))?.id
+      expect(id).not.toBe('music_trending_sound_pivot')
+      expect(id).not.toBe('music_writers_block')
+    }
+  })
+
+  it('falls back to already-seen events only when too few fresh ones remain', () => {
+    const career = createCareer({ profile: baseProfile, seed: 1 })
+    career.year = 2
+    // Stack the history so almost every year-<=3 eligible event has been seen;
+    // selection must still return something rather than collapse.
+    career.history = [
+      'comeup_stage_name',
+      'comeup_first_paid_slot',
+      'comeup_first_check',
+      'comeup_first_hater',
+      'comeup_family_faith',
+      'comeup_studio_hustle',
+      'comeup_feature_swap',
+      'comeup_viral_clip',
+      'comeup_sketchy_manager',
+      'comeup_freestyle_battle',
+      'comeup_beat_pack_credit',
+      'comeup_first_image',
+      'music_first_studio_session',
+      'money_day_job',
+      'rel_barrio_crew',
+      'media_local_radio',
+    ].map((eventId, i) => ({ year: i + 1, eventId })) as typeof career.history
+
     for (const seed of [1, 2, 3, 4, 5]) {
       expect(pickEligibleEvent(career, makeRng(seed))).toBeDefined()
     }
