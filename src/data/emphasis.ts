@@ -1,5 +1,7 @@
 import type { ArtistAttributes } from '@/types/career'
 
+import { defineCatalog } from './catalog'
+
 export type EmphasisId = 'studio' | 'stage' | 'business'
 
 export interface EmphasisDefinition {
@@ -9,7 +11,7 @@ export interface EmphasisDefinition {
   attributeBias: Partial<ArtistAttributes>
 }
 
-export const EMPHASES: EmphasisDefinition[] = [
+export const EMPHASES = defineCatalog<EmphasisDefinition>('emphasis', [
   {
     id: 'studio',
     title: 'El estudio es tu segunda casa',
@@ -28,10 +30,4 @@ export const EMPHASES: EmphasisDefinition[] = [
     description: 'Sabes que una carrera se construye también con contratos inteligentes.',
     attributeBias: { business: 10, originality: -3 },
   },
-]
-
-export function getEmphasis(id: EmphasisId): EmphasisDefinition {
-  const emphasis = EMPHASES.find((e) => e.id === id)
-  if (!emphasis) throw new Error(`Unknown emphasis: ${id}`)
-  return emphasis
-}
+])

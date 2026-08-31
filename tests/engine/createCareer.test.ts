@@ -47,7 +47,7 @@ describe('createCareer', () => {
   it('rolls a hidden genre and archetype from the seed', () => {
     const career = createCareer({ profile: baseProfile, seed: 42 })
     expect(GENRES.map((g) => g.id)).toContain(career.artist.genre)
-    expect(ARCHETYPES.map((a) => a.id)).toContain(career.artist.archetype)
+    expect(ARCHETYPES.all.map((a) => a.id)).toContain(career.artist.archetype)
   })
 
   it('different seeds can produce different hidden builds', () => {

@@ -49,7 +49,7 @@ const BLENDS: Record<string, Omit<ArtistIdentity, 'defined'>> = {
   },
 }
 
-export function styleCounts(career: Career): Record<ChoiceStyle, number> {
+function styleCounts(career: Career): Record<ChoiceStyle, number> {
   const counts: Record<ChoiceStyle, number> = {
     safe: 0,
     ambitious: 0,

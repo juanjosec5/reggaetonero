@@ -49,9 +49,10 @@ function generateOneRelease(career: Career, rng: Rng): Release {
   const producerSkill = career.team.producer?.skill ?? 0
 
   const quality = clampStat(
-    attributes.talent * 0.35 +
-      attributes.productionSense * 0.3 +
-      attributes.writing * 0.25 +
+    attributes.talent * 0.3 +
+      attributes.productionSense * 0.28 +
+      attributes.writing * 0.22 +
+      attributes.voice * 0.1 +
       producerSkill * 0.12 +
       noise(rng),
   )

@@ -43,7 +43,7 @@ function playToRetirement(seed: number, years: number) {
   const profile: ArtistProfile = {
     ...baseProfile,
     stageName: `Sim ${seed}`,
-    archetype: ARCHETYPES[seed % ARCHETYPES.length]!.id,
+    archetype: ARCHETYPES.all[seed % ARCHETYPES.all.length]!.id,
   }
   let career = createCareer({ profile, seed })
   for (let i = 0; i < years; i++) {

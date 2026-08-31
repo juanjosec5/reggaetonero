@@ -2,6 +2,8 @@ import type { Rng } from '@/engine/rng'
 import { weightedPick } from '@/engine/rng'
 import type { TeamRole } from '@/types/career'
 
+import { defineCatalog } from './catalog'
+
 export interface StaffDef {
   id: string
   name: string // fictional
@@ -12,7 +14,7 @@ export interface StaffDef {
 }
 
 /** Hireable people for every non-producer team role. Producers live in `producers.ts`. */
-export const STAFF: StaffDef[] = [
+export const STAFF = defineCatalog<StaffDef>('staff member', [
   // managers
   { id: 'mgr_tia_gloria', name: 'Tía Gloria', role: 'manager', skill: 64, cost: 70, influence: 45 },
   { id: 'mgr_rojas', name: 'Rojas', role: 'manager', skill: 80, cost: 130, influence: 70 },
@@ -26,18 +28,10 @@ export const STAFF: StaffDef[] = [
   // booking agents
   { id: 'book_ruta_sur', name: 'Ruta Sur', role: 'bookingAgent', skill: 66, cost: 50, influence: 38 },
   { id: 'book_estadio', name: 'Estadio', role: 'bookingAgent', skill: 85, cost: 125, influence: 72 },
-]
-
-const STAFF_BY_ID = new Map(STAFF.map((s) => [s.id, s]))
-
-export function getStaff(id: string): StaffDef {
-  const staff = STAFF_BY_ID.get(id)
-  if (!staff) throw new Error(`Unknown staff member: ${id}`)
-  return staff
-}
+])
 
 export function staffForRole(role: TeamRole): StaffDef[] {
-  return STAFF.filter((s) => s.role === role)
+  return STAFF.all.filter((s) => s.role === role)
 }
 
 /**

@@ -1,5 +1,7 @@
 import type { MarketState } from '@/types/career'
 
+import { defineCatalog } from './catalog'
+
 export interface MarketDef {
   id: string
   label: string // Spanish
@@ -11,7 +13,7 @@ export interface MarketDef {
   adjacency: string[]
 }
 
-export const MARKETS: MarketDef[] = [
+export const MARKETS = defineCatalog<MarketDef>('market', [
   { id: 'pr', label: 'Puerto Rico', difficulty: 20, size: 45, adjacency: ['do', 'us_latin'] },
   { id: 'co', label: 'Colombia', difficulty: 30, size: 60, adjacency: ['ve', 'mx'] },
   { id: 'do', label: 'República Dominicana', difficulty: 30, size: 40, adjacency: ['pr', 'us_latin'] },
@@ -22,15 +24,7 @@ export const MARKETS: MarketDef[] = [
   { id: 'cono_sur', label: 'Cono Sur', difficulty: 55, size: 55, adjacency: ['es', 'mx'] },
   { id: 'us_latin', label: 'EE.UU. Latino', difficulty: 60, size: 90, adjacency: ['global', 'mx'] },
   { id: 'global', label: 'Mercado global', difficulty: 80, size: 100, adjacency: [] },
-]
-
-const MARKET_BY_ID = new Map(MARKETS.map((m) => [m.id, m]))
-
-export function getMarket(id: string): MarketDef {
-  const market = MARKET_BY_ID.get(id)
-  if (!market) throw new Error(`Unknown market: ${id}`)
-  return market
-}
+])
 
 const HOME_MARKET_BY_COUNTRY: Record<string, string> = {
   'Puerto Rico': 'pr',
@@ -53,7 +47,7 @@ export function homeMarketId(country: string): string {
 /** Every market, with the artist's home market unlocked and lightly penetrated. */
 export function initialMarkets(country: string): MarketState[] {
   const home = homeMarketId(country)
-  return MARKETS.map((m) => ({
+  return MARKETS.all.map((m) => ({
     id: m.id,
     penetration: m.id === home ? 15 : 0,
     saturation: 0,

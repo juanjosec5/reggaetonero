@@ -1,6 +1,6 @@
-import { getLabel, pickLabel } from '@/data/labels'
-import { getProducer, pickProducer } from '@/data/producers'
-import { getStaff, pickStaff } from '@/data/staff'
+import { LABELS, pickLabel } from '@/data/labels'
+import { PRODUCERS, pickProducer } from '@/data/producers'
+import { STAFF, pickStaff } from '@/data/staff'
 import {
   TEAM_COST_FACTOR,
   TEAM_LOYALTY_PAID,
@@ -25,7 +25,7 @@ export function hireTeamMember(career: Career, role: TeamRole, rng: Rng, personI
 
   if (role === 'producer') {
     const def = personId
-      ? getProducer(personId)
+      ? PRODUCERS.get(personId)
       : pickProducer(rng, { genre: career.artist.genre, maxCost: career.finances.cash })
     if (!def) return
     career.team.producer = {
@@ -40,7 +40,7 @@ export function hireTeamMember(career: Career, role: TeamRole, rng: Rng, personI
     return
   }
 
-  const def = personId ? getStaff(personId) : pickStaff(role, rng, career.finances.cash)
+  const def = personId ? STAFF.get(personId) : pickStaff(role, rng, career.finances.cash)
   if (!def || def.role !== role) return
   career.team[role] = {
     id: def.id,
@@ -77,7 +77,7 @@ export function releaseTeamMember(career: Career, role?: TeamRole): void {
  */
 export function signLabel(career: Career, rng: Rng, labelId?: string): void {
   if (career.team.label) return
-  const def = labelId ? getLabel(labelId) : pickLabel(rng, career.stats.fame)
+  const def = labelId ? LABELS.get(labelId) : pickLabel(rng, career.stats.fame)
   const ownershipTaken = Math.min(
     career.finances.ownershipPercent,
     rollRange(rng, def.ownershipDemandMin, def.ownershipDemandMax),
@@ -134,7 +134,7 @@ export function applyTeamBonuses(career: Career): void {
   const { team, stats, finances } = career
 
   // A label's machine keeps the artist in front of people every year.
-  if (team.label) stats.hype = clampStat(stats.hype + getLabel(team.label.id).reach * 0.04)
+  if (team.label) stats.hype = clampStat(stats.hype + LABELS.get(team.label.id).reach * 0.04)
 
   if (team.publicist) stats.hype = clampStat(stats.hype + 4 * memberWeight(team.publicist))
   if (team.bookingAgent) stats.livePower = clampStat(stats.livePower + 6 * memberWeight(team.bookingAgent))

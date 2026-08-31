@@ -42,7 +42,7 @@ export function rollRange(rng: Rng, min: number, max: number): number {
 }
 
 /** Picks one item from a list, weighted by the given weight function. */
-export function weightedPick<T>(items: T[], weight: (item: T) => number, rng: Rng): T | undefined {
+export function weightedPick<T>(items: readonly T[], weight: (item: T) => number, rng: Rng): T | undefined {
   const weighted = items.map((item) => ({ item, weight: Math.max(0, weight(item)) }))
   const total = weighted.reduce((sum, w) => sum + w.weight, 0)
   if (total <= 0) return undefined

@@ -49,7 +49,7 @@ export function peakStars(career: Career): number {
 }
 
 /** Every city the artist lived in, in order, deduped. */
-export function citiesLived(career: Career): string[] {
+function citiesLived(career: Career): string[] {
   const seen = career.history.map((h) => h.residence).filter(Boolean)
   const ordered = seen.length ? seen : [career.residence || homeCity(career.artist.country)]
   return [...new Set(ordered)]

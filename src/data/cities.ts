@@ -5,13 +5,13 @@
  * step up a tier books bigger rooms (`venueBoost`, consumed by recordEngine).
  */
 
-import { getMarket } from '@/data/markets'
+import { MARKETS } from '@/data/markets'
 import type { MarketState } from '@/types/career'
 
 export const INTERNATIONAL_HUB = 'Miami'
 
 /** internationalReach at which a broken-out artist relocates. */
-export const RELOCATE_REACH = 20
+const RELOCATE_REACH = 20
 
 /** Penetration a market needs before it can pull the artist to its hub. */
 const MARKET_PULL_THRESHOLD = 40
@@ -40,7 +40,7 @@ interface SceneCity {
   venueBoost: number
 }
 
-export const SCENE_CITIES: Record<string, SceneCity> = {
+const SCENE_CITIES: Record<string, SceneCity> = {
   'San Juan': { tier: 1, venueBoost: 0.12 },
   Medellín: { tier: 1, venueBoost: 0.12 },
   'Ciudad de México': { tier: 1, venueBoost: 0.12 },
@@ -88,7 +88,7 @@ export function relocationTarget(
   const here = sceneTier(currentCity)
   const upward = markets
     .filter((m) => m.unlocked && m.penetration >= MARKET_PULL_THRESHOLD && HUB_BY_MARKET[m.id])
-    .map((m) => ({ city: HUB_BY_MARKET[m.id]!, pull: m.penetration * getMarket(m.id).size }))
+    .map((m) => ({ city: HUB_BY_MARKET[m.id]!, pull: m.penetration * MARKETS.get(m.id).size }))
     .filter((x) => sceneTier(x.city) > here)
     .sort((a, b) => b.pull - a.pull)
 

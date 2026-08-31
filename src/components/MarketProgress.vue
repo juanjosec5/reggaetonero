@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
-import { getMarket } from '@/data/markets'
+import { MARKETS } from '@/data/markets'
 import { MARKET_ESTABLISHED_THRESHOLD } from '@/engine/constants'
 import type { MarketState } from '@/types/career'
 
@@ -26,7 +26,7 @@ const rows = computed<Row[]>(() =>
       const { status, tone } = statusFor(state.penetration)
       return {
         id: state.id,
-        label: getMarket(state.id).label,
+        label: MARKETS.get(state.id).label,
         status,
         tone,
         fill: Math.min(100, Math.max(0, state.penetration)),

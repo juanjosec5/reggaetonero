@@ -2,6 +2,8 @@ import type { Rng } from '@/engine/rng'
 import { weightedPick } from '@/engine/rng'
 import type { ArtistArchetype, Rival } from '@/types/career'
 
+import { defineCatalog } from './catalog'
+
 export interface RivalDef {
   id: string
   name: string // fictional
@@ -11,7 +13,7 @@ export interface RivalDef {
   style: string // Spanish descriptor
 }
 
-export const RIVAL_DEFS: RivalDef[] = [
+export const RIVAL_DEFS = defineCatalog<RivalDef>('rival', [
   { id: 'rival_bravo', name: 'Bravo', archetype: 'hitmaker', baseFame: 35, baseCredibility: 20, style: 'Hits de radio uno tras otro' },
   { id: 'rival_la_nena', name: 'La Nena', archetype: 'perreo_king', baseFame: 28, baseCredibility: 30, style: 'Reina de la pista desde el barrio' },
   { id: 'rival_pluma', name: 'Pluma', archetype: 'lyricist', baseFame: 15, baseCredibility: 55, style: 'La pluma más respetada del underground' },
@@ -21,7 +23,7 @@ export const RIVAL_DEFS: RivalDef[] = [
   { id: 'rival_mvp', name: 'MVP', archetype: 'feature_artist', baseFame: 26, baseCredibility: 33, style: 'Está en el feature de todo el mundo' },
   { id: 'rival_don_e', name: 'Don E', archetype: 'executive', baseFame: 20, baseCredibility: 38, style: 'Mueve más negocio que música' },
   { id: 'rival_sombra', name: 'Sombra', archetype: 'lyricist', baseFame: 24, baseCredibility: 40, style: 'Trap oscuro con culto propio' },
-]
+])
 
 function toRival(def: RivalDef): Rival {
   return {
@@ -37,7 +39,7 @@ function toRival(def: RivalDef): Rival {
 
 /** Picks `count` distinct rivals to seed a new career with. */
 export function pickRivals(rng: Rng, count: number): Rival[] {
-  const pool = [...RIVAL_DEFS]
+  const pool = [...RIVAL_DEFS.all]
   const picked: Rival[] = []
   for (let i = 0; i < count && pool.length > 0; i++) {
     const choice = weightedPick(pool, () => 1, rng)
