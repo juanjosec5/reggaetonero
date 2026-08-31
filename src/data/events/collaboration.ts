@@ -41,7 +41,7 @@ export const COLLABORATION_EVENTS: CareerEvent[] = [
     description: 'Un productor talentoso te propone hacer varios proyectos juntos en exclusiva.',
     visibleRisk: 'low',
     condition: (c) => c.year >= 2,
-    weight: () => 3,
+    weight: () => 2,
     choices: [
       {
         text: 'Aceptar la exclusividad',

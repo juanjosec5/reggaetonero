@@ -135,7 +135,7 @@ export const MANAGEMENT_EVENTS: CareerEvent[] = [
     title: 'Un agente de shows quiere tu ruta de conciertos',
     description: 'Dice que puede llenarte la agenda de fechas si le das la exclusiva y una comisión gorda.',
     visibleRisk: 'low',
-    condition: (c) => !c.team.bookingAgent && c.stats.livePower >= 15,
+    condition: (c) => !c.team.bookingAgent && c.stats.livePower >= 8,
     weight: () => 3,
     choices: [
       {

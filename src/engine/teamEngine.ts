@@ -137,7 +137,7 @@ export function applyTeamBonuses(career: Career): void {
   if (team.label) stats.hype = clampStat(stats.hype + getLabel(team.label.id).reach * 0.04)
 
   if (team.publicist) stats.hype = clampStat(stats.hype + 4 * memberWeight(team.publicist))
-  if (team.bookingAgent) stats.livePower = clampStat(stats.livePower + 4 * memberWeight(team.bookingAgent))
+  if (team.bookingAgent) stats.livePower = clampStat(stats.livePower + 6 * memberWeight(team.bookingAgent))
   if (team.lawyer) {
     // A good lawyer slows the bleed of masters ownership.
     finances.ownershipPercent = clampStat(finances.ownershipPercent + 1 * memberWeight(team.lawyer))

@@ -23,10 +23,10 @@ describe('formatMoney', () => {
 
 describe('moneyBand', () => {
   it('maps net worth to a $ tier', () => {
-    expect(moneyBand(500)).toBe('$')
-    expect(moneyBand(1200)).toBe('$$')
-    expect(moneyBand(2500)).toBe('$$$')
-    expect(moneyBand(9000)).toBe('$$$$')
+    expect(moneyBand(1500)).toBe('$')
+    expect(moneyBand(3500)).toBe('$$')
+    expect(moneyBand(6000)).toBe('$$$')
+    expect(moneyBand(12000)).toBe('$$$$')
   })
 })
 

@@ -8,7 +8,7 @@ export const HEALTH_EVENTS: CareerEvent[] = [
     description: 'No recuerdas el último día libre. El equipo empieza a preocuparse.',
     visibleRisk: 'medium',
     condition: (c) => c.record.releases >= 3 && c.year >= 3,
-    weight: () => 3,
+    weight: () => 2,
     choices: [
       {
         text: 'Tomarte un descanso real',

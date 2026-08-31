@@ -13,9 +13,9 @@ export function formatMoney(amount: number): string {
 }
 
 const MONEY_BANDS: [max: number, label: string][] = [
-  [700, '$'],
-  [1800, '$$'],
-  [3500, '$$$'],
+  [2300, '$'],
+  [4800, '$$'],
+  [7500, '$$$'],
   [Infinity, '$$$$'],
 ]
 
