@@ -1,6 +1,7 @@
 import { applyStatDelta } from '@/engine/statPath'
 import type { Rng } from '@/engine/rng'
 import { rollRange } from '@/engine/rng'
+import { driftDelta } from '@/engine/scale'
 import type { Career, Era } from '@/types/career'
 
 /** Maps a career year to its era (year N ⇒ age 21 + N; career runs 22 → 35). */
@@ -38,14 +39,13 @@ export function applyProgression(career: Career, rng: Rng): void {
 
   // Fanbase drifts toward hype + fame; hype naturally cools off each year.
   const fanTarget = (career.stats.hype + career.stats.fame) / 2
-  const fanDelta = Math.round((fanTarget - career.stats.fanbase) * 0.15)
-  applyStatDelta(career, 'stats.fanbase', fanDelta)
+  applyStatDelta(career, 'stats.fanbase', driftDelta(career.stats.fanbase, fanTarget, 0.15))
 
   // An artist with fans plays shows: live power drifts toward what the fanbase
   // and fame support, so the touring subsystem breathes without the player
   // having to chain a specific run of tour choices.
   const liveTarget = career.stats.fanbase * 0.5 + career.stats.fame * 0.28
-  applyStatDelta(career, 'stats.livePower', Math.round((liveTarget - career.stats.livePower) * 0.12))
+  applyStatDelta(career, 'stats.livePower', driftDelta(career.stats.livePower, liveTarget, 0.12))
 
   // Momentum becomes recognition: a slice of this year's hype converts to fame,
   // with diminishing returns once you're already huge - the climb from famous to
@@ -68,6 +68,9 @@ export function applyProgression(career: Career, rng: Rng): void {
   const decayRate = 0.026 + Math.max(0, career.age - 30) * 0.024
   applyStatDelta(career, 'stats.fame', -Math.round(above * decayRate))
 
-  const credibilityDelta = Math.round((career.hiddenTraits.authenticity - career.stats.credibility) * 0.05)
-  applyStatDelta(career, 'stats.credibility', credibilityDelta)
+  applyStatDelta(
+    career,
+    'stats.credibility',
+    driftDelta(career.stats.credibility, career.hiddenTraits.authenticity, 0.05),
+  )
 }

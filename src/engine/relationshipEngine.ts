@@ -8,6 +8,7 @@ import {
   TENSION_COOLDOWN_RATE,
   clampStat,
 } from '@/engine/constants'
+import { driftToward } from '@/engine/scale'
 import type { Career, Relationship, RelationshipRole } from '@/types/career'
 
 const STAFF_ROLE_TO_RELATIONSHIP: Record<string, RelationshipRole> = {
@@ -92,8 +93,9 @@ export function rememberInteraction(
 export function decayRelationships(career: Career): void {
   for (const relationship of career.relationships) {
     for (const field of ['trust', 'loyalty', 'professionalValue'] as const) {
-      const gap = RELATIONSHIP_BASELINE - relationship[field]
-      relationship[field] = clampStat(relationship[field] + gap * RELATIONSHIP_DECAY_RATE)
+      relationship[field] = clampStat(
+        driftToward(relationship[field], RELATIONSHIP_BASELINE, RELATIONSHIP_DECAY_RATE),
+      )
     }
     relationship.tension = clampStat(relationship.tension * (1 - TENSION_COOLDOWN_RATE))
   }

@@ -1,3 +1,4 @@
+import { bandFor, type Band } from '@/engine/scale'
 import type { Career, CareerStats, MusicCareerRecord } from '@/types/career'
 
 /** The achievement counters a year's star rating is derived from. */
@@ -24,7 +25,7 @@ export function recordDelta(end: MusicCareerRecord, start: RecordDelta): RecordD
   return out
 }
 
-const STAR_BANDS: [max: number, stars: number][] = [
+const STAR_BANDS: Band<number>[] = [
   [3, 0],
   [13, 0.5],
   [22, 1],
@@ -60,7 +61,7 @@ export function recordStars(d: RecordDelta, stats?: StarStats): number {
   const stature = stats
     ? stats.fame * 0.98 + stats.fanbase * 0.36 + stats.culturalImpact * 0.52 + stats.internationalReach * 0.25
     : 0
-  return STAR_BANDS.find(([max]) => stature + activity < max)![1]
+  return bandFor(STAR_BANDS, stature + activity)
 }
 
 /** "840" · "12k" · "1.4M" — compact ticket / count formatting. */
@@ -91,7 +92,7 @@ export function currentStars(career: Career): number {
   return recordStars(recordDelta(entry.recordSnapshot, prev), entry.statsSnapshot)
 }
 
-const STAR_TIER_WORDS: [max: number, label: string][] = [
+const STAR_TIER_WORDS: Band<string>[] = [
   [1, 'Empezando'],
   [2, 'Sonando'],
   [3, 'En subida'],
@@ -102,5 +103,5 @@ const STAR_TIER_WORDS: [max: number, label: string][] = [
 
 /** A short Spanish word for where a 0–5 star rating puts you. */
 export function starTierLabel(stars: number): string {
-  return STAR_TIER_WORDS.find(([max]) => stars < max)![1]
+  return bandFor(STAR_TIER_WORDS, stars)
 }
