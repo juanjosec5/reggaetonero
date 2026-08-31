@@ -1,4 +1,4 @@
-import { grantAward, grantMilestone, hasMilestone, MILESTONES } from '@/data/awards'
+import { grammyTitle, grantAward, grantMilestone, hasMilestone, MILESTONES } from '@/data/awards'
 import { relocationTarget, sceneVenueBoost } from '@/data/cities'
 import { clampStat } from '@/engine/constants'
 import type { Rng } from '@/engine/rng'
@@ -56,7 +56,7 @@ export function accrueCareerRecord(career: Career, rng: Rng): void {
   // Awards - Grammy leans cultural/critical, Billboard leans chart/commercial.
   if ((stats.culturalImpact >= 24 || stats.credibility >= 52) && rollRange(rng, 1, 100) <= 16) {
     record.grammys += 1
-    grantAward(career, 'gr', 'grammy', 'Grammy Latino')
+    grantAward(career, 'gr', 'grammy', grammyTitle(career))
   }
   if (stats.fame >= 48 && stats.hype >= 28 && rollRange(rng, 1, 100) <= 22) {
     record.billboards += 1

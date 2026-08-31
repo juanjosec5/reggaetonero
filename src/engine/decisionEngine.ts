@@ -1,4 +1,4 @@
-import { grantAward } from '@/data/awards'
+import { grammyTitle, grantAward } from '@/data/awards'
 import { homeCity } from '@/data/cities'
 import { adjustMarket, unlockMarket } from '@/engine/marketEngine'
 import { adjustRelationship } from '@/engine/relationshipEngine'
@@ -76,7 +76,8 @@ function applyEffect(career: Career, effect: CareerEffect, rng: Rng, defaultRiva
         platinum: { key: 'plat', title: 'Disco de platino', bump: () => (career.record.platinumRecords += 1) },
       }[effect.award]
       meta.bump()
-      grantAward(career, meta.key, effect.award, effect.title ?? meta.title)
+      const fallbackTitle = effect.award === 'grammy' ? grammyTitle(career) : meta.title
+      grantAward(career, meta.key, effect.award, effect.title ?? fallbackTitle)
       return
     }
 

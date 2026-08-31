@@ -1,7 +1,14 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 
 import { getEventById } from '@/data/events'
-import { awardsForYear, grantAward, grantMilestone, hasMilestone, MILESTONES } from '@/data/awards'
+import {
+  awardsForYear,
+  grammyTitle,
+  grantAward,
+  grantMilestone,
+  hasMilestone,
+  MILESTONES,
+} from '@/data/awards'
 import { accrueCareerRecord } from '@/engine/recordEngine'
 import { createCareer } from '@/engine/createCareer'
 import { applyChoice } from '@/engine/decisionEngine'
@@ -29,6 +36,18 @@ describe('award log helpers', () => {
     expect(hasMilestone(career, m.id)).toBe(true)
     // recordEngine only grants if !hasMilestone, but the helper itself is checked here
     expect(career.awards.filter((a) => a.id.startsWith(`ms:${m.id}_`))).toHaveLength(2)
+  })
+
+  it('grammyTitle names a category, deterministically, and rotates it across wins', () => {
+    career.year = 4
+    const first = grammyTitle(career)
+    expect(first).toMatch(/^Grammy Latino — Mejor (Sencillo|Video|Álbum|Colaboración)$/)
+    expect(grammyTitle(career)).toBe(first) // pure — no RNG consumed
+
+    // a later win in a different year / count lands on its own category
+    career.year = 9
+    career.record.grammys = 2
+    expect(grammyTitle(career)).toMatch(/^Grammy Latino — Mejor /)
   })
 
   it('awardsForYear filters by year', () => {

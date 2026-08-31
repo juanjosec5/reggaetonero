@@ -1,3 +1,4 @@
+import { hashSeed } from '@/engine/rng'
 import type { AwardKind, Career, CareerAward } from '@/types/career'
 
 export const AWARD_ICON: Record<AwardKind, string> = {
@@ -5,6 +6,23 @@ export const AWARD_ICON: Record<AwardKind, string> = {
   billboard: '📈',
   platinum: '💿',
   milestone: '⭐',
+}
+
+/** Grammy Latino comes in categories — the ceremony hands out several. */
+const GRAMMY_CATEGORIES = [
+  'Mejor Sencillo',
+  'Mejor Video',
+  'Mejor Álbum',
+  'Mejor Colaboración',
+] as const
+
+/**
+ * The Grammy category for the next win — rotated deterministically from the
+ * career's own state so it varies across a run without consuming the RNG stream.
+ */
+export function grammyTitle(career: Career): string {
+  const i = hashSeed(career.seed, career.year, career.record.grammys) % GRAMMY_CATEGORIES.length
+  return `Grammy Latino — ${GRAMMY_CATEGORIES[i]}`
 }
 
 /** Grand once-in-a-career moments, checked every year after the record accrues. */
