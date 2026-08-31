@@ -10,6 +10,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "eslint .",
+    "lint:tokens": "! grep -rnE '\\b(neutral|zinc|slate|gray|grey|fuchsia|emerald|amber|rose|sky|indigo|violet)-(50|[1-9]00|950)\\b' src/",
     "format": "prettier --write ."
   },
   "overrides": {
