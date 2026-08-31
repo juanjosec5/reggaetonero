@@ -1,20 +1,23 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
+import Panel from '@/components/ui/Panel.vue'
+import StatBar from '@/components/ui/StatBar.vue'
+import { TONE_TEXT, type Tone } from '@/components/ui/tones'
 import { MARKETS } from '@/data/markets'
 import { MARKET_ESTABLISHED_THRESHOLD } from '@/engine/constants'
 import type { MarketState } from '@/types/career'
 
 const props = defineProps<{ markets: MarketState[] }>()
 
-type Row = { id: string; label: string; status: string; tone: string; fill: number }
+type Row = { id: string; label: string; status: string; tone: Tone; fill: number }
 
 // Descriptive only — the raw penetration number is never rendered.
-function statusFor(penetration: number): { status: string; tone: string } {
-  if (penetration < 25) return { status: 'Entrando', tone: 'text-sky-400' }
-  if (penetration < MARKET_ESTABLISHED_THRESHOLD) return { status: 'Creciendo', tone: 'text-amber-400' }
-  if (penetration < 82) return { status: 'Establecido', tone: 'text-emerald-400' }
-  return { status: 'Dominado', tone: 'text-fuchsia-400' }
+function statusFor(penetration: number): { status: string; tone: Tone } {
+  if (penetration < 25) return { status: 'Entrando', tone: 'info' }
+  if (penetration < MARKET_ESTABLISHED_THRESHOLD) return { status: 'Creciendo', tone: 'warn' }
+  if (penetration < 82) return { status: 'Establecido', tone: 'good' }
+  return { status: 'Dominado', tone: 'accent' }
 }
 
 // Only markets the artist has actually broken into show up.
@@ -37,19 +40,15 @@ const rows = computed<Row[]>(() =>
 
 <template>
   <!-- Stays hidden until the artist has broken into a second market. -->
-  <section v-if="rows.length >= 2" class="rounded-2xl bg-neutral-900/60 p-4 ring-1 ring-white/5">
-    <h2 class="mb-3 text-xs font-semibold uppercase tracking-wide text-neutral-500">Mercados</h2>
+  <Panel v-if="rows.length >= 2" as="section" heading="Mercados">
     <ul class="flex flex-col gap-2.5">
       <li v-for="row in rows" :key="row.id" class="flex items-center gap-3">
-        <span class="w-32 shrink-0 truncate text-xs text-neutral-300">{{ row.label }}</span>
-        <div class="h-1.5 flex-1 overflow-hidden rounded-full bg-neutral-800">
-          <div
-            class="h-full rounded-full bg-gradient-to-r from-fuchsia-600 to-fuchsia-400"
-            :style="{ width: `${row.fill}%` }"
-          />
-        </div>
-        <span class="w-24 shrink-0 text-right text-xs font-medium" :class="row.tone">{{ row.status }}</span>
+        <span class="w-32 shrink-0 truncate text-xs text-ink-muted">{{ row.label }}</span>
+        <StatBar :value="row.fill" class="flex-1" />
+        <span class="w-24 shrink-0 text-right text-xs font-medium" :class="TONE_TEXT[row.tone]">
+          {{ row.status }}
+        </span>
       </li>
     </ul>
-  </section>
+  </Panel>
 </template>

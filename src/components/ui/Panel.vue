@@ -8,10 +8,12 @@ withDefaults(
   defineProps<{
     as?: string
     pad?: 'md' | 'lg' | 'none'
+    /** eyebrow heading rendered above the slot (or use the `heading` slot) */
+    heading?: string
     /** magenta edge + bloom — for the one card that should pull focus */
     glow?: boolean
   }>(),
-  { as: 'section', pad: 'md', glow: false },
+  { as: 'section', pad: 'md', glow: false, heading: undefined },
 )
 </script>
 
@@ -24,8 +26,8 @@ withDefaults(
       { 'p-4': pad === 'md', 'p-5': pad === 'lg' },
     ]"
   >
-    <p v-if="$slots.heading" class="eyebrow mb-3">
-      <slot name="heading" />
+    <p v-if="heading || $slots.heading" class="eyebrow mb-3">
+      <slot name="heading">{{ heading }}</slot>
     </p>
     <slot />
   </component>
