@@ -1,4 +1,5 @@
 import { grantAward } from '@/data/awards'
+import { homeCity } from '@/data/cities'
 import { adjustMarket, unlockMarket } from '@/engine/marketEngine'
 import { adjustRelationship } from '@/engine/relationshipEngine'
 import { adjustRival, getRival, nearestRival } from '@/engine/rivalEngine'
@@ -78,6 +79,11 @@ function applyEffect(career: Career, effect: CareerEffect, rng: Rng, defaultRiva
       grantAward(career, meta.key, effect.award, effect.title ?? meta.title)
       return
     }
+
+    case 'move':
+      // `'home'` sends the artist back to their country's home city.
+      career.residence = effect.city === 'home' ? homeCity(career.artist.country) : effect.city
+      return
   }
 }
 

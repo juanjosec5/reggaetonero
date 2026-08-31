@@ -20,6 +20,8 @@ export const LABEL_EVENTS: CareerEvent[] = [
           { target: 'finances.cash', min: 60, max: 150 },
           { target: 'stats.industryRespect', min: 5, max: 10 },
         ],
+        // Sign and, sooner or later, the label decides what your music is worth.
+        delayedEffects: [{ eventId: 'setback_label_shelves_album', triggerYear: 3 }],
       },
       {
         text: 'Negociar mejores términos',

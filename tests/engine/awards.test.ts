@@ -61,10 +61,10 @@ describe('accrueCareerRecord awards', () => {
 })
 
 describe('award effect from a decision', () => {
-  it('comp_awards_win grants a real Grammy to the log and the counter', () => {
+  it('comp_awards_night grants a real Grammy on the campaign branch', () => {
     career.stats.fame = 60
-    career.record.hits = 4
-    const event = getEventById('comp_awards_win')!
+    career.stats.culturalImpact = 20
+    const event = getEventById('comp_awards_night')!
     const next = applyChoice(career, event, event.choices[0]!, makeRng(1))
     expect(next.record.grammys).toBe(1)
     expect(next.awards.some((a) => a.kind === 'grammy')).toBe(true)

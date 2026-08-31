@@ -168,6 +168,45 @@ export const BUSINESS_EVENTS: CareerEvent[] = [
           { target: 'stats.hype', min: -8, max: -2 },
         ],
       },
+      {
+        text: 'Devolver lo que te pagaron y montar un fondo para los afectados',
+        style: 'loyal',
+        effects: [
+          { target: 'finances.cash', min: -140, max: -60 },
+          { target: 'stats.credibility', min: -2, max: 4 },
+          { target: 'hiddenTraits.authenticity', min: 2, max: 6 },
+        ],
+        delayedEffects: [{ eventId: 'biz_second_chance', triggerYear: 2 }],
+      },
+    ],
+  },
+  {
+    id: 'biz_second_chance',
+    category: 'business',
+    title: 'La gente no olvidó lo que hiciste bien',
+    description:
+      'Un par de años después, la historia que quedó no es la del escándalo sino la del que dio la cara y puso su dinero. Otra marca — esta vez seria — quiere hablar contigo.',
+    visibleRisk: 'low',
+    condition: () => false, // Follow-up only: reached through a delayed effect.
+    weight: () => 0,
+    choices: [
+      {
+        text: 'Firmar, pero leyendo cada línea esta vez',
+        style: 'safe',
+        effects: [
+          { target: 'finances.cash', min: 60, max: 160 },
+          { target: 'stats.industryRespect', min: 2, max: 6 },
+          { target: 'attributes.business', min: 1, max: 4 },
+        ],
+      },
+      {
+        text: 'Pasar — ya sabes cómo termina eso',
+        style: 'loyal',
+        effects: [
+          { target: 'stats.credibility', min: 3, max: 7 },
+          { target: 'hiddenTraits.authenticity', min: 2, max: 5 },
+        ],
+      },
     ],
   },
   {

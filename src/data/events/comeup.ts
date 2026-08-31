@@ -399,6 +399,8 @@ export const COMEUP_EVENTS: CareerEvent[] = [
           { target: 'finances.cash', min: -20, max: -5 },
           { target: 'hiddenTraits.riskTolerance', min: 1, max: 3 },
         ],
+        // A handshake deal on beats you never fully paid for.
+        delayedEffects: [{ eventId: 'rel_beatmaker_wants_his_cut', triggerYear: 3 }],
       },
       {
         text: 'Solo pagar lo que puedas de contado',

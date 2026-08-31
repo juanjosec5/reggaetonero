@@ -67,7 +67,7 @@ export const TOUR_EVENTS: CareerEvent[] = [
     title: 'Puedes saltar a recintos más grandes',
     description: 'Tu equipo cree que ya llenas arenas. Si no las llenas, la foto de las gradas vacías da la vuelta al mundo.',
     visibleRisk: 'high',
-    condition: (c) => c.stats.livePower >= 24,
+    condition: (c) => c.stats.livePower >= 18,
     weight: () => 4,
     choices: [
       {
@@ -126,7 +126,7 @@ export const TOUR_EVENTS: CareerEvent[] = [
     title: 'La gira te está consumiendo',
     description: 'Llevas meses de bus en bus y el cuerpo te está pasando factura.',
     visibleRisk: 'medium',
-    condition: (c) => c.stats.livePower >= 26 && c.age >= 26,
+    condition: (c) => c.stats.livePower >= 20 && c.age >= 26,
     weight: () => 4,
     choices: [
       {
@@ -156,7 +156,7 @@ export const TOUR_EVENTS: CareerEvent[] = [
     title: 'Te ofrecen una residencia fija',
     description: 'Un recinto grande en el extranjero te quiere para una serie de fechas fijas todo el año. Buen dinero, pero te ata.',
     visibleRisk: 'medium',
-    condition: (c) => c.stats.internationalReach >= 20,
+    condition: (c) => c.stats.internationalReach >= 12,
     weight: () => 3,
     choices: [
       {

@@ -82,7 +82,33 @@ export function advanceMarkets(career: Career, rng: Rng): void {
     }
   }
 
+  advanceCurrentMarket(career)
   applyMarketStats(career)
+}
+
+/**
+ * The artist's focus follows the audience: `currentMarket` tracks the strongest
+ * unlocked territory (penetration × market size), so generic "penetrate" effects
+ * push into the frontier the artist is actually breaking rather than forever
+ * pumping a saturated home market. Switches only when a rival market clears the
+ * incumbent by 15%, so it doesn't flip-flop year to year. No RNG.
+ */
+function advanceCurrentMarket(career: Career): void {
+  const score = (m: MarketState) => (m.penetration / 100) * MARKETS.get(m.id).size
+  const current = getMarketState(career, career.currentMarket)
+  const incumbent = current ? score(current) : 0
+
+  let best: MarketState | undefined
+  let bestScore = incumbent * 1.15
+  for (const state of career.markets) {
+    if (!state.unlocked || state.id === career.currentMarket) continue
+    const s = score(state)
+    if (s > bestScore) {
+      bestScore = s
+      best = state
+    }
+  }
+  if (best) career.currentMarket = best.id
 }
 
 /** Derives internationalReach and nudges culturalImpact from the market spread. */
@@ -97,9 +123,9 @@ function applyMarketStats(career: Career): void {
   // Reach drifts toward what the market spread currently supports — up as you
   // expand, down as markets slip. An event bump fades over a few years rather
   // than being wiped instantly or locked in forever.
-  const reachTarget = weightedReach / 3
+  const reachTarget = weightedReach / 2.4
   career.stats.internationalReach = clampStat(
-    driftToward(career.stats.internationalReach, reachTarget, 0.4),
+    driftToward(career.stats.internationalReach, reachTarget, 0.42),
   )
 
   // Cultural impact is stickier - you don't un-impact culture - but it still

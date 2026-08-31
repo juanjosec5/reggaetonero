@@ -12,6 +12,7 @@ import { MEDIA_EVENTS } from './media'
 import { MONEY_EVENTS } from './money'
 import { MUSIC_EVENTS } from './music'
 import { RELATIONSHIP_EVENTS } from './relationship'
+import { RELOCATION_EVENTS } from './relocation'
 import { SETBACK_EVENTS } from './setbacks'
 import { TOUR_EVENTS } from './tour'
 
@@ -28,6 +29,7 @@ export const ALL_EVENTS: CareerEvent[] = [
   ...BUSINESS_EVENTS,
   ...COMPETITION_EVENTS,
   ...RELATIONSHIP_EVENTS,
+  ...RELOCATION_EVENTS,
   ...HEALTH_EVENTS,
   ...SETBACK_EVENTS,
 ]
