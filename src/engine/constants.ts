@@ -1,11 +1,11 @@
-export const ATTRIBUTE_MIN = 1
-export const ATTRIBUTE_MAX = 100
-export const TRAIT_MIN = 0
-export const TRAIT_MAX = 100
-export const STAT_MIN = 0
-export const STAT_MAX = 100
+const ATTRIBUTE_MIN = 1
+const ATTRIBUTE_MAX = 100
+const TRAIT_MIN = 0
+const TRAIT_MAX = 100
+const STAT_MIN = 0
+const STAT_MAX = 100
 
-export function clamp(value: number, min: number, max: number): number {
+function clamp(value: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, value))
 }
 

@@ -1,9 +1,9 @@
-import { MARKET_ESTABLISHED_THRESHOLD } from '@/engine/constants'
+import { establishedMarkets } from '@/engine/marketEngine'
 import type { Career, LegacyResult } from '@/types/career'
 
-/** Markets the artist is genuinely established in — used by several verdicts. */
-function establishedMarkets(career: Career): number {
-  return career.markets.filter((m) => m.unlocked && m.penetration >= MARKET_ESTABLISHED_THRESHOLD).length
+/** How many markets the artist is genuinely established in — used by several verdicts. */
+function establishedMarketCount(career: Career): number {
+  return establishedMarkets(career).length
 }
 
 export interface VerdictDefinition {
@@ -46,7 +46,7 @@ export const VERDICTS: VerdictDefinition[] = [
       Math.max(0, legacy.longevityScore - 54) * 3 +
       career.stats.culturalImpact * 0.25 +
       career.peakFame * 0.12 +
-      establishedMarkets(career) * 2,
+      establishedMarketCount(career) * 2,
   },
   {
     id: 'el_rey_del_perreo',
@@ -57,7 +57,7 @@ export const VERDICTS: VerdictDefinition[] = [
       legacy.liveScore * 1.2 +
       career.stats.culturalImpact * 0.28 +
       career.hiddenTraits.authenticity * 0.2 +
-      establishedMarkets(career) * 2 -
+      establishedMarketCount(career) * 2 -
       legacy.artisticScore * 0.25,
   },
   {

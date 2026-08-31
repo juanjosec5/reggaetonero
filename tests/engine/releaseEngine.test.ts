@@ -69,7 +69,7 @@ describe('generateReleases', () => {
     const releases = generateReleases(career, rng)
     for (const { release } of releases) {
       expect(release.title.length).toBeGreaterThan(0)
-      expect(['flop', 'normal', 'good', 'hit', 'smash']).toContain(release.tier)
+      expect(['flop', 'normal', 'hit', 'smash']).toContain(release.tier)
     }
   })
 })

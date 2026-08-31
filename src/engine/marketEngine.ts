@@ -10,10 +10,16 @@ import {
 } from '@/engine/constants'
 import type { Rng } from '@/engine/rng'
 import { rollRange } from '@/engine/rng'
+import { driftToward } from '@/engine/scale'
 import type { Career, MarketState } from '@/types/career'
 
 export function getMarketState(career: Career, marketId: string): MarketState | undefined {
   return career.markets.find((m) => m.id === marketId)
+}
+
+/** Markets the artist is genuinely established in — unlocked and past the established threshold. */
+export function establishedMarkets(career: Career): MarketState[] {
+  return career.markets.filter((m) => m.unlocked && m.penetration >= MARKET_ESTABLISHED_THRESHOLD)
 }
 
 /** Unlocks a market (idempotent). Mutates `career` in place. */
@@ -81,7 +87,7 @@ export function advanceMarkets(career: Career, rng: Rng): void {
 
 /** Derives internationalReach and nudges culturalImpact from the market spread. */
 export function applyMarketStats(career: Career): void {
-  const established = career.markets.filter((m) => m.unlocked && m.penetration >= MARKET_ESTABLISHED_THRESHOLD)
+  const established = establishedMarkets(career)
 
   const weightedReach = career.markets.reduce((sum, state) => {
     if (!state.unlocked) return sum
@@ -93,7 +99,7 @@ export function applyMarketStats(career: Career): void {
   // than being wiped instantly or locked in forever.
   const reachTarget = weightedReach / 3
   career.stats.internationalReach = clampStat(
-    career.stats.internationalReach + (reachTarget - career.stats.internationalReach) * 0.4,
+    driftToward(career.stats.internationalReach, reachTarget, 0.4),
   )
 
   // Cultural impact is stickier - you don't un-impact culture - but it still

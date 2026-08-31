@@ -1,4 +1,5 @@
-import { MARKET_ESTABLISHED_THRESHOLD } from '@/engine/constants'
+import { establishedMarkets } from '@/engine/marketEngine'
+import { bandFor, type Band } from '@/engine/scale'
 import type { Career } from '@/types/career'
 
 /**
@@ -12,7 +13,7 @@ export function formatMoney(amount: number): string {
   return `$${Math.max(0, Math.round(amount)).toLocaleString('en-US')}`
 }
 
-const MONEY_BANDS: [max: number, label: string][] = [
+const MONEY_BANDS: Band<string>[] = [
   [2300, '$'],
   [4800, '$$'],
   [7500, '$$$'],
@@ -21,10 +22,10 @@ const MONEY_BANDS: [max: number, label: string][] = [
 
 /** Wealth tier from net worth - what the play-screen header shows. */
 export function moneyBand(netWorth: number): string {
-  return MONEY_BANDS.find(([max]) => netWorth < max)![1]
+  return bandFor(MONEY_BANDS, netWorth)
 }
 
-const RECOGNITION_BANDS: [max: number, label: string][] = [
+const RECOGNITION_BANDS: Band<string>[] = [
   [8, 'Desconocido'],
   [22, 'Suena en el barrio'],
   [40, 'Nombre conocido'],
@@ -35,11 +36,11 @@ const RECOGNITION_BANDS: [max: number, label: string][] = [
 
 export function recognitionBand(career: Career): string {
   const score = career.stats.fame * 0.8 + career.stats.fanbase * 0.2
-  return RECOGNITION_BANDS.find(([max]) => score < max)![1]
+  return bandFor(RECOGNITION_BANDS, score)
 }
 
 export function establishedMarketCount(career: Career): number {
-  return career.markets.filter((m) => m.unlocked && m.penetration >= MARKET_ESTABLISHED_THRESHOLD).length
+  return establishedMarkets(career).length
 }
 
 export function globalStatusBand(career: Career): string {

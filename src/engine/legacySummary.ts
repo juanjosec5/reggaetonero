@@ -1,6 +1,7 @@
 import { homeCity } from '@/data/cities'
 import { VERDICTS } from '@/data/verdicts'
 import { computeIdentity } from '@/engine/identityEngine'
+import { bandFor, type Band } from '@/engine/scale'
 import { formatCount, recordDelta, recordStars, ZERO_DELTA } from '@/engine/stars'
 import type { Career, LegacyResult } from '@/types/career'
 
@@ -10,7 +11,7 @@ import type { Career, LegacyResult } from '@/types/career'
  * "Copiar resumen" button. Pure - no Vue.
  */
 
-const SCORE_BANDS: [max: number, label: string][] = [
+const SCORE_BANDS: Band<string>[] = [
   [25, 'Flojo'],
   [40, 'Discreto'],
   [55, 'Sólido'],
@@ -20,7 +21,7 @@ const SCORE_BANDS: [max: number, label: string][] = [
 
 /** One-word read on a 0-100 legacy score. */
 export function scoreBand(score: number): string {
-  return SCORE_BANDS.find(([max]) => score < max)![1]
+  return bandFor(SCORE_BANDS, score)
 }
 
 /** The numeric 0-100 scores on `LegacyResult` (everything except `verdictId`). */
