@@ -41,6 +41,12 @@ export function applyProgression(career: Career, rng: Rng): void {
   const fanDelta = Math.round((fanTarget - career.stats.fanbase) * 0.15)
   applyStatDelta(career, 'stats.fanbase', fanDelta)
 
+  // An artist with fans plays shows: live power drifts toward what the fanbase
+  // and fame support, so the touring subsystem breathes without the player
+  // having to chain a specific run of tour choices.
+  const liveTarget = career.stats.fanbase * 0.5 + career.stats.fame * 0.28
+  applyStatDelta(career, 'stats.livePower', Math.round((liveTarget - career.stats.livePower) * 0.12))
+
   // Momentum becomes recognition: a slice of this year's hype converts to fame,
   // with diminishing returns once you're already huge - the climb from famous to
   // superstar is far harder than from nobody to famous.

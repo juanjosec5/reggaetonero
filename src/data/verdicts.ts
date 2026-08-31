@@ -54,10 +54,10 @@ export const VERDICTS: VerdictDefinition[] = [
     description: 'No hubo tarima ni fiesta que no fuera tuya.',
     // The stage/street king - not the studio craftsman.
     score: (legacy, career) =>
-      legacy.liveScore * 1.55 +
+      legacy.liveScore * 1.2 +
       career.stats.culturalImpact * 0.28 +
       career.hiddenTraits.authenticity * 0.2 +
-      establishedMarkets(career) * 3 -
+      establishedMarkets(career) * 2 -
       legacy.artisticScore * 0.25,
   },
   {
@@ -77,8 +77,8 @@ export const VERDICTS: VerdictDefinition[] = [
     description: 'La música fue solo el primer negocio de un imperio más grande.',
     score: (legacy, career) =>
       legacy.industryScore * 0.6 +
-      career.finances.netWorth / 340 +
-      career.finances.catalogValue / 400 +
+      career.finances.netWorth / 900 +
+      career.finances.catalogValue / 800 +
       career.attributes.business * 0.5,
   },
   {

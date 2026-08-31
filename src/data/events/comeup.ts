@@ -202,7 +202,7 @@ export const COMEUP_EVENTS: CareerEvent[] = [
     description:
       'No tienes con qué pagar una sesión completa. Hay formas de entrar al estudio, pero todas cuestan algo.',
     visibleRisk: 'low',
-    condition: (c) => c.year <= 3 && c.finances.cash < 250,
+    condition: (c) => c.year <= 2,
     weight: () => 4,
     choices: [
       {

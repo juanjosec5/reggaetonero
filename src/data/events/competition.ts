@@ -73,7 +73,7 @@ export const COMPETITION_EVENTS: CareerEvent[] = [
     title: 'Te dejaron fuera de las nominaciones',
     description: 'Tu mejor año y los premios grandes ni te mencionaron. Un rival se llevó todo.',
     visibleRisk: 'medium',
-    condition: (c) => c.stats.fame >= 35 && c.record.hits >= 2,
+    condition: (c) => c.stats.fame >= 42 && c.stats.culturalImpact >= 8,
     weight: () => 3,
     choices: [
       {
@@ -101,8 +101,8 @@ export const COMPETITION_EVENTS: CareerEvent[] = [
     title: 'Ganaste el premio grande',
     description: 'Tu nombre en el sobre. La sala de pie. Los rivales aplaudiendo apretando la mandíbula. Ahora todos esperan que lo repitas.',
     visibleRisk: 'low',
-    condition: (c) => c.stats.fame >= 45 && c.record.hits >= 3,
-    weight: () => 2,
+    condition: (c) => c.stats.fame >= 52 && c.stats.culturalImpact >= 14 && c.stats.credibility >= 22,
+    weight: () => 4,
     oncePerCareer: true,
     choices: [
       {

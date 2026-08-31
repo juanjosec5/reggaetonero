@@ -51,7 +51,7 @@ export const SETBACK_EVENTS: CareerEvent[] = [
     title: 'Te acusan de inflar tus números',
     description: 'Un reportaje asegura que buena parte de tus streams son bots. Tú juras que no, pero el daño ya está hecho.',
     visibleRisk: 'high',
-    condition: (c) => c.stats.hype >= 40 && c.record.hits >= 2,
+    condition: (c) => c.stats.hype >= 30 && c.stats.fame >= 35,
     weight: () => 2,
     choices: [
       {
@@ -79,7 +79,7 @@ export const SETBACK_EVENTS: CareerEvent[] = [
     title: 'Les robaron en la gira',
     description: 'Se llevaron el equipo, los discos duros y las sesiones sin respaldo de tu próximo disco.',
     visibleRisk: 'high',
-    condition: (c) => c.stats.livePower >= 20 && c.year >= 3,
+    condition: (c) => c.stats.livePower >= 14 && c.year >= 3,
     weight: () => 2,
     choices: [
       {
@@ -266,7 +266,7 @@ export const SETBACK_EVENTS: CareerEvent[] = [
     title: 'Un problema en las cuerdas vocales',
     description: 'El médico es claro: si no paras y te operas, tu voz no va a volver a ser la misma.',
     visibleRisk: 'high',
-    condition: (c) => c.attributes.voice >= 30 && c.stats.livePower >= 25 && c.age >= 27,
+    condition: (c) => c.attributes.voice >= 30 && c.stats.livePower >= 18 && c.age >= 27,
     weight: () => 2,
     oncePerCareer: true,
     choices: [
