@@ -38,7 +38,11 @@ const readouts = computed(() => [
     </div>
 
     <Panel as="section" class="grid grid-cols-2 gap-x-4 gap-y-3 sm:grid-cols-5">
-      <div v-for="item in readouts" :key="item.label" class="flex flex-col gap-0.5">
+      <div
+        v-for="item in readouts"
+        :key="item.label"
+        class="flex flex-col items-center gap-0.5 text-center"
+      >
         <span class="eyebrow">{{ item.label }}</span>
         <span
           class="text-base font-bold"

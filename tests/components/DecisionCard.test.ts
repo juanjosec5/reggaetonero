@@ -20,11 +20,10 @@ const event: CareerEvent = {
 }
 
 describe('DecisionCard', () => {
-  it('renders the title, description, risk badge, and every choice', () => {
+  it('renders the title, description, and every choice', () => {
     const wrapper = mount(DecisionCard, { props: { event } })
     expect(wrapper.text()).toContain('Un sello grande te ofrece contrato')
     expect(wrapper.text()).toContain('Descripción de prueba.')
-    expect(wrapper.text()).toContain('Riesgo alto')
     expect(wrapper.text()).toContain('Firmar')
     expect(wrapper.text()).toContain('Negociar')
     expect(wrapper.text()).toContain('Seguir independiente')

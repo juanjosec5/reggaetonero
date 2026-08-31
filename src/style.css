@@ -96,7 +96,7 @@
   --color-series-2: rgb(var(--palette-series-2));
   --color-series-3: rgb(var(--palette-series-3));
 
-  --font-display: 'Syne Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Unbounded Variable', ui-sans-serif, system-ui, sans-serif;
   --font-sans: 'Manrope Variable', ui-sans-serif, system-ui, sans-serif;
 
   --radius-panel: var(--palette-radius-panel);
@@ -129,19 +129,9 @@
 @utility eyebrow-accent {
   @apply text-[11px] font-semibold uppercase tracking-[0.22em] text-accent;
 }
-/* chrome / liquid-metal text — the signature display treatment */
-@utility chrome {
-  background: linear-gradient(
-    180deg,
-    #9aa1b8 0%,
-    #ffffff 42%,
-    #7a8296 56%,
-    #cfd4e2 100%
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: #cfd4e2;
-  -webkit-text-fill-color: transparent;
+/* neon bloom on a display heading — keeps it legible on the dark ground */
+@utility bloom {
+  text-shadow: 0 0 24px rgb(var(--palette-accent) / 0.5);
 }
 
 /* neon bloom around a fill or a card */
@@ -154,9 +144,9 @@
 @utility glow-lime {
   box-shadow: 0 0 18px -2px rgb(var(--palette-lime) / 0.5);
 }
-/* text set in the display face, tight and a touch inflated — Syne's character */
+/* text set in the display face — Unbounded, retro-futurist and readable */
 @utility display {
   font-family: var(--font-display);
-  font-weight: 800;
-  letter-spacing: -0.02em;
+  font-weight: 600;
+  letter-spacing: -0.01em;
 }

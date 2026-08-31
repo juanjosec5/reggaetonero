@@ -1,4 +1,4 @@
-import '@fontsource-variable/syne'
+import '@fontsource-variable/unbounded'
 import '@fontsource-variable/manrope'
 
 import { createPinia } from 'pinia'

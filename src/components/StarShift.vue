@@ -71,6 +71,8 @@ function afterLeave() {
           />
         </div>
 
+        <p class="shift-label eyebrow mb-3 text-center">Nivel de reggaetonero</p>
+
         <div class="flex gap-1.5">
           <span
             v-for="(isFilled, i) in filled"
@@ -172,6 +174,16 @@ function afterLeave() {
   }
   100% {
     box-shadow: 0 18px 54px -14px rgb(var(--palette-loss) / 0.3);
+  }
+}
+
+.shift-label {
+  animation: shift-label 0.6s ease-out 0.1s both;
+}
+@keyframes shift-label {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
   }
 }
 
@@ -280,6 +292,7 @@ function afterLeave() {
   .shift-card,
   .shift-card.up,
   .shift-card.down,
+  .shift-label,
   .star,
   .star-gain,
   .star-lose {

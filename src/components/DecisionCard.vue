@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import RiskBadge from '@/components/RiskBadge.vue'
 import AppButton from '@/components/ui/AppButton.vue'
 import Panel from '@/components/ui/Panel.vue'
 import type { CareerChoice, CareerEvent } from '@/types/career'
@@ -10,10 +9,7 @@ const emit = defineEmits<{ choose: [choice: CareerChoice] }>()
 
 <template>
   <Panel as="div" :glow="!resolved" class="flex w-full flex-col gap-5">
-    <div class="flex items-start justify-between gap-3">
-      <h2 class="display text-xl text-ink">{{ event.title }}</h2>
-      <RiskBadge :risk="event.visibleRisk" />
-    </div>
+    <h2 class="display text-xl text-ink">{{ event.title }}</h2>
 
     <p class="text-sm leading-relaxed text-ink-muted">{{ event.description }}</p>
 

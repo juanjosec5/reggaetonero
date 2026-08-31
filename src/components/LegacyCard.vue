@@ -32,7 +32,7 @@ function val(key: (typeof LEGACY_METRICS)[number]['key']): number {
     </div>
 
     <div class="rounded-panel bg-surface p-5 text-center ring-1 ring-hairline">
-      <p class="chrome display text-xl">{{ verdict?.title }}</p>
+      <p class="display bloom text-xl text-ink">{{ verdict?.title }}</p>
       <p class="mt-1.5 text-sm text-ink-muted">{{ verdict?.description }}</p>
     </div>
 
