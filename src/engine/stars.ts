@@ -58,7 +58,7 @@ export function recordStars(d: RecordDelta, stats?: StarStats): number {
       d.ticketsSold / 28_000,
   )
   const stature = stats
-    ? stats.fame * 0.66 + stats.fanbase * 0.24 + stats.culturalImpact * 0.34 + stats.internationalReach * 0.16
+    ? stats.fame * 0.98 + stats.fanbase * 0.36 + stats.culturalImpact * 0.52 + stats.internationalReach * 0.25
     : 0
   return STAR_BANDS.find(([max]) => stature + activity < max)![1]
 }
