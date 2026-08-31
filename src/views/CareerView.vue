@@ -9,9 +9,11 @@ import CareerTable from '@/components/CareerTable.vue'
 import DecisionCard from '@/components/DecisionCard.vue'
 import MarketProgress from '@/components/MarketProgress.vue'
 import RivalPanel from '@/components/RivalPanel.vue'
+import StarShift from '@/components/StarShift.vue'
 import TeamPanel from '@/components/TeamPanel.vue'
 import { getEventById } from '@/data/events'
 import { MAX_CAREER_YEAR, RETIREMENT_MIN_YEAR } from '@/engine/constants'
+import { currentStars } from '@/engine/stars'
 import { useCareerStore } from '@/stores/career'
 import type { CareerAward, CareerChoice } from '@/types/career'
 
@@ -30,12 +32,20 @@ const lastYear = computed(() => career.value?.history.at(-1))
 const careerOver = computed(() => (career.value?.year ?? 0) >= MAX_CAREER_YEAR)
 const canRetire = computed(() => (career.value?.year ?? 0) >= RETIREMENT_MIN_YEAR)
 
-// Celebrate awards as they land. The first observation just sets a baseline so
-// loading a save doesn't replay every past trophy.
-const awardQueue = ref<CareerAward[]>([])
-const currentAward = computed(() => awardQueue.value[0])
-const seenAwards = ref(-1)
+// One serial queue of celebrations — new awards and whole-star gains/losses.
+// The first observation of each just sets a baseline so loading a save doesn't
+// replay past trophies or re-animate the current rating.
+type Celebration =
+  | { id: string; kind: 'award'; award: CareerAward }
+  | { id: string; kind: 'star'; dir: 'up' | 'down'; tier: number }
 
+const queue = ref<Celebration[]>([])
+const current = computed(() => queue.value[0])
+function nextCelebration() {
+  queue.value.shift()
+}
+
+const seenAwards = ref(-1)
 watch(
   () => career.value?.awards.length ?? -1,
   (n) => {
@@ -45,8 +55,35 @@ watch(
       return
     }
     if (n > seenAwards.value) {
-      awardQueue.value.push(...(career.value?.awards.slice(seenAwards.value) ?? []))
+      for (const award of career.value?.awards.slice(seenAwards.value) ?? []) {
+        queue.value.push({ id: award.id, kind: 'award', award })
+      }
       seenAwards.value = n
+    }
+  },
+  { immediate: true },
+)
+
+const rawStars = computed(() => (career.value ? currentStars(career.value) : 0))
+const seenTier = ref(-1)
+watch(
+  rawStars,
+  (raw) => {
+    const year = career.value?.year ?? 0
+    if (seenTier.value < 0) {
+      seenTier.value = Math.floor(raw)
+      return
+    }
+    const floor = Math.floor(raw)
+    if (floor > seenTier.value) {
+      for (let t = seenTier.value + 1; t <= floor; t++) {
+        queue.value.push({ id: `starup-${t}-${year}`, kind: 'star', dir: 'up', tier: t })
+      }
+      seenTier.value = floor
+    } else if (raw <= seenTier.value - 0.5) {
+      // Half-star hysteresis: a career hovering on a boundary shouldn't spam.
+      queue.value.push({ id: `stardn-${seenTier.value - 1}-${year}`, kind: 'star', dir: 'down', tier: seenTier.value - 1 })
+      seenTier.value -= 1
     }
   },
   { immediate: true },
@@ -82,14 +119,19 @@ function goRetire() {
   router.push('/legacy')
 }
 
-function nextAward() {
-  awardQueue.value.shift()
-}
 </script>
 
 <template>
   <main v-if="career" class="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 p-6">
-    <AwardToast v-if="currentAward" :key="currentAward.id" :award="currentAward" @done="nextAward" />
+    <template v-if="current">
+      <AwardToast
+        v-if="current.kind === 'award'"
+        :key="current.id"
+        :award="current.award"
+        @done="nextCelebration"
+      />
+      <StarShift v-else :key="current.id" :dir="current.dir" :tier="current.tier" @done="nextCelebration" />
+    </template>
 
     <CareerHeader :career="career" />
     <AwardShelf :awards="career.awards" />

@@ -51,6 +51,9 @@ describe('stat visibility', () => {
     // ...but the header readouts are there.
     expect(wrapper.text()).toContain('Reconocimiento')
     expect(wrapper.text()).toContain('Estatus global')
+    // the star rating is now a headline element in the header
+    expect(wrapper.find('[aria-label$="de 5 estrellas"]').exists()).toBe(true)
+    expect(wrapper.text()).toContain('Ubicación')
   })
 
   it('LegacyView reveals the nine-stat panel and the trajectory chart', async () => {
