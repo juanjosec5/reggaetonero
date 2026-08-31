@@ -29,7 +29,12 @@ export function computeLegacy(career: Career): LegacyResult {
   )
 
   const livePowerPeak = Math.max(stats.livePower, peakOf((s) => s.livePower) * 0.85)
-  const liveScore = clampStat(attributes.performance * 0.4 + attributes.charisma * 0.25 + livePowerPeak * 0.35)
+  const liveScore = clampStat(
+    attributes.performance * 0.36 +
+      attributes.charisma * 0.22 +
+      attributes.voice * 0.12 +
+      livePowerPeak * 0.3,
+  )
 
   // "networking" is now a real term: the reach of the artist's team.
   const teamMembers = Object.values(career.team).filter(
