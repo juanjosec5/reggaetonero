@@ -251,6 +251,11 @@ export interface AwardEffect {
   title?: string // player-facing name; defaults per kind
 }
 
+export interface MoveEffect {
+  kind: 'move'
+  city: string // must be a KNOWN_CITIES value ('Miami', 'Los Ángeles', 'home', …)
+}
+
 export type CareerEffect =
   | StatEffect
   | RelationshipEffect
@@ -259,6 +264,7 @@ export type CareerEffect =
   | TeamEffect
   | LabelEffect
   | AwardEffect
+  | MoveEffect
 
 export interface DelayedEffect {
   eventId: string

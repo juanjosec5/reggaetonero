@@ -11,7 +11,7 @@ import type { MarketState } from '@/types/career'
 export const INTERNATIONAL_HUB = 'Miami'
 
 /** internationalReach at which a broken-out artist relocates. */
-const RELOCATE_REACH = 20
+const RELOCATE_REACH = 13
 
 /** Penetration a market needs before it can pull the artist to its hub. */
 const MARKET_PULL_THRESHOLD = 40
@@ -47,8 +47,15 @@ const SCENE_CITIES: Record<string, SceneCity> = {
   'Buenos Aires': { tier: 1, venueBoost: 0.1 },
   Miami: { tier: 2, venueBoost: 0.25 },
   Madrid: { tier: 2, venueBoost: 0.22 },
+  'Nueva York': { tier: 2, venueBoost: 0.24 },
   'Los Ángeles': { tier: 3, venueBoost: 0.38 },
 }
+
+/** Every city an artist can live in — home cities plus the scene ladder. */
+export const KNOWN_CITIES = new Set<string>([
+  ...Object.values(HOME_CITY_BY_COUNTRY),
+  ...Object.keys(SCENE_CITIES),
+])
 
 /** The scene city each market pulls a rising artist toward. */
 const HUB_BY_MARKET: Record<string, string> = {
@@ -93,6 +100,14 @@ export function relocationTarget(
     .sort((a, b) => b.pull - a.pull)
 
   if (upward[0]) return upward[0].city
+
   // No market pulls you higher, but you've broken out — the crossover hub.
-  return sceneTier(INTERNATIONAL_HUB) > here ? INTERNATIONAL_HUB : null
+  if (sceneTier(INTERNATIONAL_HUB) > here) return INTERNATIONAL_HUB
+
+  // Artists who *start* at a tier-2 home base (Madrid, Nueva York) still get the
+  // one crossover move to Miami — otherwise España/EE.UU. can never relocate.
+  if (currentCity !== INTERNATIONAL_HUB && here === sceneTier(INTERNATIONAL_HUB)) {
+    return INTERNATIONAL_HUB
+  }
+  return null
 }

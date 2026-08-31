@@ -156,7 +156,7 @@ export const TOUR_EVENTS: CareerEvent[] = [
     title: 'Te ofrecen una residencia fija',
     description: 'Un recinto grande en el extranjero te quiere para una serie de fechas fijas todo el año. Buen dinero, pero te ata.',
     visibleRisk: 'medium',
-    condition: (c) => c.stats.internationalReach >= 20,
+    condition: (c) => c.stats.internationalReach >= 12,
     weight: () => 3,
     choices: [
       {

@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 
+import { KNOWN_CITIES } from '@/data/cities'
 import { ALL_EVENTS, getEventById } from '@/data/events'
 import { PEOPLE } from '@/data/people'
 import { PRODUCERS } from '@/data/producers'
@@ -96,6 +97,11 @@ describe('event catalog integrity', () => {
             else expect(effect.op, `${event.id}: team effect without role`).toBe('leave')
           } else if (effect.kind === 'market') {
             expect(['penetrate', 'saturate', 'unlock']).toContain(effect.op)
+          } else if (effect.kind === 'move') {
+            expect(
+              effect.city === 'home' || KNOWN_CITIES.has(effect.city),
+              `${event.id}: ${effect.city}`,
+            ).toBe(true)
           }
         }
       }
