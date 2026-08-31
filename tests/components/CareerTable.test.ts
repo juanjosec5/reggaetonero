@@ -2,6 +2,7 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 
 import CareerTable from '@/components/CareerTable.vue'
+import { grantMilestone, MILESTONES } from '@/data/awards'
 import { getEventById } from '@/data/events'
 import { simulateYear } from '@/engine/careerEngine'
 import { MAX_CAREER_YEAR } from '@/engine/constants'
@@ -49,6 +50,19 @@ describe('CareerTable', () => {
     expect(row0.text()).toContain('22')
     expect(row0.text()).not.toContain('—') // played, not a placeholder
     expect(row0.text()).toContain('ahora')
+  })
+
+  it('counts every trophy stamped with a year, not just Grammy/Billboard', () => {
+    const career = playedCareer(4)
+    const target = career.history.at(-1)!
+    const stadium = MILESTONES.find((m) => m.id === 'first_stadium')!
+    career.year = target.year
+    grantMilestone(career, stadium) // a 'milestone' award, not a grammy/billboard
+
+    const wrapper = mount(CareerTable, { props: { career } })
+    const row = wrapper.findAll('tbody tr')[target.year - 1]!
+    // the 🏆 cell for that year now shows 1, not 0
+    expect(row.findAll('td').at(-1)!.text()).toBe('1')
   })
 
   it('leaves the first row blank until the year-1 decision is made', () => {
