@@ -32,6 +32,8 @@ export const ALL_EVENTS: CareerEvent[] = [
   ...SETBACK_EVENTS,
 ]
 
+const EVENT_BY_ID = new Map(ALL_EVENTS.map((e) => [e.id, e]))
+
 export function getEventById(id: string): CareerEvent | undefined {
-  return ALL_EVENTS.find((e) => e.id === id)
+  return EVENT_BY_ID.get(id)
 }

@@ -1,5 +1,5 @@
-import { ARCHETYPES, getArchetype } from '@/data/archetypes'
-import { EMPHASES, getEmphasis } from '@/data/emphasis'
+import { ARCHETYPES } from '@/data/archetypes'
+import { EMPHASES } from '@/data/emphasis'
 import type { EmphasisId } from '@/data/emphasis'
 import { pickRivals } from '@/data/fictionalArtists'
 import { homeCity } from '@/data/cities'
@@ -7,7 +7,6 @@ import { GENRES } from '@/data/genres'
 import { homeMarketId, initialMarkets } from '@/data/markets'
 import { OPPORTUNITIES } from '@/data/opportunities'
 import type { OpportunityId } from '@/data/opportunities'
-import { getOpportunity } from '@/data/opportunities'
 import { clampAttribute, clampStat, clampTrait, STARTING_AGE, STARTING_CASH } from '@/engine/constants'
 import { makeRng, rollRange } from '@/engine/rng'
 import { CURRENT_SAVE_VERSION } from '@/types/career'
@@ -40,9 +39,9 @@ function rollBuild(rng: ReturnType<typeof makeRng>): {
 } {
   return {
     genre: GENRES[rollRange(rng, 0, GENRES.length - 1)]!.id,
-    archetypeId: ARCHETYPES[rollRange(rng, 0, ARCHETYPES.length - 1)]!.id,
-    emphasisId: EMPHASES[rollRange(rng, 0, EMPHASES.length - 1)]!.id,
-    opportunityId: OPPORTUNITIES[rollRange(rng, 0, OPPORTUNITIES.length - 1)]!.id,
+    archetypeId: ARCHETYPES.all[rollRange(rng, 0, ARCHETYPES.all.length - 1)]!.id,
+    emphasisId: EMPHASES.all[rollRange(rng, 0, EMPHASES.all.length - 1)]!.id,
+    opportunityId: OPPORTUNITIES.all[rollRange(rng, 0, OPPORTUNITIES.all.length - 1)]!.id,
   }
 }
 
@@ -74,8 +73,8 @@ function rollAttributes(
   emphasisId: EmphasisId | undefined,
   rng: ReturnType<typeof makeRng>,
 ) {
-  const archetype = getArchetype(archetypeId)
-  const emphasis = emphasisId ? getEmphasis(emphasisId) : undefined
+  const archetype = ARCHETYPES.get(archetypeId)
+  const emphasis = emphasisId ? EMPHASES.get(emphasisId) : undefined
   const attributes = {} as ArtistAttributes
   for (const key of ATTRIBUTE_KEYS) {
     const base = rollRange(rng, 25, 55)
@@ -87,7 +86,7 @@ function rollAttributes(
 }
 
 function rollTraits(archetypeId: ArtistProfile['archetype'], rng: ReturnType<typeof makeRng>) {
-  const archetype = getArchetype(archetypeId)
+  const archetype = ARCHETYPES.get(archetypeId)
   const traits = {} as HiddenTraits
   for (const key of TRAIT_KEYS) {
     const base = rollRange(rng, 20, 50)
@@ -111,7 +110,7 @@ function initialStats(opportunityId: OpportunityId | undefined): CareerStats {
   }
   if (!opportunityId) return stats
 
-  const opportunity = getOpportunity(opportunityId)
+  const opportunity = OPPORTUNITIES.get(opportunityId)
   for (const [key, bias] of Object.entries(opportunity.statBias) as [keyof CareerStats, number][]) {
     stats[key] = clampStat(stats[key] + bias)
   }
@@ -120,7 +119,7 @@ function initialStats(opportunityId: OpportunityId | undefined): CareerStats {
 
 function applyOpportunityTraits(traits: HiddenTraits, opportunityId: OpportunityId | undefined): HiddenTraits {
   if (!opportunityId) return traits
-  const opportunity = getOpportunity(opportunityId)
+  const opportunity = OPPORTUNITIES.get(opportunityId)
   if (!opportunity.traitBias) return traits
   for (const [key, bias] of Object.entries(opportunity.traitBias) as [keyof HiddenTraits, number][]) {
     traits[key] = clampTrait(traits[key] + bias)

@@ -1,5 +1,5 @@
 import { RIVAL_DEFS } from '@/data/fictionalArtists'
-import { getPerson } from '@/data/people'
+import { PEOPLE } from '@/data/people'
 import { PRODUCERS } from '@/data/producers'
 import { STAFF } from '@/data/staff'
 import {
@@ -21,22 +21,24 @@ const STAFF_ROLE_TO_RELATIONSHIP: Record<string, RelationshipRole> = {
 
 /** Resolves a personId to a display name + relationship role from the data catalogs. */
 function resolvePerson(personId: string): { name: string; role: RelationshipRole } {
-  const producer = PRODUCERS.find((p) => p.id === personId)
+  const producer = PRODUCERS.find(personId)
   if (producer) return { name: producer.name, role: 'producer' }
 
-  const staff = STAFF.find((s) => s.id === personId)
-  if (staff) return { name: staff.name, role: STAFF_ROLE_TO_RELATIONSHIP[staff.role] ?? 'collaborator' }
+  const staffMember = STAFF.find(personId)
+  if (staffMember) {
+    return { name: staffMember.name, role: STAFF_ROLE_TO_RELATIONSHIP[staffMember.role] ?? 'collaborator' }
+  }
 
-  const rival = RIVAL_DEFS.find((r) => r.id === personId)
+  const rival = RIVAL_DEFS.find(personId)
   if (rival) return { name: rival.name, role: 'rival' }
 
-  const person = getPerson(personId)
+  const person = PEOPLE.find(personId)
   if (person) return { name: person.name, role: person.role }
 
   return { name: personId, role: 'collaborator' }
 }
 
-export function getRelationship(career: Career, personId: string): Relationship | undefined {
+function getRelationship(career: Career, personId: string): Relationship | undefined {
   return career.relationships.find((r) => r.personId === personId)
 }
 

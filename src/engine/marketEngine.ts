@@ -1,4 +1,4 @@
-import { getMarket } from '@/data/markets'
+import { MARKETS } from '@/data/markets'
 import {
   MARKET_ESTABLISHED_THRESHOLD,
   MARKET_GROWTH_BASE,
@@ -53,7 +53,7 @@ export function advanceMarkets(career: Career, rng: Rng): void {
   for (const state of career.markets) {
     if (!state.unlocked) continue
 
-    const def = getMarket(state.id)
+    const def = MARKETS.get(state.id)
     const difficultyFactor = 1 - def.difficulty / 160
     const growth =
       (MARKET_GROWTH_BASE + rollRange(rng, 0, 4)) * fameFactor * difficultyFactor * (1 - state.saturation / 150)
@@ -86,12 +86,12 @@ export function advanceMarkets(career: Career, rng: Rng): void {
 }
 
 /** Derives internationalReach and nudges culturalImpact from the market spread. */
-export function applyMarketStats(career: Career): void {
+function applyMarketStats(career: Career): void {
   const established = establishedMarkets(career)
 
   const weightedReach = career.markets.reduce((sum, state) => {
     if (!state.unlocked) return sum
-    return sum + (state.penetration / 100) * getMarket(state.id).size
+    return sum + (state.penetration / 100) * MARKETS.get(state.id).size
   }, 0)
 
   // Reach drifts toward what the market spread currently supports — up as you

@@ -18,10 +18,10 @@ const baseProfile: ArtistProfile = {
 }
 
 const KNOWN_PERSON_IDS = new Set([
-  ...PRODUCERS.map((p) => p.id),
-  ...STAFF.map((s) => s.id),
-  ...RIVAL_DEFS.map((r) => r.id),
-  ...PEOPLE.map((p) => p.id),
+  ...PRODUCERS.all.map((p) => p.id),
+  ...STAFF.all.map((s) => s.id),
+  ...RIVAL_DEFS.all.map((r) => r.id),
+  ...PEOPLE.all.map((p) => p.id),
 ])
 
 const TEAM_ROLES: TeamRole[] = ['manager', 'producer', 'lawyer', 'publicist', 'bookingAgent']

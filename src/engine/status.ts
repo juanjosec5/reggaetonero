@@ -39,7 +39,7 @@ export function recognitionBand(career: Career): string {
   return bandFor(RECOGNITION_BANDS, score)
 }
 
-export function establishedMarketCount(career: Career): number {
+function establishedMarketCount(career: Career): number {
   return establishedMarkets(career).length
 }
 

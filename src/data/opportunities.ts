@@ -1,5 +1,7 @@
 import type { CareerStats, HiddenTraits, VisibleRisk } from '@/types/career'
 
+import { defineCatalog } from './catalog'
+
 export type OpportunityId = 'free_studio' | 'first_stage' | 'diy_release'
 
 export interface OpportunityDefinition {
@@ -11,7 +13,7 @@ export interface OpportunityDefinition {
   traitBias?: Partial<HiddenTraits>
 }
 
-export const OPPORTUNITIES: OpportunityDefinition[] = [
+export const OPPORTUNITIES = defineCatalog<OpportunityDefinition>('opportunity', [
   {
     id: 'free_studio',
     title: 'Un productor del barrio te da estudio gratis',
@@ -36,10 +38,4 @@ export const OPPORTUNITIES: OpportunityDefinition[] = [
     statBias: { hype: 5 },
     traitBias: { authenticity: 8, resilience: 5 },
   },
-]
-
-export function getOpportunity(id: OpportunityId): OpportunityDefinition {
-  const opportunity = OPPORTUNITIES.find((o) => o.id === id)
-  if (!opportunity) throw new Error(`Unknown opportunity: ${id}`)
-  return opportunity
-}
+])

@@ -21,7 +21,7 @@ describe('pickStaff budget handling', () => {
 
 describe('pickProducer budget handling', () => {
   it('falls back to the cheapest producer when nothing fits the budget', () => {
-    const cheapest = Math.min(...PRODUCERS.map((p) => p.cost))
+    const cheapest = Math.min(...PRODUCERS.all.map((p) => p.cost))
     expect(pickProducer(makeRng(1), { maxCost: 1 })!.cost).toBe(cheapest)
   })
 })

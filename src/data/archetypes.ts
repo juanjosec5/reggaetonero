@@ -1,5 +1,7 @@
 import type { ArtistArchetype, ArtistAttributes, HiddenTraits } from '@/types/career'
 
+import { defineCatalog } from './catalog'
+
 export interface ArchetypeDefinition {
   id: ArtistArchetype
   label: string // Spanish
@@ -8,7 +10,7 @@ export interface ArchetypeDefinition {
   traitBias: Partial<HiddenTraits>
 }
 
-export const ARCHETYPES: ArchetypeDefinition[] = [
+export const ARCHETYPES = defineCatalog<ArchetypeDefinition>('archetype', [
   {
     id: 'hitmaker',
     label: 'El Hitmaker',
@@ -65,10 +67,4 @@ export const ARCHETYPES: ArchetypeDefinition[] = [
     attributeBias: { business: 18, productionSense: 8, originality: -5 },
     traitBias: { ambition: 10, patience: 10, discipline: 5 },
   },
-]
-
-export function getArchetype(id: ArtistArchetype): ArchetypeDefinition {
-  const archetype = ARCHETYPES.find((a) => a.id === id)
-  if (!archetype) throw new Error(`Unknown archetype: ${id}`)
-  return archetype
-}
+])
