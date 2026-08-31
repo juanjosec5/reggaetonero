@@ -1,4 +1,4 @@
-import type { CareerStats, MusicCareerRecord } from '@/types/career'
+import type { Career, CareerStats, MusicCareerRecord } from '@/types/career'
 
 /** The achievement counters a year's star rating is derived from. */
 export type RecordDelta = Pick<
@@ -68,4 +68,39 @@ export function formatCount(n: number): string {
   if (n < 1000) return String(Math.round(n))
   if (n < 1_000_000) return `${(n / 1000).toFixed(n < 10_000 ? 1 : 0)}k`
   return `${(n / 1_000_000).toFixed(1)}M`
+}
+
+/**
+ * The "current overall" star rating — the score of the latest *resolved* career
+ * year (a year whose decision is in, or that had no decision). Identical to the
+ * last populated row of the career table; it rises and falls year to year.
+ */
+export function currentStars(career: Career): number {
+  const history = career.history
+  let entryIdx = -1
+  for (let i = history.length - 1; i >= 0; i--) {
+    const y = history[i]!
+    if (y.choiceTaken || !y.eventId) {
+      entryIdx = i
+      break
+    }
+  }
+  if (entryIdx < 0) return 0
+  const entry = history[entryIdx]!
+  const prev = history[entryIdx - 1]?.recordSnapshot ?? ZERO_DELTA
+  return recordStars(recordDelta(entry.recordSnapshot, prev), entry.statsSnapshot)
+}
+
+const STAR_TIER_WORDS: [max: number, label: string][] = [
+  [1, 'Empezando'],
+  [2, 'Sonando'],
+  [3, 'En subida'],
+  [4, 'En la cima'],
+  [5, 'Cabeza de cartel'],
+  [Infinity, 'Leyenda'],
+]
+
+/** A short Spanish word for where a 0–5 star rating puts you. */
+export function starTierLabel(stars: number): string {
+  return STAR_TIER_WORDS.find(([max]) => stars < max)![1]
 }

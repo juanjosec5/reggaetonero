@@ -69,7 +69,7 @@ function startCareer() {
       <p class="text-xs text-neutral-600">Empiezas a los 22. La carrera llega hasta los 35.</p>
     </section>
 
-    <div class="mt-auto pt-4">
+    <div class="mt-8">
       <button
         type="button"
         class="w-full rounded-2xl bg-fuchsia-500 px-4 py-3.5 text-sm font-semibold text-white disabled:opacity-40"
