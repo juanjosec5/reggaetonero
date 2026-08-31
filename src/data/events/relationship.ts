@@ -244,6 +244,66 @@ export const RELATIONSHIP_EVENTS: CareerEvent[] = [
           { target: 'hiddenTraits.discipline', min: 1, max: 4 },
           { target: 'stats.credibility', min: -3, max: 0 },
         ],
+        delayedEffects: [{ eventId: 'rel_day_one_blows_up', triggerYear: 3 }],
+      },
+    ],
+  },
+  {
+    id: 'rel_day_one_blows_up',
+    category: 'relationship',
+    title: 'El que dejaste atrás la rompió sin ti',
+    description:
+      'El pana que sacaste del proyecto se juntó con otra gente y ahora tiene un tema pegado. En la entrevista, cuando le preguntan por ti, sonríe y cambia de tema.',
+    visibleRisk: 'low',
+    condition: () => false, // Follow-up only: reached through a delayed effect.
+    weight: () => 0,
+    choices: [
+      {
+        text: 'Escribirle y felicitarlo de verdad',
+        style: 'loyal',
+        effects: [
+          { target: 'hiddenTraits.loyalty', min: 3, max: 7 },
+          { target: 'stats.credibility', min: 2, max: 6 },
+        ],
+      },
+      {
+        text: 'Dejar claro en tu próxima entrevista quién lo puso ahí',
+        style: 'ambitious',
+        effects: [
+          { target: 'stats.hype', min: 2, max: 6 },
+          { target: 'hiddenTraits.ego', min: 2, max: 5 },
+          { target: 'stats.credibility', min: -5, max: -1 },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'rel_beatmaker_wants_his_cut',
+    category: 'relationship',
+    title: 'El de los beats vino a cobrar',
+    description:
+      'Aquel productor que te fió los instrumentales al principio ahora es alguien. Dice que la mitad de tu catálogo temprano se paró sobre su trabajo y quiere puntos de todo lo que esos beats tocaron.',
+    visibleRisk: 'medium',
+    condition: () => false, // Follow-up only: reached through a delayed effect.
+    weight: () => 0,
+    choices: [
+      {
+        text: 'Sentarte a negociar un porcentaje justo',
+        style: 'loyal',
+        effects: [
+          { target: 'finances.ownershipPercent', min: -6, max: -2 },
+          { target: 'stats.industryRespect', min: 2, max: 6 },
+          { target: 'hiddenTraits.loyalty', min: 1, max: 4 },
+        ],
+      },
+      {
+        text: 'Recordarle que firmó un papel de cesión',
+        style: 'ambitious',
+        effects: [
+          { target: 'finances.cash', min: -60, max: 10 },
+          { target: 'stats.credibility', min: -5, max: 1 },
+          { target: 'stats.industryRespect', min: -6, max: 2 },
+        ],
       },
     ],
   },
@@ -253,7 +313,7 @@ export const RELATIONSHIP_EVENTS: CareerEvent[] = [
     title: 'Al que ayudaste ya no te menciona',
     description: 'Un artista que empujaste cuando nadie lo miraba ahora llena sitios y en las entrevistas cuenta su historia sin tu nombre.',
     visibleRisk: 'low',
-    condition: (c) => c.age >= 31 && (c.stats.industryRespect >= 8 || c.stats.culturalImpact >= 15),
+    condition: (c) => c.age >= 30 && c.stats.culturalImpact >= 12,
     weight: () => 4,
     choices: [
       {

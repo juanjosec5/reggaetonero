@@ -20,6 +20,8 @@ export const MANAGEMENT_EVENTS: CareerEvent[] = [
           { target: 'hiddenTraits.authenticity', min: -3, max: -1 },
           { target: 'stats.industryRespect', min: 2, max: 6 },
         ],
+        // Having a manager sets a relationship storyline in motion.
+        delayedEffects: [{ eventId: 'mgmt_manager_conflict', triggerYear: 3 }],
       },
       {
         text: 'Seguir manejándote tú mismo',
@@ -49,6 +51,8 @@ export const MANAGEMENT_EVENTS: CareerEvent[] = [
           { target: 'hiddenTraits.ego', min: 2, max: 5 },
           { target: 'stats.hype', min: -4, max: 2 },
         ],
+        // Push her around and, if you get big enough, someone bigger comes calling.
+        delayedEffects: [{ eventId: 'mgmt_manager_poaches_you', triggerYear: 2 }],
       },
       {
         text: 'Ceder y confiar en su experiencia',
@@ -58,6 +62,8 @@ export const MANAGEMENT_EVENTS: CareerEvent[] = [
           { target: 'hiddenTraits.patience', min: 2, max: 4 },
           { target: 'hiddenTraits.authenticity', min: -4, max: -1 },
         ],
+        // Trust her fully and you stop checking the books.
+        delayedEffects: [{ eventId: 'setback_manager_embezzlement', triggerYear: 2 }],
       },
       {
         text: 'Despedirla y buscar otra opción',
@@ -158,36 +164,6 @@ export const MANAGEMENT_EVENTS: CareerEvent[] = [
     ],
   },
   {
-    id: 'mgmt_team_payroll_crunch',
-    category: 'management',
-    title: 'La nómina del equipo pesa',
-    description: 'Mantener a todo tu equipo cuesta más de lo que entra este año.',
-    visibleRisk: 'medium',
-    condition: (c) =>
-      [c.team.manager, c.team.producer, c.team.lawyer, c.team.publicist, c.team.bookingAgent].filter(Boolean)
-        .length >= 2 && c.finances.cash < 60,
-    weight: () => 4,
-    choices: [
-      {
-        text: 'Recortar y soltar a alguien del equipo',
-        style: 'safe',
-        effects: [
-          { kind: 'team', op: 'leave' }, // no role - the engine drops the weakest member
-          { target: 'stats.hype', min: -6, max: -2 },
-          { target: 'stats.industryRespect', min: -3, max: 0 },
-        ],
-      },
-      {
-        text: 'Aguantar y pagar de tu bolsillo',
-        style: 'loyal',
-        effects: [
-          { target: 'finances.cash', min: -50, max: -20 },
-          { target: 'stats.credibility', min: 1, max: 4 },
-        ],
-      },
-    ],
-  },
-  {
     id: 'mgmt_manager_poaches_you',
     category: 'management',
     title: 'Una mánager más grande te tira los perros',
@@ -235,6 +211,7 @@ export const MANAGEMENT_EVENTS: CareerEvent[] = [
           { target: 'finances.cash', min: -45, max: -20 },
           { target: 'attributes.productionSense', min: 2, max: 5 },
         ],
+        delayedEffects: [{ eventId: 'rel_producer_loyalty_test', triggerYear: 2 }],
       },
       {
         text: 'Seguir trabajando con varios',

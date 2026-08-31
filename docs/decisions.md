@@ -3,15 +3,24 @@
 Reference for the event catalog (`src/data/events/*.ts`, aggregated by
 `src/data/events/index.ts`). The code is the source of truth; this is the map.
 
+> **Partial / dated.** The prose below still reflects an earlier design and the
+> era tables + some ids are stale. The current arc is **14 years, age 22 → 35**
+> (debut 22–24 · ascenso 25–27 · cima 28–30 · veterano 31–33 · leyenda 34–35),
+> ~120 events across 15 files including `relocation.ts`, and the award events are
+> now one `comp_awards_night`. Trust `src/types/career.ts` + the event files.
+
 ## Shape of a career
 
-- Fixed **21 years**, age 20 → 40. Roughly one event per year, so a playthrough
-  is **~15–20 decisions** (some years roll nothing; a matured delayed effect
+- Fixed **14 years**, age 22 → 35. Roughly one event per year, so a playthrough
+  is **~10–14 decisions** (some years roll nothing; a matured delayed effect
   pre-empts a fresh roll — see `eventEngine.selectYearEvent`).
-- **75 events**: 17 `oncePerCareer`, 10 follow-up-only (`condition: () => false`,
-  reached only through a `pendingEffect`), ~48 repeatable. Several repeatables are
-  practically once-ish because they gate on team/label state the event itself
-  flips (`mgmt_hire_*`, `label_major_three_album_deal`, …).
+- **~120 events**: ~20 `oncePerCareer`, ~18 follow-up-only (`condition: () => false`,
+  `weight: () => 0`, reached only through a `pendingEffect`), the rest repeatable.
+  Several repeatables are practically once-ish because they gate on team/label
+  state the event itself flips (`mgmt_hire_*`, `label_major_three_album_deal`, …).
+- Chains: the "commit" choice of a team/label event plants a consequence 2–4
+  years out, so the manager / producer / label storylines fire *because* you
+  hired the person. A few run 3 steps (sign → conflict → embezzlement).
 
 ## 1. Critical moments — the decisions that define a career
 

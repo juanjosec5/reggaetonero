@@ -17,6 +17,8 @@ export const CONTROVERSY_EVENTS: CareerEvent[] = [
           { target: 'stats.hype', min: 3, max: 8 },
           { target: 'stats.catalogStrength', min: -2, max: 3 },
         ],
+        // Rushing it out means nobody checked whether the loop was cleared.
+        delayedEffects: [{ eventId: 'controversy_sample_lawsuit', triggerYear: 1 }],
       },
       {
         text: 'No decir nada y dejar que pase',
@@ -82,6 +84,70 @@ export const CONTROVERSY_EVENTS: CareerEvent[] = [
         text: 'Usarlo para seguir generando ruido',
         style: 'commercial',
         effects: [{ target: 'stats.hype', min: 3, max: 7 }],
+        delayedEffects: [{ eventId: 'controversy_feud_public', triggerYear: 1 }],
+      },
+    ],
+  },
+  {
+    id: 'controversy_sample_lawsuit',
+    category: 'controversy',
+    title: 'Una productora te demandó',
+    description:
+      'El loop de esa canción que sacaste con prisa no estaba autorizado. Una productora chica con abogados grandes quiere su parte — y un ejemplo.',
+    visibleRisk: 'high',
+    condition: () => false, // Follow-up only: reached through a delayed effect.
+    weight: () => 0,
+    choices: [
+      {
+        text: 'Arreglar fuera de corte y pagar',
+        style: 'safe',
+        effects: [
+          { target: 'finances.cash', min: -190, max: -80 },
+          { target: 'stats.credibility', min: -4, max: -1 },
+          { target: 'hiddenTraits.patience', min: 1, max: 4 },
+        ],
+      },
+      {
+        text: 'Pelearla — el beat lo cambiaste tú',
+        style: 'ambitious',
+        effects: [
+          { target: 'finances.cash', min: -130, max: 20 },
+          { target: 'stats.industryRespect', min: -8, max: 4 },
+          { target: 'stats.hype', min: -6, max: 3 },
+          { target: 'hiddenTraits.resilience', min: 2, max: 6 },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'controversy_feud_public',
+    category: 'controversy',
+    title: 'El beef se salió de control',
+    description:
+      'Lo que empezó en indirectas ya llegó a la ceremonia: un empujón, cámaras encima, y un promotor grande que ahora no quiere a ninguno de los dos en su cartel.',
+    visibleRisk: 'high',
+    condition: () => false, // Follow-up only: reached through a delayed effect.
+    weight: () => 0,
+    choices: [
+      {
+        text: 'Bajar el tono y pedir que quede ahí',
+        style: 'safe',
+        effects: [
+          { target: 'stats.credibility', min: 2, max: 6 },
+          { target: 'stats.hype', min: -6, max: -1 },
+          { target: 'stats.livePower', min: -6, max: -1 },
+          { kind: 'rival', field: 'relationship', min: 3, max: 12 },
+        ],
+      },
+      {
+        text: 'Doblar la apuesta, esto vende',
+        style: 'commercial',
+        effects: [
+          { target: 'stats.hype', min: 6, max: 16 },
+          { target: 'stats.credibility', min: -6, max: 0 },
+          { target: 'stats.industryRespect', min: -8, max: -2 },
+          { kind: 'rival', field: 'relationship', min: -18, max: -6 },
+        ],
       },
     ],
   },
