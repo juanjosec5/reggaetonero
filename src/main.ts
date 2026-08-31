@@ -1,3 +1,6 @@
+import '@fontsource-variable/syne'
+import '@fontsource-variable/manrope'
+
 import { createPinia } from 'pinia'
 import { createApp } from 'vue'
 

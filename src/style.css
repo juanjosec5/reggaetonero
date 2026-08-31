@@ -1,10 +1,145 @@
 @import 'tailwindcss';
 
-html,
-body {
-  height: 100%;
+/* ==========================================================================
+   PALETTE PRIMITIVES — the one place a visual direction is swapped.
+   Current direction: "Perreo 2000" (Y2K chrome club-flyer).
+   Colors that need runtime alpha in component <style> blocks are stored as
+   space-separated channel triplets so both `rgb(var(--x))` (here) and
+   `rgb(var(--x) / 0.4)` (in keyframes) can consume them.
+   ========================================================================== */
+:root {
+  /* surfaces */
+  --palette-bg: 13 8 20; /* #0D0814 aubergine-black */
+  --palette-bg-deep: 8 5 14; /* deeper black-purple — modals, verdict */
+  --palette-glass: 255 255 255; /* consumed at low alpha for glass panels */
+  --palette-scrim: 6 4 12;
+
+  /* hairlines */
+  --palette-hairline: 255 255 255; /* consumed at ~0.10 */
+
+  /* ink */
+  --palette-ink: 244 245 250;
+  --palette-ink-muted: 176 181 200;
+  --palette-ink-subtle: 138 132 168;
+  --palette-ink-faint: 108 102 132;
+
+  /* accent — magenta; -strong is the deep stop of the two-stop gradient */
+  --palette-accent: 255 61 180; /* #FF3DB4 */
+  --palette-accent-strong: 214 38 155;
+  --palette-accent-ink: 13 8 20; /* dark text on a magenta fill */
+
+  /* the other two neons */
+  --palette-cyan: 55 224 255; /* #37E0FF */
+  --palette-lime: 198 255 61; /* #C6FF3D */
+
+  /* outcome semantics */
+  --palette-win: 198 255 61; /* lime — gains / whole-star up */
+  --palette-loss: 130 120 255; /* periwinkle — whole-star down */
+  --palette-star: 198 255 61;
+  --palette-star-empty: 62 54 86;
+
+  /* status band (risk levels, market stage, loyalty, rivalry) */
+  --palette-status-good: 52 224 168;
+  --palette-status-warn: 255 196 84;
+  --palette-status-bad: 255 92 132;
+  --palette-status-info: 55 224 255;
+
+  /* celebration keyframes (AwardToast / StarShift) */
+  --palette-celebrate: 255 61 180;
+  --palette-celebrate-grand: 198 255 61;
+
+  /* trajectory chart series */
+  --palette-series-1: 255 61 180;
+  --palette-series-2: 55 224 255;
+  --palette-series-3: 198 255 61;
+
+  /* shape + motion */
+  --palette-radius-panel: 1.15rem;
+  --palette-radius-tile: 0.85rem;
+  --palette-ease: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-body {
-  @apply bg-neutral-950 text-neutral-100;
+/* ==========================================================================
+   THEME — components only ever touch these tokens.
+   ========================================================================== */
+@theme {
+  --color-bg: rgb(var(--palette-bg));
+  --color-bg-deep: rgb(var(--palette-bg-deep));
+  --color-surface: rgb(var(--palette-glass) / 0.05);
+  --color-surface-2: rgb(var(--palette-glass) / 0.08);
+  --color-scrim: rgb(var(--palette-scrim) / 0.62);
+  --color-hairline: rgb(var(--palette-hairline) / 0.1);
+  --color-hairline-strong: rgb(var(--palette-hairline) / 0.18);
+
+  --color-ink: rgb(var(--palette-ink));
+  --color-ink-muted: rgb(var(--palette-ink-muted));
+  --color-ink-subtle: rgb(var(--palette-ink-subtle));
+  --color-ink-faint: rgb(var(--palette-ink-faint));
+
+  --color-accent: rgb(var(--palette-accent));
+  --color-accent-strong: rgb(var(--palette-accent-strong));
+  --color-accent-ink: rgb(var(--palette-accent-ink));
+  --color-cyan: rgb(var(--palette-cyan));
+  --color-lime: rgb(var(--palette-lime));
+
+  --color-win: rgb(var(--palette-win));
+  --color-loss: rgb(var(--palette-loss));
+  --color-star: rgb(var(--palette-star));
+  --color-star-empty: rgb(var(--palette-star-empty));
+
+  --color-status-good: rgb(var(--palette-status-good));
+  --color-status-warn: rgb(var(--palette-status-warn));
+  --color-status-bad: rgb(var(--palette-status-bad));
+  --color-status-info: rgb(var(--palette-status-info));
+
+  --color-series-1: rgb(var(--palette-series-1));
+  --color-series-2: rgb(var(--palette-series-2));
+  --color-series-3: rgb(var(--palette-series-3));
+
+  --font-display: 'Syne Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Manrope Variable', ui-sans-serif, system-ui, sans-serif;
+
+  --radius-panel: var(--palette-radius-panel);
+  --radius-tile: var(--palette-radius-tile);
+
+  --ease-out-quint: var(--palette-ease);
+}
+
+@layer base {
+  html,
+  body {
+    height: 100%;
+  }
+  body {
+    @apply bg-bg font-sans text-ink;
+    /* faint fixed aurora so the aubergine ground isn't flat */
+    background-image:
+      radial-gradient(80% 55% at 12% -5%, rgb(var(--palette-accent) / 0.14), transparent 60%),
+      radial-gradient(70% 50% at 100% 100%, rgb(var(--palette-cyan) / 0.1), transparent 55%);
+    background-attachment: fixed;
+  }
+}
+
+/* ==========================================================================
+   UTILITIES — repeated text-only recipes.
+   ========================================================================== */
+@utility eyebrow {
+  @apply text-[11px] font-semibold uppercase tracking-[0.16em] text-ink-subtle;
+}
+@utility eyebrow-accent {
+  @apply text-[11px] font-semibold uppercase tracking-[0.22em] text-accent;
+}
+/* chrome / liquid-metal text — the signature display treatment */
+@utility chrome {
+  background: linear-gradient(
+    180deg,
+    #9aa1b8 0%,
+    #ffffff 42%,
+    #7a8296 56%,
+    #cfd4e2 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: #cfd4e2;
+  -webkit-text-fill-color: transparent;
 }
