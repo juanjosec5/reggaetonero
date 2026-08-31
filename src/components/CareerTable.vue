@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 
 import StarRating from '@/components/StarRating.vue'
+import { awardsForYear } from '@/data/awards'
 import { homeCity } from '@/data/cities'
 import { STARTING_AGE, MAX_CAREER_YEAR } from '@/engine/constants'
 import { formatCount, recordDelta, recordStars, ZERO_DELTA } from '@/engine/stars'
@@ -33,7 +34,9 @@ const rows = computed(() => {
       city: entry.residence || startCity,
       stars: recordStars(d, entry.statsSnapshot),
       tickets: d.ticketsSold > 0 ? formatCount(d.ticketsSold) : '·',
-      awards: d.grammys + d.billboards,
+      // Every trophy stamped with this year — Grammy, Billboard, platino, hito —
+      // matching the shelf and the celebration toast.
+      awards: awardsForYear(props.career, year).length,
     }
   })
 })
@@ -50,7 +53,7 @@ const rows = computed(() => {
             <th class="pb-2 pr-3 text-left font-medium">Dónde vives</th>
             <th class="w-14 pb-2 text-center text-sm font-normal" title="Puntuación del año">★</th>
             <th class="w-14 pb-2 text-center text-sm font-normal" title="Entradas vendidas">🎟️</th>
-            <th class="w-12 pb-2 text-center text-sm font-normal" title="Grammy · Billboard">🏆</th>
+            <th class="w-12 pb-2 text-center text-sm font-normal" title="Premios y hitos del año">🏆</th>
           </tr>
         </thead>
         <tbody>
@@ -75,7 +78,7 @@ const rows = computed(() => {
               <span v-else>·</span>
             </td>
             <td class="py-2 text-center text-xs tabular-nums">{{ row.played ? row.tickets : '·' }}</td>
-            <td class="py-2 text-center text-xs tabular-nums" :title="`Grammy · Billboard`">
+            <td class="py-2 text-center text-xs tabular-nums" title="Premios y hitos del año">
               {{ row.played ? row.awards : '·' }}
             </td>
           </tr>
