@@ -143,3 +143,21 @@
   color: #cfd4e2;
   -webkit-text-fill-color: transparent;
 }
+
+/* neon bloom around a fill or a card */
+@utility glow-accent {
+  box-shadow: 0 6px 26px -8px rgb(var(--palette-accent) / 0.6);
+}
+@utility glow-cyan {
+  box-shadow: 0 0 18px -2px rgb(var(--palette-cyan) / 0.45);
+}
+@utility glow-lime {
+  box-shadow: 0 0 18px -2px rgb(var(--palette-lime) / 0.5);
+}
+/* text set in the display face, tight and a touch inflated — Syne's character */
+@utility display {
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.02;
+}
