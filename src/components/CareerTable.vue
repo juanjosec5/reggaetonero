@@ -43,12 +43,12 @@ const rows = computed(() => {
 </script>
 
 <template>
-  <section class="rounded-2xl bg-neutral-900/60 ring-1 ring-white/5">
-    <h2 class="px-4 pt-4 text-xs font-semibold uppercase tracking-wide text-neutral-500">Tu carrera</h2>
+  <section class="rounded-panel bg-surface ring-1 ring-hairline backdrop-blur-sm">
+    <h2 class="eyebrow px-4 pt-4">Tu carrera</h2>
     <div class="overflow-x-auto px-4 pb-4 pt-3">
       <table class="w-full min-w-[22rem] border-collapse text-sm">
         <thead>
-          <tr class="text-[11px] uppercase tracking-wide text-neutral-600">
+          <tr class="text-[11px] uppercase tracking-wide text-ink-faint">
             <th class="pb-2 pr-3 text-left font-medium">Edad</th>
             <th class="pb-2 pr-3 text-left font-medium">Dónde vives</th>
             <th class="w-14 pb-2 text-center text-sm font-normal" title="Puntuación del año">★</th>
@@ -60,14 +60,14 @@ const rows = computed(() => {
           <tr
             v-for="row in rows"
             :key="row.year"
-            class="border-t border-white/5"
-            :class="row.current ? 'text-neutral-100' : row.played ? 'text-neutral-300' : 'text-neutral-600'"
+            class="border-t border-hairline"
+            :class="row.current ? 'text-ink' : row.played ? 'text-ink-muted' : 'text-ink-faint'"
           >
             <td class="py-2 pr-3 whitespace-nowrap tabular-nums">
               {{ row.age }}
               <span
                 v-if="row.current"
-                class="ml-1.5 rounded-full bg-fuchsia-500/15 px-1.5 py-0.5 text-[10px] font-medium text-fuchsia-300"
+                class="ml-1.5 rounded-full bg-accent/15 px-1.5 py-0.5 text-[10px] font-semibold text-accent"
               >
                 ahora
               </span>
