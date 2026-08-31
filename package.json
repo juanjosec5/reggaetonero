@@ -10,6 +10,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "eslint .",
+    "lint:tokens": "! grep -rnE '\\b(neutral|zinc|slate|gray|grey|fuchsia|emerald|amber|rose|sky|indigo|violet)-(50|[1-9]00|950)\\b' src/",
     "format": "prettier --write ."
   },
   "overrides": {
@@ -18,6 +19,8 @@
     }
   },
   "dependencies": {
+    "@fontsource-variable/manrope": "^5.3.0",
+    "@fontsource-variable/unbounded": "^5.3.0",
     "@vercel/analytics": "^2.0.1",
     "pinia": "^4.0.3",
     "vue": "^3.5.41",

@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import RiskBadge from '@/components/RiskBadge.vue'
+import AppButton from '@/components/ui/AppButton.vue'
+import Panel from '@/components/ui/Panel.vue'
 import type { CareerChoice, CareerEvent } from '@/types/career'
 
 defineProps<{ event: CareerEvent; resolved?: boolean; choiceTaken?: string }>()
@@ -7,28 +8,25 @@ const emit = defineEmits<{ choose: [choice: CareerChoice] }>()
 </script>
 
 <template>
-  <div class="flex w-full flex-col gap-5 rounded-2xl bg-neutral-900/60 p-4 ring-1 ring-white/5">
-    <div class="flex items-start justify-between gap-3">
-      <h2 class="text-xl font-semibold text-neutral-50">{{ event.title }}</h2>
-      <RiskBadge :risk="event.visibleRisk" />
-    </div>
+  <Panel as="div" :glow="!resolved" class="flex w-full flex-col gap-5">
+    <h2 class="display text-xl text-ink">{{ event.title }}</h2>
 
-    <p class="text-sm leading-relaxed text-neutral-300">{{ event.description }}</p>
+    <p class="text-sm leading-relaxed text-ink-muted">{{ event.description }}</p>
 
-    <div v-if="resolved" class="rounded-xl bg-neutral-800/60 px-3 py-2">
-      <p class="text-xs font-medium text-fuchsia-400">→ {{ choiceTaken }}</p>
+    <div v-if="resolved" class="rounded-tile bg-surface-2 px-3 py-2 ring-1 ring-hairline">
+      <p class="text-xs font-semibold text-accent">→ {{ choiceTaken }}</p>
     </div>
 
     <div v-else class="flex flex-col gap-3">
-      <button
+      <AppButton
         v-for="choice in event.choices"
         :key="choice.text"
-        type="button"
-        class="w-full rounded-2xl bg-neutral-800 px-4 py-3.5 text-left text-sm font-medium text-neutral-100 transition active:scale-[0.98] active:bg-neutral-700"
+        variant="choice"
+        block
         @click="emit('choose', choice)"
       >
         {{ choice.text }}
-      </button>
+      </AppButton>
     </div>
-  </div>
+  </Panel>
 </template>

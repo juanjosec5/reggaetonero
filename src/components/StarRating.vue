@@ -16,11 +16,15 @@ const sizeClass = computed(() => (props.size === 'lg' ? 'text-2xl' : 'text-[10px
     <span
       v-for="(fill, i) in fills"
       :key="i"
-      class="relative leading-none text-neutral-700"
+      class="relative leading-none text-star-empty"
       :class="sizeClass"
     >
       ★
-      <span class="absolute inset-0 overflow-hidden text-amber-400" :style="{ width: `${fill}%` }">★</span>
+      <span
+        class="absolute inset-0 overflow-hidden text-star [filter:drop-shadow(0_0_5px_rgb(var(--palette-star)/0.5))]"
+        :style="{ width: `${fill}%` }"
+        >★</span
+      >
     </span>
   </span>
 </template>

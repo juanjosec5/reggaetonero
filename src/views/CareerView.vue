@@ -11,6 +11,7 @@ import MarketProgress from '@/components/MarketProgress.vue'
 import RivalPanel from '@/components/RivalPanel.vue'
 import StarShift from '@/components/StarShift.vue'
 import TeamPanel from '@/components/TeamPanel.vue'
+import AppButton from '@/components/ui/AppButton.vue'
 import { getEventById } from '@/data/events'
 import { MAX_CAREER_YEAR, RETIREMENT_MIN_YEAR } from '@/engine/constants'
 import { currentStars } from '@/engine/stars'
@@ -184,7 +185,7 @@ function goRetire() {
     v-if="career && introPhase === 'intro' && displayedEvent"
     class="mx-auto flex w-full max-w-lg flex-1 flex-col items-center justify-center gap-5 p-6"
   >
-    <p class="intro-eyebrow text-xs font-semibold uppercase tracking-[0.25em] text-fuchsia-400">
+    <p class="intro-eyebrow text-xs font-semibold uppercase tracking-[0.25em] text-accent">
       Tu primera decisión
     </p>
     <DecisionCard
@@ -230,26 +231,21 @@ function goRetire() {
 
         <template v-if="!store.pendingChoice">
           <div class="rest-fade rest-d2" :class="restRevealed ? 'rest-in' : 'rest-out'">
-            <p v-if="careerOver" class="text-sm text-neutral-400">
+            <p v-if="careerOver" class="text-sm text-ink-subtle">
               Llegaste a los 35. Es hora de cerrar el ciclo.
             </p>
-            <button
-              v-if="!careerOver"
-              type="button"
-              class="w-full rounded-2xl bg-fuchsia-500 px-4 py-3.5 text-sm font-semibold text-white active:scale-[0.98]"
-              @click="advance"
-            >
+            <AppButton v-if="!careerOver" variant="primary" block @click="advance">
               Avanzar al próximo año
-            </button>
-            <button
+            </AppButton>
+            <AppButton
               v-if="canRetire"
-              type="button"
-              class="mt-3 w-full rounded-2xl px-4 py-3.5 text-sm font-semibold active:scale-[0.98]"
-              :class="careerOver ? 'bg-fuchsia-500 text-white' : 'bg-neutral-800 text-neutral-100'"
+              :variant="careerOver ? 'primary' : 'secondary'"
+              block
+              class="mt-3"
               @click="goRetire"
             >
               Retirarte
-            </button>
+            </AppButton>
           </div>
         </template>
 

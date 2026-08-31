@@ -15,11 +15,11 @@ async function open(props: { dir: 'up' | 'down'; tier: number }) {
 }
 
 describe('StarShift', () => {
-  it('renders five star glyphs and no text', async () => {
+  it('renders five star glyphs under the level label', async () => {
     const wrapper = await open({ dir: 'up', tier: 3 })
     expect(wrapper.findAll('span.star')).toHaveLength(5)
-    expect(wrapper.findAll('span.star.text-amber-400')).toHaveLength(3) // tier 3 filled
-    expect(wrapper.text().replace(/★/g, '').trim()).toBe('') // purely visual
+    expect(wrapper.findAll('span.star.text-star')).toHaveLength(3) // tier 3 filled
+    expect(wrapper.text().replace(/★/g, '').trim()).toBe('Nivel de reggaetonero')
     wrapper.unmount()
   })
 

@@ -1,3 +1,6 @@
+import '@fontsource-variable/unbounded'
+import '@fontsource-variable/manrope'
+
 import { createPinia } from 'pinia'
 import { createApp } from 'vue'
 

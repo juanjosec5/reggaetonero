@@ -6,9 +6,9 @@ import type { CareerYear } from '@/types/career'
 const props = defineProps<{ history: CareerYear[] }>()
 
 const SERIES = [
-  { key: 'fame', label: 'Fama', color: '#e879f9' },
-  { key: 'catalogStrength', label: 'Catálogo', color: '#38bdf8' },
-  { key: 'culturalImpact', label: 'Impacto', color: '#fbbf24' },
+  { key: 'fame', label: 'Fama', cls: 'text-series-1' },
+  { key: 'catalogStrength', label: 'Catálogo', cls: 'text-series-2' },
+  { key: 'culturalImpact', label: 'Impacto', cls: 'text-series-3' },
 ] as const
 
 const W = 300
@@ -45,12 +45,17 @@ const yearLabels = computed(() => {
 
 <template>
   <div class="flex flex-col gap-3">
-    <p class="text-xs font-semibold uppercase tracking-wide text-neutral-500">Tu trayectoria</p>
+    <p class="eyebrow">Tu trayectoria</p>
 
-    <p v-if="!hasData" class="text-sm text-neutral-500">Carrera demasiado corta para una gráfica.</p>
+    <p v-if="!hasData" class="text-sm text-ink-subtle">Carrera demasiado corta para una gráfica.</p>
 
     <template v-else>
-      <svg :viewBox="`0 0 ${W} ${H}`" class="w-full" role="img" aria-label="Evolución de la carrera por año">
+      <svg
+        :viewBox="`0 0 ${W} ${H}`"
+        class="w-full"
+        role="img"
+        aria-label="Evolución de la carrera por año"
+      >
         <line
           v-for="frac in [0, 0.5, 1]"
           :key="frac"
@@ -59,7 +64,7 @@ const yearLabels = computed(() => {
           :y1="PAD_TOP + (H - PAD_TOP - PAD_BOTTOM) * frac"
           :y2="PAD_TOP + (H - PAD_TOP - PAD_BOTTOM) * frac"
           stroke="currentColor"
-          class="text-neutral-800"
+          class="text-hairline-strong"
           stroke-width="1"
         />
         <path
@@ -67,20 +72,30 @@ const yearLabels = computed(() => {
           :key="s.key"
           :d="pathFor(s.key)"
           fill="none"
-          :stroke="s.color"
-          stroke-width="2"
+          stroke="currentColor"
+          :class="s.cls"
+          stroke-width="2.5"
           stroke-linejoin="round"
           stroke-linecap="round"
         />
-        <text :x="PAD_X" :y="H - 4" class="fill-neutral-500 text-[9px]">Año {{ yearLabels.first }}</text>
-        <text :x="W - PAD_X" :y="H - 4" text-anchor="end" class="fill-neutral-500 text-[9px]">
+        <text :x="PAD_X" :y="H - 4" class="fill-ink-faint text-[9px]">Año {{ yearLabels.first }}</text>
+        <text
+          :x="W - PAD_X"
+          :y="H - 4"
+          text-anchor="end"
+          class="fill-ink-faint text-[9px]"
+        >
           Año {{ yearLabels.last }}
         </text>
       </svg>
 
       <div class="flex flex-wrap gap-x-4 gap-y-1">
-        <span v-for="s in SERIES" :key="s.key" class="flex items-center gap-1.5 text-xs text-neutral-400">
-          <span class="h-2 w-2 rounded-full" :style="{ backgroundColor: s.color }" />
+        <span
+          v-for="s in SERIES"
+          :key="s.key"
+          class="flex items-center gap-1.5 text-xs text-ink-subtle"
+        >
+          <span class="h-2 w-2 rounded-full bg-current" :class="s.cls" />
           {{ s.label }}
         </span>
       </div>
