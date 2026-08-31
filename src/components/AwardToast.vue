@@ -44,12 +44,12 @@ function afterLeave() {
   <Transition name="award" appear @after-leave="afterLeave">
     <div
       v-if="show"
-      class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-6 backdrop-blur-[2px]"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-scrim px-6 backdrop-blur-[2px]"
       @click="show = false"
     >
       <div
-        class="award-card relative flex flex-col items-center gap-2.5 rounded-3xl px-10 py-8 text-center ring-1"
-        :class="award.grand ? 'grand bg-neutral-950/95 ring-amber-300/40' : 'bg-neutral-950/95 ring-fuchsia-400/30'"
+        class="award-card relative flex flex-col items-center gap-2.5 rounded-3xl px-10 py-8 text-center ring-1 backdrop-blur-md"
+        :class="award.grand ? 'grand bg-bg-deep/95 ring-lime/40' : 'bg-bg-deep/95 ring-accent/30'"
       >
         <div class="spark-burst" aria-hidden="true">
           <span
@@ -63,11 +63,11 @@ function afterLeave() {
         <span class="award-icon text-6xl">{{ AWARD_ICON[award.kind] }}</span>
         <p
           class="text-[11px] font-semibold uppercase tracking-[0.2em]"
-          :class="award.grand ? 'text-amber-300' : 'text-fuchsia-400'"
+          :class="award.grand ? 'text-lime' : 'text-accent'"
         >
           {{ award.grand ? 'Hito de carrera' : 'Nuevo logro' }}
         </p>
-        <p class="max-w-[16rem] text-lg font-bold leading-snug text-neutral-50">{{ award.title }}</p>
+        <p class="max-w-[16rem] text-lg font-bold leading-snug text-ink">{{ award.title }}</p>
       </div>
     </div>
   </Transition>
@@ -112,13 +112,13 @@ function afterLeave() {
 /* Temporal drop shadow — bursts wide, then settles to a resting glow. */
 @keyframes award-glow {
   0% {
-    box-shadow: 0 0 0 0 rgb(217 70 239 / 0);
+    box-shadow: 0 0 0 0 rgb(var(--palette-celebrate) / 0);
   }
   35% {
-    box-shadow: 0 30px 90px -10px rgb(217 70 239 / 0.75);
+    box-shadow: 0 30px 90px -10px rgb(var(--palette-celebrate) / 0.75);
   }
   100% {
-    box-shadow: 0 18px 50px -12px rgb(217 70 239 / 0.35);
+    box-shadow: 0 18px 50px -12px rgb(var(--palette-celebrate) / 0.35);
   }
 }
 .award-card.grand {
@@ -128,13 +128,13 @@ function afterLeave() {
 }
 @keyframes award-glow-grand {
   0% {
-    box-shadow: 0 0 0 0 rgb(251 191 36 / 0);
+    box-shadow: 0 0 0 0 rgb(var(--palette-celebrate-grand) / 0);
   }
   35% {
-    box-shadow: 0 36px 110px 0 rgb(251 191 36 / 0.85);
+    box-shadow: 0 36px 110px 0 rgb(var(--palette-celebrate-grand) / 0.85);
   }
   100% {
-    box-shadow: 0 22px 64px -10px rgb(251 191 36 / 0.45);
+    box-shadow: 0 22px 64px -10px rgb(var(--palette-celebrate-grand) / 0.45);
   }
 }
 
@@ -169,14 +169,14 @@ function afterLeave() {
   width: 4px;
   height: 4px;
   border-radius: 9999px;
-  background: rgb(217 70 239);
-  box-shadow: 0 0 6px 1px rgb(217 70 239 / 0.7);
+  background: rgb(var(--palette-celebrate));
+  box-shadow: 0 0 6px 1px rgb(var(--palette-celebrate) / 0.7);
   transform-origin: center;
   animation: spark-fly 0.9s cubic-bezier(0.12, 0.8, 0.3, 1) var(--delay) both;
 }
 .spark-gold {
-  background: rgb(251 191 36);
-  box-shadow: 0 0 7px 1px rgb(251 191 36 / 0.75);
+  background: rgb(var(--palette-celebrate-grand));
+  box-shadow: 0 0 7px 1px rgb(var(--palette-celebrate-grand) / 0.75);
   animation-duration: 1.1s;
 }
 @keyframes spark-fly {

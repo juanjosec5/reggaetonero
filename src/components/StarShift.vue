@@ -50,10 +50,13 @@ function afterLeave() {
   <Transition name="shift" appear @after-leave="afterLeave">
     <div
       v-if="show"
-      class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-6 backdrop-blur-[2px]"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-scrim px-6 backdrop-blur-[2px]"
       @click="show = false"
     >
-      <div class="shift-card relative rounded-3xl px-10 py-9" :class="dir === 'up' ? 'up' : 'down'">
+      <div
+        class="shift-card relative rounded-3xl px-10 py-9 backdrop-blur-md"
+        :class="dir === 'up' ? 'up' : 'down'"
+      >
         <div class="particles" aria-hidden="true">
           <span
             v-for="p in particles"
@@ -74,7 +77,7 @@ function afterLeave() {
             :key="i"
             class="star text-5xl leading-none"
             :class="[
-              isFilled ? 'text-amber-400' : 'text-neutral-700',
+              isFilled ? 'text-star' : 'text-star-empty',
               i === shiftingIndex ? (dir === 'up' ? 'star-gain' : 'star-lose') : '',
             ]"
             >★</span
@@ -99,17 +102,17 @@ function afterLeave() {
 }
 
 .shift-card {
-  background: rgb(10 10 10 / 0.95);
-  border: 1px solid rgb(var(--accent) / 0.35);
+  background: rgb(var(--palette-bg-deep) / 0.95);
+  border: 1px solid rgb(var(--shift-accent) / 0.35);
 }
 .shift-card.up {
-  --accent: 251 191 36; /* amber-400 */
+  --shift-accent: var(--palette-win);
   animation:
     card-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both,
     card-glow-up 1s ease-out both;
 }
 .shift-card.down {
-  --accent: 129 140 248; /* indigo-400 */
+  --shift-accent: var(--palette-loss);
   animation:
     card-slump 1s cubic-bezier(0.33, 0, 0.4, 1) both,
     card-glow-down 1.3s ease-out both;
@@ -151,24 +154,24 @@ function afterLeave() {
 }
 @keyframes card-glow-up {
   0% {
-    box-shadow: 0 0 0 0 rgb(251 191 36 / 0);
+    box-shadow: 0 0 0 0 rgb(var(--palette-win) / 0);
   }
   35% {
-    box-shadow: 0 32px 100px 0 rgb(251 191 36 / 0.8);
+    box-shadow: 0 32px 100px 0 rgb(var(--palette-win) / 0.8);
   }
   100% {
-    box-shadow: 0 20px 60px -12px rgb(251 191 36 / 0.4);
+    box-shadow: 0 20px 60px -12px rgb(var(--palette-win) / 0.4);
   }
 }
 @keyframes card-glow-down {
   0% {
-    box-shadow: 0 0 0 0 rgb(129 140 248 / 0);
+    box-shadow: 0 0 0 0 rgb(var(--palette-loss) / 0);
   }
   40% {
-    box-shadow: 0 30px 90px 0 rgb(129 140 248 / 0.55);
+    box-shadow: 0 30px 90px 0 rgb(var(--palette-loss) / 0.55);
   }
   100% {
-    box-shadow: 0 18px 54px -14px rgb(129 140 248 / 0.3);
+    box-shadow: 0 18px 54px -14px rgb(var(--palette-loss) / 0.3);
   }
 }
 
@@ -178,7 +181,7 @@ function afterLeave() {
   transform-origin: center;
 }
 .star-gain {
-  color: rgb(251 191 36);
+  color: rgb(var(--palette-win));
   animation: star-pop 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both;
 }
 @keyframes star-pop {
@@ -199,18 +202,18 @@ function afterLeave() {
 }
 @keyframes star-drop {
   0% {
-    color: rgb(251 191 36);
+    color: rgb(var(--palette-star));
     transform: translateY(0) rotate(0) scale(1);
     opacity: 1;
     filter: saturate(1);
   }
   30% {
-    color: rgb(167 139 250);
+    color: rgb(var(--palette-loss));
     filter: saturate(0.4);
     transform: translateY(2px) rotate(-6deg) scale(0.96);
   }
   100% {
-    color: rgb(100 116 139);
+    color: rgb(var(--palette-star-empty));
     transform: translateY(46px) rotate(-32deg) scale(0.6);
     opacity: 0;
     filter: saturate(0);
@@ -232,11 +235,11 @@ function afterLeave() {
   width: 4px;
   height: 4px;
   border-radius: 9999px;
-  background: rgb(var(--accent));
+  background: rgb(var(--shift-accent));
   transform-origin: center;
 }
 .shift-card.up .particle {
-  box-shadow: 0 0 6px 1px rgb(var(--accent) / 0.7);
+  box-shadow: 0 0 6px 1px rgb(var(--shift-accent) / 0.7);
   animation: particle-burst 0.95s cubic-bezier(0.12, 0.8, 0.3, 1) var(--delay) both;
 }
 .shift-card.down .particle {
@@ -289,7 +292,7 @@ function afterLeave() {
   }
   /* keep the lost star from sitting in its filled state */
   .star-lose {
-    color: rgb(100 116 139);
+    color: rgb(var(--palette-star-empty));
     opacity: 0.4;
   }
 }

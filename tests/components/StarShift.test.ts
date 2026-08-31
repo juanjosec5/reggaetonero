@@ -18,7 +18,7 @@ describe('StarShift', () => {
   it('renders five star glyphs and no text', async () => {
     const wrapper = await open({ dir: 'up', tier: 3 })
     expect(wrapper.findAll('span.star')).toHaveLength(5)
-    expect(wrapper.findAll('span.star.text-amber-400')).toHaveLength(3) // tier 3 filled
+    expect(wrapper.findAll('span.star.text-star')).toHaveLength(3) // tier 3 filled
     expect(wrapper.text().replace(/★/g, '').trim()).toBe('') // purely visual
     wrapper.unmount()
   })
