@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 
-import { AWARD_ICON } from '@/data/awards'
+import { AWARD_ICON, AWARD_IMAGE } from '@/data/awards'
 import type { CareerAward } from '@/types/career'
 
 const props = defineProps<{ award: CareerAward }>()
 const emit = defineEmits<{ done: [] }>()
 
 const show = ref(false)
+
+const awardImage = computed(() => AWARD_IMAGE[props.award.kind])
 
 // A ring of sparks that fly outward on entry. Deterministic (fixed spread, no
 // Math.random) so the burst reads as designed and doesn't flicker on re-render.
@@ -60,7 +62,13 @@ function afterLeave() {
             :style="{ '--angle': s.angle + 'deg', '--distance': s.distance + 'px', '--delay': s.delay + 'ms' }"
           />
         </div>
-        <span class="award-icon text-6xl">{{ AWARD_ICON[award.kind] }}</span>
+        <img
+          v-if="awardImage"
+          :src="awardImage"
+          alt=""
+          class="award-icon h-20 w-20 object-contain"
+        />
+        <span v-else class="award-icon text-6xl">{{ AWARD_ICON[award.kind] }}</span>
         <p
           class="text-[11px] font-semibold uppercase tracking-[0.2em]"
           :class="award.grand ? 'text-lime' : 'text-accent'"

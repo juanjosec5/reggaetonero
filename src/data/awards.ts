@@ -8,6 +8,15 @@ export const AWARD_ICON: Record<AwardKind, string> = {
   milestone: '⭐',
 }
 
+/**
+ * Real award badges live in /public and stand in for the emoji when present.
+ * Kinds without an entry (platinum, milestone) keep their {@link AWARD_ICON}.
+ */
+export const AWARD_IMAGE: Partial<Record<AwardKind, string>> = {
+  grammy: '/grammy.png',
+  billboard: '/billboard.png',
+}
+
 /** Grammy Latino comes in categories — the ceremony hands out several. */
 const GRAMMY_CATEGORIES = [
   'Mejor Sencillo',
